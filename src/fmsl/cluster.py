@@ -136,7 +136,9 @@ def _real_roots(p, lo=None, hi=None):
        Rational roots are found exactly and divided out first, so that an algebraic number
        is only used for a genuinely irrational root."""
     from .multivar import _rational_roots
-    from .algebraic import pdivmod
+    from .algebraic import pdivmod, is_alg_poly, roots_alg
+    if is_alg_poly(p):
+        return sorted(set_unique(roots_alg(p, lo, hi)), key=cmp_to_key(cmp))
     p = squarefree(ptrim([Fr(v) for v in p]))
     out = []
     if p and p[0] == 0:
@@ -152,7 +154,8 @@ def _real_roots(p, lo=None, hi=None):
 def image_of_rational_function(n, d):
     """closure of { n(c)/d(c) : c real, d(c) != 0 } as a list of closed extended intervals.
        n, d: coefficient lists over Q, coprime, ratio not constant.  Exact."""
-    n, d = ptrim([Fr(v) for v in n]), ptrim([Fr(v) for v in d])
+    from .algebraic import coef
+    n, d = ptrim([coef(v) for v in n]), ptrim([coef(v) for v in d])
     R = lambda c: peval(n, c) / peval(d, c)
     g = psub(pmul(pderiv(n), d), pmul(n, pderiv(d)))          # critical points: R' = 0
     prod = squarefree(pmul(g, d)) if g else squarefree(d)

@@ -37,12 +37,21 @@ def pmul(a, b):
             for j, y in enumerate(b): r[i + j] += x * y
     return ptrim(r)
 
+def _div(u, v):
+    """exact quotient; rationals stay Fractions, algebraic numbers stay algebraic"""
+    if isinstance(u, A) or isinstance(v, A): return u / v
+    return Fr(u) / v
+
+def is_alg_poly(p):
+    """True if some coefficient is a (non-rational) algebraic number"""
+    return any(isinstance(v, A) for v in p)
+
 def pdivmod(a, b):
     a = ptrim(a); b = ptrim(b)
     if not b: raise ZeroDivisionError("polynomial division by zero")
     q = [Fr(0)] * max(len(a) - len(b) + 1, 1)
     while len(a) >= len(b) and a:
-        k = len(a) - len(b); f = Fr(a[-1]) / b[-1]; q[k] = f
+        k = len(a) - len(b); f = _div(a[-1], b[-1]); q[k] = f
         for i, bv in enumerate(b): a[i + k] -= f * bv
         a = ptrim(a)
     return ptrim(q), a
@@ -50,7 +59,7 @@ def pdivmod(a, b):
 def pgcd(a, b):
     a, b = ptrim(a), ptrim(b)
     while b: a, b = b, pdivmod(a, b)[1]
-    return [Fr(v) / a[-1] for v in a] if a else a
+    return [_div(v, a[-1]) for v in a] if a else a
 
 def pderiv(p): return ptrim([i * p[i] for i in range(1, len(p))])
 
@@ -115,8 +124,14 @@ def _sign_at(coeffs, x):
         if i < n: bpow //= b
     return (tot > 0) - (tot < 0)
 
+def coef(v):
+    """a coefficient as an exact number: algebraic numbers stay algebraic, the rest become Fractions"""
+    return v if isinstance(v, A) else Fr(v)
+
 def count_roots(p, lo, hi):
     """distinct real roots of p in (lo, hi]"""
+    if is_alg_poly(p):
+        return _count_generic(_sturm_generic(_lift_poly(ptrim(p), _coeff_field(p)))[1], lo, hi)
     sq, seq = _sturm_of(p)
     if len(sq) <= 1: return 0
     def ch(x):
@@ -126,11 +141,14 @@ def count_roots(p, lo, hi):
 
 def root_bound(p):
     p = ptrim(p)
+    if is_alg_poly(p):
+        return 1 + max(_abs_upper(v) for v in p[:-1]) / _abs_lower(p[-1]) if len(p) > 1 else Fr(1)
     return 1 + max(abs(Fr(v) / p[-1]) for v in p[:-1]) if len(p) > 1 else Fr(1)
 
 def isolate_real_roots(p, lo=None, hi=None):
     """isolating intervals (lo, hi] for the distinct real roots of p (rational p), optionally
        only those in (lo, hi].  Returns list of ('rational', r) or ('interval', lo, hi)."""
+    if is_alg_poly(p): return isolate_real_roots_alg(p, lo, hi)[0]
     p = squarefree(p)
     if len(p) <= 1: return []
     B = root_bound(p)
@@ -220,9 +238,16 @@ class A:
 
     def _co(s, o):
         if isinstance(o, A):
-            if o.F is not s.F: raise NotImplementedError("arithmetic across different algebraic fields")
+            if o.F is not s.F: return None          # handled by _cross
             return o.c
         if isinstance(o, _NUM): return [Fr(o)] if o else []
+        return None
+
+    def _cross(s, o):
+        """(s, o) as elements of one common field, or None if o is not a number"""
+        if isinstance(o, A) and o.F is not s.F:
+            L = unify_fields(s.F, o.F)
+            return embed(s, L), embed(o, L)
         return None
 
     def _wrap(s, c):
@@ -233,21 +258,31 @@ class A:
         return s.c[0] if s.c else Fr(0)
 
     def __add__(s, o):
+        x = s._cross(o)
+        if x: return x[0] + x[1]
         c = s._co(o)
         return NotImplemented if c is None else s._wrap(padd(s.c, c))
     __radd__ = __add__
     def __sub__(s, o):
+        x = s._cross(o)
+        if x: return x[0] - x[1]
         c = s._co(o)
         return NotImplemented if c is None else s._wrap(psub(s.c, c))
     def __rsub__(s, o):
+        x = s._cross(o)
+        if x: return x[1] - x[0]
         c = s._co(o)
         return NotImplemented if c is None else s._wrap(psub(c, s.c))
     def __neg__(s): return s._wrap([-v for v in s.c])
     def __mul__(s, o):
+        x = s._cross(o)
+        if x: return x[0] * x[1]
         c = s._co(o)
         return NotImplemented if c is None else s._wrap(pmul(s.c, c))
     __rmul__ = __mul__
     def __truediv__(s, o):
+        x = s._cross(o)
+        if x: return x[0] / x[1]
         c = s._co(o)
         if c is None: return NotImplemented
         if isinstance(o, _NUM):
@@ -255,6 +290,8 @@ class A:
             return s._wrap([v / Fr(o) for v in s.c])
         return s._wrap(pmul(s.c, s.F.inverse(c)))
     def __rtruediv__(s, o):
+        x = s._cross(o)
+        if x: return x[1] / x[0]
         c = s._co(o)
         return NotImplemented if c is None else s._wrap(pmul(c, s.F.inverse(s.c)))
     def __pow__(s, n):
@@ -269,6 +306,8 @@ class A:
     def sign(s): return s.F.sign(s.c)
     def __bool__(s): return not s.F.is_zero(s.c)
     def __eq__(s, o):
+        x = s._cross(o)
+        if x: return x[0] == x[1]
         c = s._co(o)
         return NotImplemented if c is None else s.F.is_zero(psub(s.c, c))
     def __ne__(s, o):
@@ -301,3 +340,187 @@ def same_value(u, v):
             u.F.refine(); v.F.refine()
         return None
     return u == v
+
+
+# ---------------- polynomials with algebraic coefficients, and several fields at once ----------------
+# A polynomial whose coefficients lie in a field Q(alpha) is handled exactly:
+#   * Sturm sequences work over any ordered field, so roots are counted and isolated by rational
+#     intervals using exact field arithmetic (signs of field elements are exact);
+#   * a root rho is represented through the NORM  N(t) = Res_y(m(y), p(y, t))  (m = defining
+#     polynomial of alpha), a rational polynomial having every root of p among its roots;
+#     the isolating interval is refined until it isolates rho among the roots of N as well;
+#   * numbers from two different fields Q(alpha), Q(beta) are combined in Q(gamma),
+#     gamma = beta + k alpha (primitive element), with alpha, beta expressed in Q(gamma)
+#     through a gcd over Q(gamma).  This is done automatically by the arithmetic of A.
+
+def _coeff_field(p):
+    F = None
+    for v in p:
+        if isinstance(v, A):
+            if F is None: F = v.F
+            elif v.F is not F: F = unify_fields(F, v.F)
+    return F
+
+def _lift_poly(p, F):
+    return [embed(v, F) if isinstance(v, A) else Fr(v) for v in p]
+
+def _abs_upper(v):
+    if not isinstance(v, A): return abs(Fr(v))
+    a, b = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
+    return max(abs(a), abs(b))
+
+def _abs_lower(v):
+    """a positive lower bound for |v|, v != 0"""
+    if not isinstance(v, A): return abs(Fr(v))
+    while True:
+        a, b = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
+        if a > 0: return a
+        if b < 0: return -b
+        v.F.refine()
+
+def _sturm_generic(p):
+    p = squarefree(ptrim(p))
+    seq = [p, pderiv(p)]
+    while len(seq[-1]) > 1:
+        r = pdivmod(seq[-2], seq[-1])[1]
+        if not r: break
+        seq.append([-v for v in r])
+    return p, [t for t in seq if t]
+
+def _count_generic(seq, lo, hi):
+    def ch(x):
+        sg = [t for t in (sign_of(peval(s, x)) for s in seq) if t != 0]
+        return sum(1 for u, v in zip(sg, sg[1:]) if u != v)
+    return ch(lo) - ch(hi)
+
+def isolate_real_roots_alg(p, lo=None, hi=None):
+    """like isolate_real_roots, for a polynomial with coefficients in one algebraic field"""
+    F = _coeff_field(p)
+    p = _lift_poly(ptrim(p), F)
+    sq, seq = _sturm_generic(p)
+    if len(sq) <= 1: return [], sq
+    B = 1 + max(_abs_upper(v) for v in sq[:-1]) / _abs_lower(sq[-1])
+    L = -B if lo is None else max(-B, Fr(lo))
+    H = B if hi is None else min(B, Fr(hi))
+    if L >= H: return [], sq
+    out, stack = [], [(L, H)]
+    while stack:
+        a, b = stack.pop()
+        n = _count_generic(seq, a, b)
+        if n == 0: continue
+        if n == 1:
+            out.append(("rational", b) if sign_of(peval(sq, b)) == 0 else ("interval", a, b)); continue
+        mid = (a + b) / 2
+        stack += [(a, mid), (mid, b)]
+    return sorted(out, key=lambda r: r[1]), sq
+
+def norm_poly(p):
+    """N(t) = Res_y(m(y), p(y, t)): rational, and every root of p is a root of N"""
+    from .plane import resultant_d
+    F = _coeff_field(p)
+    p = _lift_poly(p, F)
+    P = {}
+    for i, v in enumerate(p):
+        cs = v.c if isinstance(v, A) else ([Fr(v)] if v else [])
+        for j, c in enumerate(cs):
+            if c: P[(i, j)] = P.get((i, j), 0) + c
+    M = {(0, j): Fr(c) for j, c in enumerate(F.p) if c}
+    return ptrim(resultant_d(P, M))
+
+def roots_alg(p, lo=None, hi=None):
+    """exact real roots (Fractions or A) of a polynomial with algebraic coefficients, in (lo, hi]"""
+    from .multivar import _rational_roots
+    if _coeff_field(p) is None:
+        from .cluster import _real_roots
+        return _real_roots(p, lo, hi)
+    ivs, sq = isolate_real_roots_alg(p, lo, hi)
+    if not ivs: return []
+    if len(sq) == 2:                                      # linear: the root lies in the same field
+        r = -sq[0] / sq[1]
+        return [r]
+    N = squarefree(norm_poly(sq))
+    out = []
+    seq = _sturm_generic(sq)[1]
+    for iv in ivs:
+        if iv[0] == "rational": out.append(iv[1]); continue
+        a, b = iv[1], iv[2]
+        while count_roots(N, a, b) != 1:                  # refine with p's own Sturm sequence
+            mid = (a + b) / 2
+            if sign_of(peval(sq, mid)) == 0: a = b = None; out.append(mid); break
+            if _count_generic(seq, a, mid) == 1: b = mid
+            else: a = mid
+        if a is None: continue
+        rr = [r for r in _rational_roots(N, a, b) if a < r <= b]
+        out.append(rr[0] if rr else A.root(AlgField(N, a, b)))
+    return out
+
+# ---- several fields: embeddings into a common field ----
+_EMB = {}       # (id(E), id(L)) -> (E, L, image of E's generator in L)
+
+def _record(E, L, img):
+    _EMB[(id(E), id(L))] = (E, L, img)
+
+def _image(E, L):
+    hit = _EMB.get((id(E), id(L)))
+    return hit[2] if hit and hit[0] is E and hit[1] is L else None
+
+def embed(x, L):
+    """the element x (Fraction or A) as an element of the field L"""
+    if not isinstance(x, A) or x.F is L: return x
+    img = _image(x.F, L)
+    if img is None: raise NotImplementedError("no embedding known")
+    acc = Fr(0)
+    for c in reversed(x.F.reduce(x.c)): acc = acc * img + c
+    return acc
+
+def unify_fields(F, K):
+    """a field containing both F and K (records the embeddings)"""
+    if F is K: return F
+    if _image(F, K) is not None: return K
+    if _image(K, F) is not None: return F
+    for (iE, iL), (E, L, img) in list(_EMB.items()):
+        if E is F and _image(K, L) is not None: return L
+    return _compositum(F, K)
+
+def _compositum(F, K):
+    from .plane import resultant_d
+    for k in range(1, 40):
+        # R(t) = Res_y(F.p(y), K.p(t - k y)); gamma = beta + k alpha is a root
+        P = {}
+        for j, c in enumerate(K.p):
+            if not c: continue
+            from math import comb
+            for e in range(j + 1):          # (t - k y)^j = sum comb(j,e) t^(j-e) (-k y)^e
+                key = (j - e, e)
+                P[key] = P.get(key, 0) + Fr(c) * comb(j, e) * (-k) ** e
+        M = {(0, j): Fr(c) for j, c in enumerate(F.p) if c}
+        R = ptrim(resultant_d(P, M))
+        if len(R) <= 1 or len(pgcd(R, pderiv(R))) > 1: continue
+        # isolate gamma inside K.interval + k * F.interval
+        for _ in range(400):
+            lo, hi = K.lo + k * F.lo, K.hi + k * F.hi
+            if count_roots(R, lo, hi) == 1: break
+            F.refine(); K.refine()
+        else:
+            continue
+        L = AlgField(R, lo, hi)
+        g = A.root(L)
+        # alpha = the common root of F.p(y) and K.p(g - k y) (a gcd over L)
+        G2 = []
+        for j, c in enumerate(K.p):
+            if not c: continue
+            term = [Fr(c)]
+            for _ in range(j): term = pmul(term, [g, Fr(-k)])
+            G2 = padd(G2, term)
+        G = pgcd([Fr(c) for c in F.p], G2)
+        if len(G) != 2: continue
+        alpha = -G[0] / G[1]
+        beta = g - k * alpha
+        _record(F, L, alpha); _record(K, L, beta)
+        # anything already embedded in F or K is embedded in L too
+        for (iE, iX), (E, X, img) in list(_EMB.items()):
+            if X is F or X is K:
+                if _image(E, L) is None:
+                    _record(E, L, embed(img, L) if isinstance(img, A) else img)
+        return L
+    raise ArithmeticError("no primitive element found")

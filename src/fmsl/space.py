@@ -511,17 +511,19 @@ def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zer
     for (c0, d0) in pts:
         _do_zoom(N, D, a, b, sigma, ("yz", (c0, d0)), depth, label, where, out, budget, ctx)
 
+ALLOW_ALG = False
+
 def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None):
     if depth >= MAX_DEPTH:
         out.append({"kind": "unresolved", "why": "depth limit", "where": where}); return
     q = a.denominator * b.denominator // gcd(a.denominator, b.denominator)
     p, r = int(a * q), int(b * q)
     if what[0] == "y":
-        if isinstance(what[1], A):
+        if isinstance(what[1], A) and not ALLOW_ALG:
             out.append({"kind": "unresolved", "why": "irrational zoom point", "where": where}); return
         sh = ((p, what[1]), None); txt = f"y = {what[1]}*|x|^{a}+..."
     elif what[0] == "z":
-        if isinstance(what[1], A):
+        if isinstance(what[1], A) and not ALLOW_ALG:
             out.append({"kind": "unresolved", "why": "irrational zoom point", "where": where}); return
         sh = (None, (r, what[1])); txt = f"z = {what[1]}*|x|^{b}+..."
     else:
