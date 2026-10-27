@@ -327,17 +327,22 @@ def cluster_set(entries):
             complete = False
         elif k == "depends":
             fN, fD = e["R"]
-            if not all(not isinstance(v, A) for v in list(fN) + list(fD)):
-                # coefficients in a number field: approximate them (40 digits); flag as inexact
+            from .algebraic import pgcd, pdivmod, coef
+            def _img(fN, fD):
+                g = pgcd(fN, fD)
+                n, d = pdivmod(fN, g)[0], pdivmod(fD, g)[0]
+                if len(ptrim(n)) <= 1 and len(ptrim(d)) <= 1:
+                    v = (ptrim(n) or [Fr(0)])[0] / d[0]; return [(v, v)]
+                return image_of_rational_function(n, d)
+            try:
+                # exact, also when the coefficients lie in a number field
+                items += _img([coef(v) for v in fN], [coef(v) for v in fD])
+            except (ArithmeticError, NotImplementedError, TypeError):
+                # fallback: approximate the coefficients (40 digits); flagged as inexact
                 fN = [Fr(v.F.approx(v.c)) if isinstance(v, A) else Fr(v) for v in fN]
                 fD = [Fr(v.F.approx(v.c)) if isinstance(v, A) else Fr(v) for v in fD]
                 exact = False
-            from .algebraic import pgcd, pdivmod
-            g = pgcd(fN, fD)
-            n, d = pdivmod(fN, g)[0], pdivmod(fD, g)[0]
-            if len(ptrim(n)) <= 1 and len(ptrim(d)) <= 1:
-                v = (ptrim(n) or [Fr(0)])[0] / d[0]; items.append((v, v)); continue
-            items += image_of_rational_function(n, d)
+                items += _img(fN, fD)
     signed = _union_line(items)
     def to_circle(it):                       # on the circle the point -oo is the point oo
         if it != "all" and isinstance(it[0], _Inf) and it[0].sgn < 0 and isinstance(it[1], _Inf) and it[1].sgn < 0:

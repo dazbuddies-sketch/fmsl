@@ -192,7 +192,10 @@ def snapshot(N, D, t0):
     res = profile_polys(N2, D2)
     cl = res["cluster"]
     return {"text": cl.get("signed_text", cl.get("text")), "verdict": res["verdict"],
-            "sig": _signature(res), "exact": cl.get("exact", False) and cl.get("complete", True)}
+            "sig": _signature(res),
+            # a whole-line answer cannot be missing anything, even if some branch was unresolved
+            "exact": cl.get("exact", False) and (cl.get("complete", True) or bool(cl.get("whole"))),
+            "comps": cl.get("signed_components")}
 
 
 def moving_state(N, D, t0):
@@ -205,12 +208,15 @@ def moving_state(N, D, t0):
 def _samples_between(lo, hi):
     """three rational times strictly inside (lo, hi); lo/hi None = unbounded"""
     if lo is None and hi is None: return [Fr(-1), Fr(0), Fr(1)]
+    from math import floor, ceil
     if lo is None:
-        h = _bounds(hi)[0] if isinstance(hi, A) else hi
-        return [h - 3, h - 2, h - 1] if not isinstance(hi, A) else [h - 3, h - 2, h - 1]
+        h = floor(_bounds(hi)[0]) if isinstance(hi, A) else floor(hi)
+        h = h if h < hi else h - 1
+        return [Fr(h - 2), Fr(h - 1), Fr(h)]
     if hi is None:
-        l = _bounds(lo)[1] if isinstance(lo, A) else lo
-        return [l + 1, l + 2, l + 3]
+        l = ceil(_bounds(lo)[1]) if isinstance(lo, A) else ceil(lo)
+        l = l if l > lo else l + 1
+        return [Fr(l), Fr(l + 1), Fr(l + 2)]
     m = _rational_between(lo, hi)
     m1 = _rational_between(lo, m)
     m2 = _rational_between(m, hi)
@@ -248,9 +254,15 @@ def moving_profile(text, path=None, joint=True):
                 a, b = _bisect_change(N, D, pts[u], pts[u + 1], sigs[u], sigs[u + 1])
                 unexplained.append((a, b))
         mid = snaps[1]
+        ends = []
+        if mid and mid.get("comps") is not None:
+            try:
+                ends = endpoint_formulas(N, D, pts[1], mid["comps"])
+            except (ArithmeticError, NotImplementedError, TypeError):
+                ends = []
         intervals.append({"lo": lo, "hi": hi, "sample": pts[1],
                           "snapshot": mid["text"] if mid else "undefined (D = 0)",
-                          "exact": bool(mid and mid["exact"])})
+                          "exact": bool(mid and mid["exact"]), "ends": ends})
         sig_of_interval.append(sigs[1])
     special = []
     for k, (t0, why) in enumerate(cands):
@@ -291,6 +303,38 @@ def _tstr(t):
     return f"{float(t):.6g} (algebraic)" if isinstance(t, A) else str(t)
 
 
+def _tpoly_text(L):
+    """polynomial in t (ascending Fractions) as text"""
+    terms = []
+    for k in range(len(L) - 1, -1, -1):
+        c = L[k]
+        if not c: continue
+        cs = str(int(c)) if c.denominator == 1 else f"({c})"
+        mon = "" if k == 0 else ("t" if k == 1 else f"t^{k}")
+        if mon:
+            body = mon if abs(c) == 1 else f"{str(abs(int(c))) if c.denominator == 1 else f'({abs(c)})'}*{mon}"
+        else:
+            body = str(abs(int(c))) if c.denominator == 1 else f"{abs(c)}"
+        terms.append(("-" if c < 0 else "+", body))
+    if not terms: return "0"
+    out = ("-" if terms[0][0] == "-" else "") + terms[0][1]
+    for sg, body in terms[1:]: out += f" {sg} {body}"
+    return out
+
+
+def _solve_text(E):
+    """E(t, v) = 0 as text; solved for v when E is linear in v"""
+    if max(e for (_, e) in E) == 1:
+        L1 = [Fr(0)] * (1 + max([k for (k, e) in E if e == 1] or [0]))
+        L0 = [Fr(0)] * (1 + max([k for (k, e) in E if e == 0] or [0]))
+        for (k, e), c in E.items(): (L1 if e == 1 else L0)[k] += c
+        L1, L0 = ptrim(L1), ptrim([-c for c in L0])
+        if len(L1) == 1:
+            return "v = " + _tpoly_text([c / L1[0] for c in L0])
+        return f"v = ({_tpoly_text(L0)}) / ({_tpoly_text(L1)})"
+    return _E_text(E) + "  (v = the end)"
+
+
 def describe_moving(text, path=None):
     r = moving_profile(text, path)
     out = [f"f = {text}" + (f",  target at ({path[0]}, {path[1]})" if path else "")]
@@ -300,6 +344,13 @@ def describe_moving(text, path=None):
         hi = "+oo" if iv["hi"] is None else _tstr(iv["hi"])
         more = "".join(f";  at t = {t}: {txt}" for t, txt in iv.get("more", [])[:2])
         out.append(f"  {lo} < t < {hi}:  at t = {iv['sample']}: {iv['snapshot']}{more}")
+        forms = []
+        for v, E in iv.get("ends", []):
+            if E:
+                txt = _solve_text(E)
+                if txt not in forms: forms.append(txt)
+        if forms:
+            out.append(f"      ends move with t as:  " + ";  ".join(forms))
     if r["special"]:
         out.append("special times (the snapshot changes character):")
         for s in r["special"]:
@@ -310,3 +361,140 @@ def describe_moving(text, path=None):
         out.append(f"  change near t in ({float(a):.6g}, {float(b):.6g}) not explained by the top-level "
                    f"candidates (found by sampling)")
     return "\n".join(out)
+
+
+# ------------------------------------------------------------------ endpoint formulas
+# A finite end of a snapshot is (at the top level of the analysis) either a critical value of
+# the ratio R_t(c) = fN(t, c) / fD(t, c) of initial forms, or a limit of R_t at c -> 0 or oo.
+# A critical value v satisfies E(t, v) = Res_c(R' numerator, v fD - fN) = 0.  E is computed
+# exactly by evaluation at rational times and interpolation in t: its degree in t is at most
+# the Sylvester bound B, so B + 1 exact values determine it; two further times are checked.
+
+def _interp(ts, vals):
+    """exact Lagrange interpolation: polynomial (ascending list) through (ts[k], vals[k])"""
+    from .algebraic import padd, pmul
+    out = []
+    for k, (tk, yk) in enumerate(zip(ts, vals)):
+        if not yk: continue
+        num, den = [Fr(1)], Fr(1)
+        for m, tm in enumerate(ts):
+            if m == k: continue
+            num = pmul(num, [-tm, Fr(1)]); den *= (tk - tm)
+        out = padd(out, [c * yk / den for c in num])
+    return ptrim(out)
+
+
+def _endpoint_polys(N, D):
+    """candidate polynomials E(t, v) as dicts {(t power, v power)}"""
+    CN, CD = _coeff_polys(N), _coeff_polys(D)
+    out = []
+    for a in _tie_weights(set(CN) | set(CD)):
+        for sigma in (1, -1):
+            fN, fD = _initial_form(CN, a, sigma), _initial_form(CD, a, sigma)
+            if not fN or not fD: continue
+            for jj in {_cdeg(fN), _cdeg(fD), min(j for (_, j) in fN), min(j for (_, j) in fD)}:
+                E = {}
+                for (k, j), v in fD.items():
+                    if j == jj: E[(k, 1)] = E.get((k, 1), 0) + v
+                for (k, j), v in fN.items():
+                    if j == jj: E[(k, 0)] = E.get((k, 0), 0) - v
+                E = {kk: vv for kk, vv in E.items() if vv}
+                if any(e == 1 for (_, e) in E): out.append(E)
+            g = _bsub(_bmul(_dc(fN), fD), _bmul(fN, _dc(fD)))
+            if not g or _cdeg(g) == 0: continue
+            degt = lambda P: max((k for (k, _) in P), default=0)
+            # bound on deg_t of Res_c(g, v fD - fN)
+            dQ = max(_cdeg(fN), _cdeg(fD)); tQ = max(degt(fN), degt(fD))
+            B = _cdeg(g) * tQ + dQ * degt(g)
+            ts = [Fr(k, 1) + Fr(1, 7) for k in range(B + 3)]
+            rows = []
+            for t0 in ts:
+                gt = {}
+                for (k, j), v in g.items(): gt[(0, j)] = gt.get((0, j), 0) + v * t0 ** k
+                Q = {}
+                for (k, j), v in fD.items(): Q[(1, j)] = Q.get((1, j), 0) + v * t0 ** k
+                for (k, j), v in fN.items(): Q[(0, j)] = Q.get((0, j), 0) - v * t0 ** k
+                gt = {kk: vv for kk, vv in _merge(gt).items() if vv}
+                Q = {kk: vv for kk, vv in Q.items() if vv}
+                rows.append(ptrim(resultant_d(Q, gt)) if gt and Q else [])   # polynomial in v
+            dv = max((len(r) for r in rows), default=0)
+            E = {}
+            for e in range(dv):
+                coeffs_t = _interp(ts[:B + 1], [r[e] if e < len(r) else Fr(0) for r in rows[:B + 1]])
+                for k, c in enumerate(coeffs_t):
+                    if c: E[(k, e)] = c
+            ok = all(_evalE(E, t0) == ptrim(r) for t0, r in zip(ts[B + 1:], rows[B + 1:]))
+            if E and ok: out.append(E)
+    return out
+
+
+def _merge(P):
+    out = {}
+    for k, v in P.items(): out[k] = out.get(k, 0) + v
+    return out
+
+
+def _evalE(E, t0):
+    """E(t0, v) as a polynomial in v"""
+    dv = 1 + max((e for (_, e) in E), default=-1)
+    L = [Fr(0)] * dv
+    for (k, e), c in E.items(): L[e] += c * t0 ** k
+    return ptrim(L)
+
+
+def _primitive_E(E):
+    """remove the content in t (a factor depending on t only) and scale to integers"""
+    from math import gcd
+    from .algebraic import pgcd
+    byv = {}
+    for (k, e), c in E.items():
+        L = byv.setdefault(e, [])
+        while len(L) <= k: L.append(Fr(0))
+        L[k] += c
+    cont = None
+    for L in byv.values():
+        cont = ptrim(L) if cont is None else pgcd(cont, ptrim(L))
+    from .algebraic import pdivmod
+    if cont and len(cont) > 1:
+        byv = {e: pdivmod(ptrim(L), cont)[0] for e, L in byv.items()}
+    E2 = {(k, e): c for e, L in byv.items() for k, c in enumerate(L) if c}
+    den = 1
+    for c in E2.values(): den = den * c.denominator // gcd(den, c.denominator)
+    E2 = {k: c * den for k, c in E2.items()}
+    g = 0
+    for c in E2.values(): g = gcd(g, int(c))
+    return {k: c / g for k, c in E2.items()} if g > 1 else E2
+
+
+def _E_text(E):
+    terms = []
+    for (k, e), c in sorted(E.items(), key=lambda kv: (-kv[0][1], -kv[0][0])):
+        c = int(c) if c.denominator == 1 else c
+        mon = "*".join(p for p in (("t" if k == 1 else f"t^{k}") if k else "", ("v" if e == 1 else f"v^{e}") if e else "") if p)
+        if mon:
+            co = "" if c == 1 else ("-" if c == -1 else f"{c}*")
+            terms.append(f"{co}{mon}")
+        else:
+            terms.append(str(c))
+    s = " + ".join(terms).replace("+ -", "- ")
+    return s + " = 0"
+
+
+def endpoint_formulas(N, D, t0, comps):
+    """for the finite ends of the snapshot at the rational time t0: an exact relation
+       E(t, v) = 0 satisfied by that end (v) for t in this interval, when one is found"""
+    from .algebraic import peval
+    Es = [_primitive_E(E) for E in _endpoint_polys(N, D)]
+    out = []
+    ends = []
+    for lo, hi in comps:
+        for v in ((lo,) if cmp(lo, hi) == 0 else (lo, hi)):
+            if not isinstance(v, _Inf): ends.append(v)
+    for v in ends:
+        hit = None
+        for E in sorted(Es, key=lambda E: (max(e for (_, e) in E), len(E))):
+            p = _evalE(E, t0)
+            if len(p) > 1 and peval(p, v) == 0:
+                hit = E; break
+        out.append((v, hit))
+    return out
