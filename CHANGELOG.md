@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.10.0
+- Experiment A of MJ Celedon's FMS research brief (`benchmarks/experiment_a.py`, run in GitHub
+  Actions against SymPy 1.13.3): 1,120 expressions in the brief's categories, ground truth by
+  construction.  FMSL 1008 correct, 0 wrong, 112 unresolved (piecewise, unsupported); SymPy
+  963 / 147 / 10; naive floats 557 / 279 / 60.  Several variables: FMSL exact in 224/224, the
+  path method 67/224.
+- One variable: essential factors are kept in products, so x*sin(1/x) -> 0 (squeeze theorem;
+  it was reported as oscillating) and x^k exp(c/x^m) is decided on each side.
+- Sums and powers of essential factors are reported as not decided (sin(1/x) - sin(1/x) was
+  reported as oscillating).  The library functions Exp/Sin/Cos still raise Essential unless
+  called with keep=True.
+
 ## 0.9.0
 - Moving targets (`fmsl.moving`): for a family f(x, y, t), optionally with the 0/0 point moving
   along a path, the fluid state at each time, exact formulas E(t, v) = 0 for how its ends
