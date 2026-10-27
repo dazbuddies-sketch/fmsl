@@ -69,9 +69,15 @@ def main():
     else: f = lambda it: answer_anthropic(it, a.model, a.max_tokens)
     with ThreadPoolExecutor(max_workers=a.workers if a.method == "anthropic" else 1) as ex:
         answers = list(ex.map(f, items))
+    errors = [a for a in answers if isinstance(a, str) and a.startswith("ERROR:")]
+    if errors:
+        # failed API calls are not answers: never score them; stop if the run did not really happen
+        print(f"{len(errors)} of {len(answers)} calls failed, e.g. {errors[0][:300]}")
+        if len(errors) > len(answers) // 10:
+            sys.exit("Too many failed calls: nothing recorded. Fix the cause (e.g. API credits) and rerun.")
     rows = []
     for it, ans in zip(items, answers):
-        if ans is None: continue                       # method does not apply (paths in 3-D)
+        if ans is None or (isinstance(ans, str) and ans.startswith("ERROR:")): continue
         g = grade(it, ans)
         rows.append({"id": it["id"], "tier": it["tier"], "category": it["category"], "trap": bool(it["path_test"] and it["path_test"]["trap"]),
                      **g, "answer_tail": ans[-400:]})
