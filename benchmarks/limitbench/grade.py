@@ -11,7 +11,7 @@ Scores per item:
   verdict  -- right about whether the limit exists
   exact    -- the limit value, or the whole set, is right (endpoints within 1e-3 relative)
 """
-import math, re
+import ast, math, re
 
 PROMPT = """Let f({vars}) = {f}.
 Determine the behaviour of f as ({vars}) -> ({zeros}): find the set of ALL limit values, that is,
@@ -35,13 +35,23 @@ def _num(s):
     s = s.strip().replace(" ", "")
     if s in ("+oo", "oo", "+inf", "inf", "+infinity", "infinity", "∞", "+∞"): return math.inf
     if s in ("-oo", "-inf", "-infinity", "-∞"): return -math.inf
-    m = re.fullmatch(r"([+-]?\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)", s)
-    if m: return float(m.group(1)) / float(m.group(2))
-    m = re.fullmatch(r"([+-]?)sqrt\((\d+(?:\.\d+)?)\)(?:/(\d+(?:\.\d+)?))?", s)
-    if m:
-        v = math.sqrt(float(m.group(2))) / (float(m.group(3)) if m.group(3) else 1.0)
-        return -v if m.group(1) == "-" else v
-    return float(s)
+    s = s.replace("√", "sqrt").replace("^", "**")
+    return _arith(ast.parse(s, mode="eval").body)
+
+
+def _arith(n):
+    """Evaluate a closed-form number safely: + - * / ** and sqrt(...), nothing else."""
+    if isinstance(n, ast.Constant) and isinstance(n.value, (int, float)): return float(n.value)
+    if isinstance(n, ast.UnaryOp) and isinstance(n.op, (ast.UAdd, ast.USub)):
+        v = _arith(n.operand); return -v if isinstance(n.op, ast.USub) else v
+    if isinstance(n, ast.BinOp) and isinstance(n.op, (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow)):
+        a, b = _arith(n.left), _arith(n.right)
+        if isinstance(n.op, ast.Pow) and abs(b) > 10: raise ValueError("exponent too large")
+        return {ast.Add: a + b, ast.Sub: a - b, ast.Mult: a * b}.get(type(n.op)) if not isinstance(n.op, (ast.Div, ast.Pow)) \
+            else (a / b if isinstance(n.op, ast.Div) else a ** b)
+    if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "sqrt" and len(n.args) == 1:
+        return math.sqrt(_arith(n.args[0]))
+    raise ValueError("not a number")
 
 
 def parse_answer(text):
@@ -65,7 +75,7 @@ def parse_answer(text):
             if mm: v = _num(mm.group(1)); comps.append((v, v)); continue
             return None
         return ("SET", comps)
-    except (ValueError, ZeroDivisionError):
+    except (ValueError, ZeroDivisionError, SyntaxError, TypeError, OverflowError):
         return None
 
 

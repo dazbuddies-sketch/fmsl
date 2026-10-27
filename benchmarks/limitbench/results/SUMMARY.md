@@ -32,3 +32,17 @@
 
 Tokens used: 16,427 input, 86,271 output.
 
+
+**Regraded** (grader fix: endpoints written as expressions such as `(1-sqrt(10))/2` were left unparsed;
+all three were correct). anthropic_claude-haiku-5-5, same 50 items:
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 50 | 100.0% | 98.0% | 0 |
+| tier 1 | 21 | 100.0% | 95.2% | 0 |
+| tier 2 | 4 | 100.0% | 100.0% | 0 |
+| tier 3 | 21 | 100.0% | 100.0% | 0 |
+| tier 4 | 4 | 100.0% | 100.0% | 0 |
+| path-test traps | 17 | 100.0% | 100.0% | 0 |
+
+For comparison, the path method on the 46 two-variable items of this subset: verdict 29/46 (63%), exact 10/46 (22%).
