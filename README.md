@@ -311,23 +311,30 @@ Examples, each confirmed by hand or by a known closed form:
 | (xy − 2z² + xz)/(x² + 2y² + 3z²) | [−0.796873…, 0.394973…] | generalized eigenvalues |
 | x²y²z²/(x⁶ + y⁶ + z⁶) | [0, 1/3] | decided at a vertex (c = d = 1) |
 | xyz/(x⁴ + y⁴ + z²) | [−√2/4, √2/4] (to 40 digits) | max of cd/(1 + c⁴ + d²) |
+| x²yz/((yz − x²)² + x⁶) | [−1/4, +∞] | zoom along the curve yz = x²: t/(t − 1)² ≥ −1/4 |
+| 2x³y²z²/((y²z − x)² + x⁴) | {0} (limit 0) | a squared form touches 0 without crossing it |
 
-On 200 random rational functions of three variables, the engine decides **199** (32 limits,
-144 no-limit, 23 divergent; median time 0.01 s). One is left UNPROVEN, because it needs a zoom at
-irrational points, which version 1 does not do. Every computed fluid state is connected.
+On 200 random rational functions of three variables (`benchmarks/space_random.py`), the engine
+decides **all 200** (24 limits, 162 no-limit, 14 divergent; median time 0.01 s). Every computed
+fluid state is connected.
 
 **Independent check.** `benchmarks/cube_crosscheck.py` computes the exact image of f on the
 surface of small cubes |x|, |y|, |z| ≤ r. On each face f is a two-variable function over a
-square, and its exact image comes from the box version of the range algorithm. No Newton
-polyhedra, weights or zooming are used. On 11 classic and 40 random functions,
-the cube image matches the engine's exact signed fluid state at r = 10⁻³ and 10⁻⁶ on **51 of 51**.
+square, and its exact image comes from the box version of the range algorithm, plus the
+two-variable fluid state at any point inside a face where the face function is 0/0. No Newton
+polyhedra, weights or zooming are used. On 11 classic and 40 random functions, and on 54
+functions built to vanish along curves (the curve zoom), the cube image matches the engine's
+exact signed fluid state at r = 10⁻³ and 10⁻⁶ on **104 of 105**; the other one was too slow for
+the cube (over 2 hours) and is confirmed instead on the plane z = x, where the two-variable
+engine proves every real value is taken, which is the engine's answer [−∞, +∞]. This check found one real
+engine error, fixed in 0.7.0: a squared denominator form had been treated as a pole surface.
 When I deleted parts of correct answers on purpose (vertex ranges, pole and zero surfaces), the
 cube check caught **11 of 11** changed answers. The connectedness test caught none of them. The low-level range algorithm itself was
 tested against dense sampling: 60 of 60 random functions agree over a square, and 60 of 60 over
 the whole plane.
 
 **Version 1 limits.** The following are reported as UNPROVEN, never guessed: zooming along a
-whole curve of roots that is not a coordinate line; zooming at irrational points; depth > 4. A
+curve c^p d^q = u₀ with neither |p| nor |q| equal to 1; zooming at irrational points; depth > 4. A
 critical value whose critical point is not cut out linearly is computed to 40 digits and
 marked "approx.".
 
