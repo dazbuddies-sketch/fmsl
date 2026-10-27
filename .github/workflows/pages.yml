@@ -1,0 +1,62 @@
+# Publishes the Fluid State Explorer (docs/demo) to GitHub Pages, then tests the live page in a
+# real browser: Python (Pyodide) must load FMSL from PyPI and return exact answers.
+# One-time setup: repository Settings -> Pages -> Source: "GitHub Actions".
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/demo
+      - id: deployment
+        uses: actions/deploy-pages@v4
+  live-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install playwright@1.48.2 && npx playwright install --with-deps chromium
+      - name: Test the live page
+        env:
+          URL: ${{ needs.deploy.outputs.url }}
+        run: |
+          cat > t.js <<'JS'
+          const { chromium } = require('playwright');
+          (async () => {
+            const b = await chromium.launch(); const p = await b.newPage();
+            await p.goto(process.env.URL, { waitUntil: 'load' });
+            await p.waitForSelector('body[data-ready="1"]', { timeout: 180000 });
+            const cases = [['xy/(x²+y²)', '[-1/2, 1/2]'], ['x²y²/(x²+y²)', '{0}'], ['3 variables', '[-1/2, 1]']];
+            for (const [chip, want] of cases) {
+              await p.click(`.chip:has-text("${chip}")`);
+              await p.waitForFunction(w => document.getElementById('state').textContent === w, want, { timeout: 60000 });
+              console.log('ok', chip, '->', want);
+            }
+            await p.click('.chip:has-text("moving target")');
+            await p.waitForFunction(() => document.getElementById('report').textContent.includes('Celedon points'), null, { timeout: 120000 });
+            console.log('ok moving target -> Celedon points shown');
+            await b.close();
+          })().catch(e => { console.error(e); process.exit(1); });
+          JS
+          node t.js
