@@ -10,9 +10,11 @@ Two questions:
     i.e. the target is approached while it moves.  This is a three-variable problem: the
     three-variable engine (fmsl.space) with z = t - t0.
 
-The snapshot changes character only at finitely many SPECIAL TIMES.  This module computes
+The snapshot changes character only at finitely many times: the CELEDON POINTS of the family
+(named by MJ Celedon after the Celedon Point of his Fluid Mathematics System, a transition
+between mathematical regimes).  This module computes
 
-  1. candidate special times, exactly: real roots of
+  1. candidate Celedon points, exactly: real roots of
        - every coefficient (a polynomial in t) of N and D  (the Newton polygons change there),
        - for every weight a where monomials tie: the discriminants and mutual resultants of the
          initial forms in c (y = c|x|^a), and of the critical-point polynomial of their ratio;
@@ -24,7 +26,7 @@ The snapshot changes character only at finitely many SPECIAL TIMES.  This module
   3. at every candidate where the type does change: the snapshot and the moving state.
 
 What is proven and what is not: every reported fluid state is exact.  Candidate times are exact
-algebraic numbers.  Completeness of the list of special times is proven for changes visible in
+algebraic numbers.  Completeness of the list of Celedon points is proven for changes visible in
 the top-level Newton data; changes that arise only deeper in the zoom are detected by sampling
 (reported as "change near ..."), which is evidence, not proof.
 """
@@ -126,7 +128,7 @@ def _cdeg(P): return max((j for (_, j) in P), default=0)
 
 
 def candidate_times(N, D):
-    """exact real candidate special times (sorted), with the reason each one appears"""
+    """exact real candidate Celedon points (sorted), with the reason each one appears"""
     CN, CD = _coeff_polys(N), _coeff_polys(D)
     polys = []                                           # (polynomial in t, reason)
     for (m, L) in list(CN.items()) + list(CD.items()):
@@ -282,7 +284,7 @@ def moving_profile(text, path=None, joint=True):
             except (ArithmeticError, NotImplementedError, TypeError) as exc:
                 entry["moving"] = f"not computed ({type(exc).__name__})"
         special.append(entry)
-    # merge neighbouring intervals of the same type that no special time separates
+    # merge neighbouring intervals of the same type that no Celedon point separates
     merged = []
     sp_times = [e["t"] for e in special]
     for k, iv in enumerate(intervals):
@@ -294,7 +296,9 @@ def moving_profile(text, path=None, joint=True):
             merged[-1][0].setdefault("more", []).append((iv["sample"], iv["snapshot"]))
         else:
             merged.append([dict(iv), sig_of_interval[k]])
-    return {"intervals": [m[0] for m in merged], "special": special, "unexplained": unexplained,
+    return {"intervals": [m[0] for m in merged], "celedon_points": special,
+            "special": special,                                  # older name, kept for compatibility
+            "unexplained": unexplained,
             "candidates": len(cands)}
 
 
@@ -352,7 +356,7 @@ def describe_moving(text, path=None):
         if forms:
             out.append(f"      ends move with t as:  " + ";  ".join(forms))
     if r["special"]:
-        out.append("special times (the snapshot changes character):")
+        out.append("Celedon points (the times where the snapshot changes character):")
         for s in r["special"]:
             out.append(f"  t = {_tstr(s['t'])}:  snapshot {s['snapshot']};  moving target {s.get('moving', '-')}")
             kinds = sorted({re.sub(r" \(weight.*\)$", "", w) for w in s["why"]})

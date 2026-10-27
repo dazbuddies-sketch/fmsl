@@ -7,7 +7,7 @@ from fmsl.moving import moving_profile, parse_moving, snapshot, endpoint_formula
 class MovingTargets(unittest.TestCase):
     def test_special_time_and_intervals(self):
         r = moving_profile("(x^2-t*y^2)/(x^2+y^2)")
-        self.assertEqual([s["t"] for s in r["special"]], [-1])
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [-1])
         self.assertEqual(r["special"][0]["snapshot"], "{1}")
         self.assertEqual(r["special"][0]["moving"], "{1}")
         self.assertEqual(r["unexplained"], [])

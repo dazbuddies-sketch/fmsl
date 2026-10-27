@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1
+- The special times of `fmsl.moving` are named **Celedon points**, by MJ Celedon, after the
+  Celedon Point of the Fluid Mathematics System (a transition between mathematical regimes):
+  the exact times where the fluid state of a family changes character.  The result key
+  `celedon_points` is added; `special` remains as an alias.
+
 ## 0.10.0
 - Experiment A of MJ Celedon's FMS research brief (`benchmarks/experiment_a.py`, run in GitHub
   Actions against SymPy 1.13.3): 1,120 expressions in the brief's categories, ground truth by
