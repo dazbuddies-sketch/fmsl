@@ -1,13 +1,26 @@
-### anthropic_claude-haiku-5-5  (50 items)
+### anthropic_claude-haiku-5-5  (491 items)
 
 | subset | n | verdict right | exact answer | unparsed |
 |---|---|---|---|---|
-| all | 50 | 94.0% | 92.0% | 3 |
-| tier 1 | 21 | 85.7% | 81.0% | 3 |
-| tier 2 | 4 | 100.0% | 100.0% | 0 |
-| tier 3 | 21 | 100.0% | 100.0% | 0 |
-| tier 4 | 4 | 100.0% | 100.0% | 0 |
-| path-test traps | 17 | 100.0% | 100.0% | 0 |
+| all | 491 | 100.0% | 99.6% | 0 |
+| tier 1 | 184 | 100.0% | 99.5% | 0 |
+| tier 2 | 58 | 100.0% | 100.0% | 0 |
+| tier 3 | 208 | 100.0% | 99.5% | 0 |
+| tier 4 | 41 | 100.0% | 100.0% | 0 |
+| path-test traps | 132 | 100.0% | 100.0% | 0 |
 
-Tokens used: 16,427 input, 86,271 output.
+Tokens used: 161,411 input, 878,034 output.
+
+### anthropic_claude-sonnet-5-5  (491 items)
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 491 | 100.0% | 99.6% | 0 |
+| tier 1 | 184 | 100.0% | 99.5% | 0 |
+| tier 2 | 58 | 100.0% | 100.0% | 0 |
+| tier 3 | 208 | 100.0% | 99.5% | 0 |
+| tier 4 | 41 | 100.0% | 100.0% | 0 |
+| path-test traps | 132 | 100.0% | 100.0% | 0 |
+
+Tokens used: 161,411 input, 353,237 output.
 
