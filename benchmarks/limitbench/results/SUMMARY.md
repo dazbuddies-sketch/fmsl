@@ -19,3 +19,14 @@
 | tier 3 | 208 | 47.1% | 3.4% | 0 |
 | path-test traps | 132 | 0.0% | 0.0% | 0 |
 
+### anthropic_claude-haiku-5-5  (50 items)
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 50 | 0.0% | 0.0% | 50 |
+| tier 1 | 21 | 0.0% | 0.0% | 21 |
+| tier 2 | 4 | 0.0% | 0.0% | 4 |
+| tier 3 | 21 | 0.0% | 0.0% | 21 |
+| tier 4 | 4 | 0.0% | 0.0% | 4 |
+| path-test traps | 17 | 0.0% | 0.0% | 17 |
+
