@@ -401,15 +401,18 @@ from a method under test. It runs in GitHub Actions against SymPy 1.13.3
 
 | method | correct | wrong | unresolved |
 |---|---|---|---|
-| FMSL | 1008 | 0 | 112 |
+| FMSL | 1120 | 0 | 0 |
 | SymPy (one variable: `limit` from each side; several variables: limits along 8 standard paths) | 963 | 147 | 10 |
 | naive floating point (probing at 10⁻⁴ and 10⁻⁷) | 557 | 279 | 60 (of 896) |
 
 What this shows, and what it does not:
 
-* **One variable: a tie.** FMSL and SymPy are both correct on all 784 removable, pole,
-  one-sided, oscillatory, cancellation, ill-conditioned and essential cases. SymPy also handles
-  the 112 piecewise cases (|x|, sign); FMSL does not support them (all 112 FMSL "unresolved").
+* **One variable: a tie.** FMSL and SymPy are both correct on all 896 one-variable cases:
+  removable, poles, one-sided, oscillatory, cancellation, ill-conditioned, essential, and
+  piecewise (|x|, sign). FMSL handles |f| and sign(f) exactly by analysing each side of 0
+  separately (near 0, f ≈ c·xᵏ fixes the sign on each side); this was added in 0.11.0, before
+  which the 112 piecewise cases were unsupported. The run is reproducible: two runs of the same
+  version gave identical tables.
 * **Several variables and parameters: the difference.** SymPy has no multivariable limit
   routine, so the baseline is the common practice of limits along paths. It found the exact set
   of limit values in 67 of 224 cases, and got the yes/no question "does the limit exist?" wrong
@@ -493,7 +496,7 @@ out a hidden curve. The exact profile does both, and it also explains what the s
 | `if NAME == ...` | Rejected by the type checker: equality on these values may be unprovable |
 | `emit python NAME` / `emit c NAME` | Generate safe code with a proven error bound (C is compiled and validated if a C compiler is installed) |
 
-Expressions: `+ - * /`, integer powers `^`, `sin cos exp`, exact decimal numbers, the
+Expressions: `+ - * /`, integer powers `^`, `sin cos exp`, `abs sign` (analysed on each side of 0), exact decimal numbers, the
 imaginary unit `i`, context parameters, and previously defined names, including
 composition such as `B(t^2)`. Formulas containing `i` compile to complex code
 (`cmath` in Python, C99 `double complex` in C).
