@@ -324,9 +324,10 @@ square, and its exact image comes from the box version of the range algorithm, p
 two-variable fluid state at any point inside a face where the face function is 0/0. No Newton
 polyhedra, weights or zooming are used. On 11 classic and 40 random functions, and on 54
 functions built to vanish along curves (the curve zoom), the cube image matches the engine's
-exact signed fluid state at r = 10⁻³ and 10⁻⁶ on **104 of 105**; the other one was too slow for
-the cube (over 2 hours) and is confirmed instead on the plane z = x, where the two-variable
-engine proves every real value is taken, which is the engine's answer [−∞, +∞]. This check found one real
+exact signed fluid state at r = 10⁻³ and 10⁻⁶ on **102 of 105**. The other 3 were too slow for
+the cube (over 2 hours each); all three have the answer [−∞, +∞], confirmed independently: one
+on the plane z = x, where the two-variable engine proves every real value is taken, and two by
+explicit families of paths along which f tends to any chosen real number. The cube check found one real
 engine error, fixed in 0.7.0: a squared denominator form had been treated as a pole surface.
 When I deleted parts of correct answers on purpose (vertex ranges, pole and zero surfaces), the
 cube check caught **11 of 11** changed answers. The connectedness test caught none of them. The low-level range algorithm itself was
