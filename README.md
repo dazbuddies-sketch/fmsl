@@ -384,7 +384,7 @@ rational times and interpolation, with the degree bounded in advance and two ext
 snapshots agree with the square-loop image at sample times 75 of 75; moving states agree with
 the cube image at rational Celedon points 36 of 36; dense sampling (12 times per interval)
 found no unreported change of type. The closest prior work I found decides limits of
-two-variable rational functions with Sturm's theorem (J. Symbolic Comput., 2019); I did not
+two-variable rational functions with Sturm's theorem (Zeng and Xiao, J. Symbolic Comput. 96, 2020); I did not
 find a tool that computes exact fluid states for families with a parameter, but my search was
 brief, so this is provisional.
 
