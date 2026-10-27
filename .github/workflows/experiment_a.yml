@@ -1,0 +1,29 @@
+# Experiment A of the FMS research brief: FMSL vs SymPy vs naive floats, 1,232 expressions.
+# Runs on pushes to the experiment-a branch (or by hand); commits the result tables back.
+name: experiment-a
+on:
+  push:
+    branches: [experiment-a]
+    paths: ["benchmarks/experiment_a.py", ".github/workflows/experiment_a.yml", "src/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e . "sympy==1.13.3"
+      - run: python benchmarks/experiment_a.py
+      - name: Commit the results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/results/experiment_a.md benchmarks/results/experiment_a.json
+          git commit -m "Experiment A results (SymPy $(python -c 'import sympy; print(sympy.__version__)'))" || exit 0
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

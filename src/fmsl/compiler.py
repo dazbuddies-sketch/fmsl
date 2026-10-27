@@ -18,7 +18,7 @@ are not allowed as constants because coefficients must stay rational.
 import cmath, math, re, sys, os, shutil, subprocess, tempfile
 from fractions import Fraction as Fr
 from . import engine as fms4
-from .engine import V, Exp, Sin, Cos, Essential, infinity_flow
+from .engine import V, Exp, Sin, Cos, Essential, EssFactor, infinity_flow
 from .gauss import G
 from .siletz import proven_series_error
 
@@ -134,9 +134,10 @@ def build(e, var):
     if t == "pow":
         b = build(e[1], var)
         return b ** e[2] if e[2] >= 0 else 1 / (b ** -e[2])
-    if t == "call": return {"sin": Sin, "cos": Cos, "exp": Exp}[e[1]](build(e[2], var))
+    if t == "call": return {"sin": Sin, "cos": Cos, "exp": Exp}[e[1]](build(e[2], var), keep=True)
     a, b = build(e[1], var), build(e[2], var)
-    return {"+": a.__add__, "-": a.__sub__, "*": a.__mul__, "/": a.__truediv__}[t](b)
+    import operator
+    return {"+": operator.add, "-": operator.sub, "*": operator.mul, "/": operator.truediv}[t](a, b)
 
 def is_complex(e):
     t = e[0]
@@ -183,6 +184,11 @@ def to_c(e, var, cx=False):
 
 def analyze(v):
     """Return (kind, text, proven) for a fluid value."""
+    if isinstance(v, EssFactor):
+        lim = v.limits()
+        if lim is None:
+            return ("essential", v._text(), True)
+        return ("essential", "ESSENTIAL singularity: " + lim[2], True)
     try:
         vv = v.val()
     except Essential as ex:

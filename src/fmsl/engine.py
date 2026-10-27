@@ -79,6 +79,7 @@ class V:
 
     # ----------------------------- arithmetic -------------------------------
     def __add__(s, o):
+        if isinstance(o, EssFactor): return NotImplemented
         o = _lift(o)
         cert = s.spec is not None and o.spec is not None
         spec = _union(_shift(s.spec, o.dQ), _shift(o.spec, s.dQ)) if cert else None
@@ -86,9 +87,12 @@ class V:
         return V("+", s, o, min(s.lo, o.lo), spec, pdeg, s.dQ + o.dQ)
     __radd__ = __add__
     def __neg__(s):    return V("neg", s, None, s.lo, s.spec, s.pdeg, s.dQ)
-    def __sub__(s, o): return s + (-_lift(o))
+    def __sub__(s, o):
+        if isinstance(o, EssFactor): return NotImplemented
+        return s + (-_lift(o))
     def __rsub__(s, o): return _lift(o) - s
     def __mul__(s, o):
+        if isinstance(o, EssFactor): return NotImplemented
         o = _lift(o)
         cert = s.spec is not None and o.spec is not None
         pdeg = s.pdeg + o.pdeg if cert and s.pdeg is not None and o.pdeg is not None else None
@@ -96,6 +100,7 @@ class V:
         return V("*", s, o, s.lo + o.lo, spec, pdeg, s.dQ + o.dQ)
     __rmul__ = __mul__
     def __truediv__(s, o):
+        if isinstance(o, EssFactor): return NotImplemented
         o = _lift(o)
         vb = o.val()
         if vb[0] == "zero":
@@ -112,7 +117,9 @@ class V:
             spec = _prod(_shift(s.spec, o.dQ), {_kneg(q): 1})
             return V("/", s, o, s.lo - vb[1], spec, None, s.dQ, data=vb[1])
         return V("/", s, o, s.lo - vb[1], None, None, s.dQ, data=vb[1])
-    def __rtruediv__(s, o): return _lift(o) / s
+    def __rtruediv__(s, o):
+        if isinstance(o, EssFactor): return NotImplemented
+        return _lift(o) / s
     def __pow__(s, n):
         out = V.rat([1])
         for _ in range(n): out = out * s
@@ -120,11 +127,16 @@ class V:
 
     # ------------------------ composition (uncertified) ---------------------
     @staticmethod
-    def compose(fn, f, spec=None):
+    def compose(fn, f, spec=None, keep=False):
+        if isinstance(f, EssFactor): raise Essential(f._undecided(f"inside {fn}(...)"))
         f = _lift(f)
         neg = [(k, f.coeff(k)) for k in range(f.lo, 0) if f.coeff(k) != 0]
         if neg:
             m, c = -neg[0][0], neg[0][1]          # inner pole of order m, coeff c
+            if keep and m == -f.lo and all(f.coeff(k) == 0 for k in range(f.lo + 1, 0)) and f.coeff(0) == 0:
+                # f = c x^-m + (vanishing terms): keep fn(c x^-m + ...) as an essential factor,
+                # so that a product with a regular factor can still be decided (squeeze theorem)
+                return EssFactor(fn, m, c, f)
             raise Essential(_ess_text(fn, m, c))
         if f.coeff(0) != 0:
             raise ValueError(f"{fn}(f) with f(0) = {f.coeff(0)} != 0 has transcendental "
@@ -187,6 +199,69 @@ class V:
 
     def certified(s): return s.r is not None
     def window(s):    return None if s.r is None else s.r - 1 - max(s.lo, -s.dQ) + 1
+
+
+class EssFactor:
+    """R(x) * fn(f(x)), where f has a pole of order m with leading coefficient c at 0 and R is an
+       ordinary (Laurent) value.  Only products and quotients with ordinary values are kept;
+       anything else (sums, two essential factors, coefficients) raises Essential as before.
+       limits() decides the one-sided limits rigorously when that is possible:
+         sin / cos of a pole with real lead: bounded by 1 and oscillating; times R vanishing to
+           order k > 0 -> 0 on both sides (squeeze theorem); otherwise no limit;
+         exp of a pole with real lead: on a side where the exponent -> -oo it is flat (beats every
+           power), so the product -> 0; where it -> +oo it beats every power, so the product
+           -> +-oo with the sign of R on that side."""
+    def __init__(s, fn, m, c, f, R=None):
+        s.fn, s.m, s.c, s.f = fn, m, G(c), f
+        s.R = R if R is not None else V.rat([1])
+    def _text(s): return _ess_text(s.fn, s.m, s.c)
+    def _undecided(s, how):
+        return (f"ESSENTIAL singularity: {s.fn} of a pole of order {s.m} (lead {s.c}) {how}; "
+                f"the limit is not decided [UNPROVEN]")
+    def _fail(s, *a): raise Essential(s._undecided("inside a sum"))
+    def val(s): raise Essential(s._text())
+    def coeff(s, k): raise Essential(s._text())
+    def __mul__(s, o):
+        if isinstance(o, EssFactor): raise Essential(s._undecided("times another essential factor"))
+        return EssFactor(s.fn, s.m, s.c, s.f, s.R * _lift(o))
+    __rmul__ = __mul__
+    def __truediv__(s, o):
+        if isinstance(o, EssFactor): raise Essential(s._undecided("divided by another essential factor"))
+        return EssFactor(s.fn, s.m, s.c, s.f, s.R / _lift(o))
+    def __rtruediv__(s, o): raise Essential(s._undecided("in a denominator"))
+    def __neg__(s): return EssFactor(s.fn, s.m, s.c, s.f, -s.R)
+    __add__ = __radd__ = __sub__ = __rsub__ = _fail
+    def __pow__(s, n):
+        if n == 1: return s
+        raise Essential(s._undecided(f"raised to the power {n}"))
+
+    def limits(s):
+        """(left, right, text) with left/right in {Fraction 0, '+oo', '-oo', 'osc'}, or None"""
+        if not s.c.is_real(): return None
+        rv = s.R.val()
+        if rv[0] == "zero":
+            if not rv[1]: return None
+            return (Fr(0), Fr(0), "identically 0 (the factor in front is C_e) [proven]")
+        k, a = rv[1], s.R.coeff(rv[1])
+        if not G(a).is_real(): return None
+        a = G(a).re
+        if s.fn in ("sin", "cos"):
+            if k > 0:
+                return (Fr(0), Fr(0), f"limit 0 on both sides: |{s.fn}| <= 1 while the factor in front "
+                                      f"vanishes to order {k} (squeeze theorem) [proven]")
+            return ("osc", "osc", f"{s.fn} of a pole of order {s.m} oscillates"
+                                  + (" with growing amplitude" if k < 0 else "") + "; no limit on either side [proven]")
+        # exp
+        out = []
+        for sg in (-1, 1):
+            expo = s.c.re * (sg ** s.m)                  # sign of the exponent c x^-m on this side
+            if expo < 0: out.append(Fr(0))
+            else:
+                side = a * (sg ** k) if k >= 0 else a * (sg ** (-k))
+                out.append("+oo" if side > 0 else "-oo")
+        txt = (f"exp of a pole of order {s.m} (lead {s.c}) times a factor of order {k}: "
+               f"x->0-: {out[0]}; x->0+: {out[1]} (exp beats every power) [proven]")
+        return (out[0], out[1], txt)
 
 
 ZERO = ()          # spectrum key of the zero exponent (plain polynomials)
@@ -328,11 +403,14 @@ def _ess_text(fn, m, c):
 
 # convenient atoms
 x = V.rat([0, 1])
-def Exp(f):  return V.exp(f) if not isinstance(f, V) else (_atom_or_comp("exp", f))
-def Sin(f):  return V.sin(f) if not isinstance(f, V) else (_atom_or_comp("sin", f))
-def Cos(f):  return V.cos(f) if not isinstance(f, V) else (_atom_or_comp("cos", f))
+# keep=True: an essential singularity inside is kept as an EssFactor (used by the FMSL language,
+# so that products such as x*sin(1/x) can be decided); keep=False raises Essential at once.
+def Exp(f, keep=False):  return V.exp(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("exp", f, keep))
+def Sin(f, keep=False):  return V.sin(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("sin", f, keep))
+def Cos(f, keep=False):  return V.cos(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("cos", f, keep))
 
-def _atom_or_comp(fn, f):
+def _atom_or_comp(fn, f, keep=False):
+    if isinstance(f, EssFactor): raise Essential(f._undecided(f"inside {fn}(...)"))
     """Certified atom when f is exactly lam*x; certified composition when f is a
        polynomial with f(0)=0; otherwise uncertified composition."""
     # certified polynomial (pdeg known, no denominator): read its exact coefficients
@@ -345,5 +423,5 @@ def _atom_or_comp(fn, f):
         if c[0] == 0:                                     # polynomial exponent q(x)
             spec = ({_kstrip(tuple(G(v).pair() for v in c[1:])): 1} if fn == "exp"
                     else _trig_spec(c[1:]))
-            return V.compose(fn, f, spec)
-    return V.compose(fn, f)
+            return V.compose(fn, f, spec, keep=keep)
+    return V.compose(fn, f, keep=keep)
