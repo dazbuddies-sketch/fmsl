@@ -37,7 +37,7 @@ _INEXACT = [False]
 def _fields_cmp(u, v):
     """exact comparison of two algebraic numbers from different fields (u != v assumed)"""
     from .algebraic import _ieval
-    for _ in range(200):
+    for _ in range(10):                                # most pairs separate quickly
         a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
         a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
         if b1 < a2: return -1
@@ -136,7 +136,9 @@ def _real_roots(p, lo=None, hi=None):
        Rational roots are found exactly and divided out first, so that an algebraic number
        is only used for a genuinely irrational root."""
     from .multivar import _rational_roots
-    from .algebraic import pdivmod
+    from .algebraic import pdivmod, is_alg_poly, roots_alg
+    if is_alg_poly(p):
+        return sorted(set_unique(roots_alg(p, lo, hi)), key=cmp_to_key(cmp))
     p = squarefree(ptrim([Fr(v) for v in p]))
     out = []
     if p and p[0] == 0:
@@ -152,7 +154,8 @@ def _real_roots(p, lo=None, hi=None):
 def image_of_rational_function(n, d):
     """closure of { n(c)/d(c) : c real, d(c) != 0 } as a list of closed extended intervals.
        n, d: coefficient lists over Q, coprime, ratio not constant.  Exact."""
-    n, d = ptrim([Fr(v) for v in n]), ptrim([Fr(v) for v in d])
+    from .algebraic import coef
+    n, d = ptrim([coef(v) for v in n]), ptrim([coef(v) for v in d])
     R = lambda c: peval(n, c) / peval(d, c)
     g = psub(pmul(pderiv(n), d), pmul(n, pderiv(d)))          # critical points: R' = 0
     prod = squarefree(pmul(g, d)) if g else squarefree(d)

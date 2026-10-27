@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.8.0
+- Three variables: exact zooming at irrational points (issue #2), e.g. along y = sqrt(2) x,
+  z = sqrt(3) x for x^4/((y^2 - 2x^2)^2 + (z^2 - 3x^2)^2 + x^6) (fluid state [0, +oo]).
+  On 47 functions built around irrational special points, complete answers rose from 34 to
+  42 and UNPROVEN fell from 2 to 0; every changed or upgraded answer agrees with the cube
+  cross-check.
+- Exact real algebraic numbers: roots of polynomials whose coefficients are themselves
+  algebraic (Sturm sequences over Q(alpha), norms), and arithmetic across two fields through a
+  primitive element (common fields up to degree 16; beyond that a branch is reported
+  unresolved, never guessed).
+- Faster: one sign evaluation per interval refinement; cross-field equality decided exactly by
+  the characteristic-polynomial test after a few refinements.  The 200 random functions of
+  `benchmarks/space_random.py` take 35 s in total (slowest 26 s).
+
 ## 0.7.0
 - Three variables: zoom along curves c^v0 d^v1 = u0 (issue #1). Denominators that vanish to
   high order along a curve such as yz = x^2 are now decided exactly; e.g.

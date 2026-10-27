@@ -334,8 +334,14 @@ cube check caught **11 of 11** changed answers. The connectedness test caught no
 tested against dense sampling: 60 of 60 random functions agree over a square, and 60 of 60 over
 the whole plane.
 
+Zooms at irrational points are exact: the analysis continues over the number field of the
+point (for example Q(√2, √3) for a zoom at y = √2·x, z = √3·x), using exact real algebraic
+numbers throughout. On 47 functions built around irrational special points, 42 are decided
+completely; every answer that this changed agrees with the cube check below.
+
 **Version 1 limits.** The following are reported as UNPROVEN, never guessed: zooming along a
-curve c^p d^q = u₀ with neither |p| nor |q| equal to 1; zooming at irrational points; depth > 4. A
+curve c^p d^q = u₀ with neither |p| nor |q| equal to 1; number fields of degree above 16;
+depth > 4. A
 critical value whose critical point is not cut out linearly is computed to 40 digits and
 marked "approx.".
 

@@ -78,3 +78,23 @@ class Bifurcations(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAlgebraicCoefficients(unittest.TestCase):
+    def test_two_fields(self):
+        from fmsl.algebraic import A, AlgField
+        r2 = A.root(AlgField([-2, 0, 1], 1, 2)); r3 = A.root(AlgField([-3, 0, 1], 1, 2))
+        s = r2 + r3
+        self.assertEqual(s * s, 5 + 2 * (r2 * r3))          # (sqrt2 + sqrt3)^2
+        self.assertEqual((r2 * r3) ** 2, 6)
+
+    def test_roots_with_algebraic_coefficients(self):
+        from fractions import Fraction as Fr
+        from fmsl.algebraic import A, AlgField, roots_alg
+        r2 = A.root(AlgField([-2, 0, 1], 1, 2))
+        rts = roots_alg([Fr(-1), -r2, Fr(1)])                 # t^2 - sqrt2 t - 1
+        self.assertEqual(len(rts), 2)
+        for t in rts:
+            self.assertEqual(t * t - r2 * t - 1, 0)           # exact
+        self.assertAlmostEqual(float(rts[1]), (2 ** .5 + 6 ** .5) / 2, places=12)
+

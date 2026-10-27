@@ -252,7 +252,8 @@ def at_d(P, d0):
 def image_1d(n, d, lo=None, hi=None):
     """closure of { n(t)/d(t) : t in (lo, hi), d(t) != 0 } as signed closed intervals.
        n, d rational univariate polynomials, coprime."""
-    n, d = ptrim([Fr(v) for v in n]), ptrim([Fr(v) for v in d])
+    from .algebraic import coef
+    n, d = ptrim([coef(v) for v in n]), ptrim([coef(v) for v in d])
     if not d: return []
     if not n: return [(Fr(0), Fr(0))]
     g = pgcd(n, d)

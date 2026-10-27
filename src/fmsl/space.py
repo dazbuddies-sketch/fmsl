@@ -19,7 +19,7 @@ Arcs inside the coordinate planes are handled by the two-variable engine.
 The cluster set is then the closure of the union of all these values; it is connected on the
 circle R u {oo} (the same theorem as in two variables), which is checked.
 Version 1 limits (reported as UNPROVEN, never guessed): zooming along a whole curve of roots
-that is not a coordinate line, zooming at an irrational point, depth > MAX_DEPTH.
+that is not a coordinate line, number fields of degree > 16, depth > MAX_DEPTH.
 """
 from fractions import Fraction as Fr
 from math import gcd
@@ -32,6 +32,9 @@ from .cluster import (cmp, POS, NEG, _Inf, _real_roots, _rational_between, _boun
 from .plane import (bclean, bdc, bdd, in_d, at_c, has_real_points, image_2d, image_1d, bgcd,
                     bdivexact, resultant_d, beval, _poly_roots_in, _samples, _gcd_any)
 from .multivar import profile_polys
+
+# zoom at irrational (real algebraic) points, exactly, over number fields
+ALLOW_ALG = True
 
 MAX_DEPTH = 4
 BUDGET = 4000
@@ -317,12 +320,12 @@ def _common_points(A_, B_):
         cs = _poly_roots_in(in_d(U)[0])
         for c0 in cs:
             if cmp(c0, 0) == 0: continue
-            if isinstance(c0, A): other = True; continue
+            if isinstance(c0, A) and not ALLOW_ALG: other = True; continue
             gv = at_c(V, c0)
             if not gv: other = True; continue                 # V vanishes on the whole line
             for d0 in _poly_roots_in(gv):
                 if cmp(d0, 0) == 0: continue
-                if isinstance(d0, A): other = True
+                if isinstance(d0, A) and not ALLOW_ALG: other = True
                 else: pts.append((c0, d0))
         return pts, other
     res = resultant_d(A_, B_)
@@ -331,10 +334,10 @@ def _common_points(A_, B_):
         if cmp(c0, 0) == 0: continue
         gg = _gcd_any(at_c(A_, c0), at_c(B_, c0))
         if len(gg) <= 1: continue
-        if isinstance(c0, A) or any(isinstance(v, A) for v in gg): other = True; continue
+        if (isinstance(c0, A) or any(isinstance(v, A) for v in gg)) and not ALLOW_ALG: other = True; continue
         for d0 in _poly_roots_in(gg):
             if cmp(d0, 0) == 0: continue
-            if isinstance(d0, A): other = True
+            if isinstance(d0, A) and not ALLOW_ALG: other = True
             else: pts.append((c0, d0))
     return pts, other
 
@@ -517,11 +520,11 @@ def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None
     q = a.denominator * b.denominator // gcd(a.denominator, b.denominator)
     p, r = int(a * q), int(b * q)
     if what[0] == "y":
-        if isinstance(what[1], A):
+        if isinstance(what[1], A) and not ALLOW_ALG:
             out.append({"kind": "unresolved", "why": "irrational zoom point", "where": where}); return
         sh = ((p, what[1]), None); txt = f"y = {what[1]}*|x|^{a}+..."
     elif what[0] == "z":
-        if isinstance(what[1], A):
+        if isinstance(what[1], A) and not ALLOW_ALG:
             out.append({"kind": "unresolved", "why": "irrational zoom point", "where": where}); return
         sh = (None, (r, what[1])); txt = f"z = {what[1]}*|x|^{b}+..."
     else:
@@ -537,9 +540,24 @@ def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None
     if what[0] == "z" and "a" in region:
         new_region["a"] = tuple(None if t is None else t * q for t in region["a"])
     planes = (ctx or {}).get("planes", True)
-    jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
-    if planes: _planes(N2, D2, depth + 1, lab, out)
-    _finish_vertices(jobs, out)
+    shifts = [v for sh_ in sh if sh_ for v in (sh_[1],)]
+    if not any(isinstance(v, A) for v in shifts):
+        jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
+        if planes: _planes(N2, D2, depth + 1, lab, out)
+        _finish_vertices(jobs, out)
+        return
+    # irrational zoom point: the analysis below runs over a number field.  If the fields grow
+    # too large (algebraic.MAX_FIELD_DEGREE) this branch is reported unresolved, never guessed;
+    # nothing from a branch that did not finish is kept.
+    tmp = []
+    try:
+        jobs = _analyze(N2, D2, depth + 1, (1,), lab, tmp, budget, new_region or None, planes)
+        if planes: _planes(N2, D2, depth + 1, lab, tmp)
+        _finish_vertices(jobs, tmp)
+    except ArithmeticError as exc:
+        out.append({"kind": "unresolved", "why": f"irrational zoom point ({exc})", "where": where})
+        return
+    out.extend(tmp)
 
 def _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
     """Vertex with f -> 0 away from fD = 0, where fD alone depends only on u = c^v0 d^v1
