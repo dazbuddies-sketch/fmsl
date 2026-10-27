@@ -239,31 +239,6 @@ class AlgField:
         return s.reduce([v / r1[0] for v in u1])
 
 
-_FIELDS = {}     # square-free polynomial (primitive integer form) -> fields already made for its roots
-
-def field_for(p, lo, hi):
-    """the field of the unique root of p in (lo, hi], reusing an existing field object for the
-       same root (so that the same number found twice is not treated as two fields)"""
-    sq = squarefree(ptrim([Fr(v) for v in p]))
-    key = tuple(_primitive_positive(sq))
-    lo, hi = Fr(lo), Fr(hi)
-    for F in _FIELDS.get(key, ()):
-        # same polynomial: the same root iff F's root lies in (lo, hi]
-        while True:
-            if F.hi <= lo or F.lo >= hi:
-                break                                   # disjoint: a different root
-            if lo <= F.lo and F.hi <= hi:
-                if F.lo < F.hi and (F.lo > lo or count_roots(sq, lo, F.lo) == 0):
-                    return F
-                break
-            F.refine()
-            if F.hi - F.lo < Fr(1, 10 ** 60): break
-    F = AlgField(sq, lo, hi)
-    lst = _FIELDS.setdefault(key, [])
-    if len(lst) < 50: lst.append(F)
-    return F
-
-
 class A:
     """element of Q(alpha) for a fixed real algebraic alpha"""
     __slots__ = ("F", "c")

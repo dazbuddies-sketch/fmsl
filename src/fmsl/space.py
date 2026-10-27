@@ -19,7 +19,7 @@ Arcs inside the coordinate planes are handled by the two-variable engine.
 The cluster set is then the closure of the union of all these values; it is connected on the
 circle R u {oo} (the same theorem as in two variables), which is checked.
 Version 1 limits (reported as UNPROVEN, never guessed): zooming along a whole curve of roots
-that is not a coordinate line, zooming at an irrational point, depth > MAX_DEPTH.
+that is not a coordinate line, number fields of degree > 16, depth > MAX_DEPTH.
 """
 from fractions import Fraction as Fr
 from math import gcd
@@ -33,8 +33,8 @@ from .plane import (bclean, bdc, bdd, in_d, at_c, has_real_points, image_2d, ima
                     bdivexact, resultant_d, beval, _poly_roots_in, _samples, _gcd_any)
 from .multivar import profile_polys
 
-# zoom at irrational (real algebraic) points; off until it passes the cross-checks
-ALLOW_ALG = False
+# zoom at irrational (real algebraic) points, exactly, over number fields
+ALLOW_ALG = True
 
 MAX_DEPTH = 4
 BUDGET = 4000

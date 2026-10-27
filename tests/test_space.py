@@ -48,6 +48,16 @@ class Plane(unittest.TestCase):
         self.assertEqual(r["signed_text"], "[-oo, +oo]")
         self.assertTrue(r["complete"])
 
+    def test_irrational_zoom(self):
+        # zooms at y = +-sqrt(2) x, z = +-sqrt(3) x: arithmetic in Q(sqrt 2, sqrt 3) (issue #2)
+        r = profile3("x^4/((y^2-2*x^2)^2+(z^2-3*x^2)^2+x^6)")
+        self.assertEqual(r["signed_text"], "[0, +oo]")
+        self.assertTrue(r["complete"])
+        # x < 0: the denominator vanishes on a real surface; f >= 1/|x| where it is negative
+        r = profile3("-x^4/((y^2-3*x^2)^2+x^5+z^2)")
+        self.assertEqual(r["signed_text"], "[-oo, 0] u {+oo}")
+        self.assertTrue(r["complete"])
+
     def test_resultant_and_gcd(self):
         P = {(1, 0): Fr(1), (0, 1): Fr(-1)}                 # c - d
         Q = {(2, 0): Fr(1), (0, 2): Fr(1), (0, 0): Fr(-2)}  # c^2 + d^2 - 2

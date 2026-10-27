@@ -136,7 +136,7 @@ def _real_roots(p, lo=None, hi=None):
        Rational roots are found exactly and divided out first, so that an algebraic number
        is only used for a genuinely irrational root."""
     from .multivar import _rational_roots
-    from .algebraic import pdivmod, is_alg_poly, roots_alg, field_for
+    from .algebraic import pdivmod, is_alg_poly, roots_alg
     if is_alg_poly(p):
         return sorted(set_unique(roots_alg(p, lo, hi)), key=cmp_to_key(cmp))
     p = squarefree(ptrim([Fr(v) for v in p]))
