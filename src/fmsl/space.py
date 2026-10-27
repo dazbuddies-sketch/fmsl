@@ -284,10 +284,16 @@ def _regular_crossing(F, Gc):
     if r: bps += _poly_roots_in(r)
     for c0 in _samples(bps):
         if c0 == 0: continue
-        g = squarefree(at_c(F, c0))
+        p = at_c(F, c0)
+        g = squarefree(p)
         if len(g) <= 1: continue
+        from .algebraic import pderiv
+        dp = pderiv(p)
         for d0 in _poly_roots_in(g):
             if cmp(d0, 0) == 0: continue
+            # only a SIMPLE root is a sign-changing smooth crossing; a repeated root (e.g. of a
+            # square such as (y^2 z - x)^2) touches zero without crossing
+            if sign_of(peval_any(dp, d0)) == 0: continue
             if sign_of(beval(Gc, c0, d0)) != 0: return True
     return False
 
@@ -419,6 +425,8 @@ def _analyze(N, D, depth, sigmas, label, out, budget, region=None, planes=True):
                 if _regular_crossing(fD, fN):
                     out.append({"kind": "all", "where": where, "why": "a smooth real pole surface crosses here while f is near 0"})
                     continue
+                if _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
+                    continue
                 _vertex_zoom(N, D, fD, fN, a, b, sigma, depth, label, where, out, budget, zero_of="D", ctx=ctx)
             elif delta < 0:
                 sg = _sign_set_2d(fN, fD)
@@ -532,6 +540,27 @@ def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None
     jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
     if planes: _planes(N2, D2, depth + 1, lab, out)
     _finish_vertices(jobs, out)
+
+def _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
+    """Vertex with f -> 0 away from fD = 0, where fD alone depends only on u = c^v0 d^v1
+       (e.g. fD = (c^2 d - 1)^2).  Then fD = 0 on the torus is the union of the curves
+       u = u0 over the real roots u0 of gD, and zooming along each one covers every path that
+       stays near fD = 0, exactly as for an edge.  Returns False if this does not apply."""
+    if len(fD) < 2: return False
+    st, v = _structure({}, fD)
+    if st != "line": return False
+    if not (abs(v[0]) == 1 or abs(v[1]) == 1): return False
+    _, gD = _to_u(fD, v)
+    pos_only = (v[0] % 2 == 0) and (v[1] % 2 == 0)
+    roots = [u0 for u0 in _poly_roots_in(gD) if cmp(u0, 0) != 0 and not (pos_only and cmp(u0, 0) < 0)]
+    for u0 in set_unique(roots):
+        if v == (1, 0):
+            _do_zoom(N, D, a, b, sigma, ("y", u0), depth, label, where, out, budget, ctx)
+        elif v == (0, 1):
+            _do_zoom(N, D, a, b, sigma, ("z", u0), depth, label, where, out, budget, ctx)
+        else:
+            _curve_zoom(N, D, a, b, sigma, v, u0, depth, label, where, out, budget, ctx)
+    return True
 
 def _curve_zoom(N, D, a, b, sigma, v, u0, depth, label, where, out, budget, ctx):
     """zoom along the curve c^v0 d^v1 = u0 of an edge, where one exponent is +-1.
