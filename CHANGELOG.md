@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.0
+- Moving targets (`fmsl.moving`): for a family f(x, y, t), optionally with the 0/0 point moving
+  along a path, the fluid state at each time, exact formulas E(t, v) = 0 for how its ends
+  move, the exact special times where it changes character (rational or algebraic), and the
+  fluid state of the moving target at each special time (three-variable engine).
+- Cross-check `benchmarks/moving_crosscheck.py`: 75/75 snapshots agree with the square-loop
+  image, 36/36 moving states with the cube image, no unreported change of type.
+- Two variables: ranges of initial forms with algebraic coefficients are now exact (they were
+  approximated to 40 digits and flagged); the approximation remains only as a flagged fallback.
+
 ## 0.8.0
 - Three variables: exact zooming at irrational points (issue #2), e.g. along y = sqrt(2) x,
   z = sqrt(3) x for x^4/((y^2 - 2x^2)^2 + (z^2 - 3x^2)^2 + x^6) (fluid state [0, +oo]).
