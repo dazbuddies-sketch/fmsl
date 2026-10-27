@@ -4,7 +4,7 @@
   python evaluate.py --method fmsl                  FMSL itself (sanity check: must be 100%)
   python evaluate.py --method anthropic --model M   a Claude model via the Anthropic API
                                                     (needs ANTHROPIC_API_KEY in the environment)
-Options: --limit N (first N items), --workers K (parallel API calls, default 4).
+Options: --limit N (N items spread evenly over the set), --workers K (parallel API calls, default 4).
 Writes results/<method>[_<model>].jsonl and prints a summary table (also appended to results/SUMMARY.md).
 """
 import argparse, json, math, os, sys, time
@@ -17,7 +17,9 @@ from grade import prompt_for, grade
 
 def load(limit=None):
     items = [json.loads(l) for l in open(os.path.join(HERE, "limitbench.jsonl"))]
-    return items[:limit] if limit else items
+    if not limit or limit >= len(items): return items
+    step = len(items) / limit                         # an even spread over all tiers, deterministic
+    return [items[int(k * step)] for k in range(limit)]
 
 
 def answer_paths(item):

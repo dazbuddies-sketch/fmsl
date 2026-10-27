@@ -9,7 +9,7 @@ Endpoints are accepted within 1e-3 relative (so 4 significant digits suffice).
 
 Scores per item:
   verdict  -- right about whether the limit exists
-  exact    -- the limit value, or the whole set, is right (endpoints within 1e-4 relative)
+  exact    -- the limit value, or the whole set, is right (endpoints within 1e-3 relative)
 """
 import math, re
 
