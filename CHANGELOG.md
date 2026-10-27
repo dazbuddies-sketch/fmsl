@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.6.0
+- Highlights: all 21 examples of Dinh-Guo-Nguyen-Pham (2022) reproduced, including the curve
+  case they left as future work; cross-checks agree 113/113 (2-D) and 51/51 (3-D).
 - Three variables: `fmsl.space` computes exact fluid states of rational functions of x, y, z.
 - Exact range of two-variable rational functions over a square or the plane (`fmsl.plane`).
 - Signed ranges (+oo and -oo kept apart); all 21 examples of Dinh-Guo-Nguyen-Pham (2022)
