@@ -1,1 +1,1 @@
-{"models": ["claude-haiku-5-5"], "limit": 50}
+{"models": ["claude-haiku-5-5"], "limit": 50, "run": 2}

@@ -42,6 +42,11 @@ def answer_fmsl(item):
     return "ANSWER: SET " + st
 
 
+import threading
+USAGE = {"input_tokens": 0, "output_tokens": 0}
+_LOCK = threading.Lock()
+
+
 def answer_anthropic(item, model, max_tokens):
     import anthropic
     client = anthropic.Anthropic()
@@ -49,6 +54,9 @@ def answer_anthropic(item, model, max_tokens):
         try:
             msg = client.messages.create(model=model, max_tokens=max_tokens,
                                          messages=[{"role": "user", "content": prompt_for(item)}])
+            with _LOCK:
+                USAGE["input_tokens"] += getattr(msg.usage, "input_tokens", 0) or 0
+                USAGE["output_tokens"] += getattr(msg.usage, "output_tokens", 0) or 0
             return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
         except Exception as exc:                      # rate limits, overload: back off and retry
             if attempt == 4: return f"ERROR: {type(exc).__name__}: {exc}"
@@ -94,6 +102,8 @@ def main():
         if sub:
             lines.append(f"| {nm} | {len(sub)} | {pct(sub, 'verdict')} | {pct(sub, 'exact')} | "
                          f"{sum(1 for r in sub if not r['parsed'])} |")
+    if a.method == "anthropic":
+        lines += ["", f"Tokens used: {USAGE['input_tokens']:,} input, {USAGE['output_tokens']:,} output."]
     text = "\n".join(lines) + "\n"
     print(text)
     with open(os.path.join(HERE, "results", "SUMMARY.md"), "a") as fh: fh.write(text + "\n")
