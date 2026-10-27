@@ -1,2 +1,2 @@
-50 of 50 calls failed, e.g. ERROR: BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CgTX1X7ReeriD54LVjvTp'}
+36 of 50 calls failed, e.g. ERROR: BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CgTYqHdmRuSga5idp5ink'}
 Too many failed calls: nothing recorded. Fix the cause (e.g. API credits) and rerun.
