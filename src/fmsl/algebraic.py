@@ -371,13 +371,14 @@ def same_value(u, v):
     """exact equality across Fractions and algebraic numbers. Returns True/False, or None
        if the two numbers live in different algebraic fields and could not be separated."""
     if isinstance(u, A) and isinstance(v, A) and u.F is not v.F:
-        for _ in range(3):
+        for _ in range(10):
             a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
             a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
             if b1 < a2 or b2 < a1: return False
             u.F.refine(); v.F.refine()
         try:
-            return (u - v) == 0                        # exact, in a common field
+            from .cluster import _exact_equal            # exact: characteristic-polynomial test
+            return _exact_equal(u, v)
         except ArithmeticError:
             return None
     return u == v
@@ -523,8 +524,15 @@ def unify_fields(F, K):
         if E is F and _image(K, L) is not None: return L
     return _compositum(F, K)
 
+MAX_FIELD_DEGREE = 16
+
+class FieldTooLarge(ArithmeticError):
+    pass
+
 def _compositum(F, K):
     from .plane import resultant_d
+    if (len(F.p) - 1) * (len(K.p) - 1) > MAX_FIELD_DEGREE:
+        raise FieldTooLarge(f"common field of degree {(len(F.p) - 1) * (len(K.p) - 1)} > {MAX_FIELD_DEGREE}")
     for k in range(1, 40):
         # R(t) = Res_y(F.p(y), K.p(t - k y)); gamma = beta + k alpha is a root
         P = {}

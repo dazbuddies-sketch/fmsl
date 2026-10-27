@@ -37,7 +37,7 @@ _INEXACT = [False]
 def _fields_cmp(u, v):
     """exact comparison of two algebraic numbers from different fields (u != v assumed)"""
     from .algebraic import _ieval
-    for _ in range(200):
+    for _ in range(10):                                # most pairs separate quickly
         a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
         a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
         if b1 < a2: return -1
@@ -99,19 +99,9 @@ def cmp(u, v):
         kv = v.sgn if isinstance(v, _Inf) else 0
         return (ku > kv) - (ku < kv)
     if isinstance(u, A) and isinstance(v, A) and u.F is not v.F:
-        from .algebraic import _ieval
-        for _ in range(3):                             # usually the enclosures separate fast
-            a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
-            a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
-            if b1 < a2: return -1
-            if b2 < a1: return 1
-            u.F.refine(); v.F.refine()
-        try:
-            return sign_of(u - v)                      # exact, in a common field
-        except ArithmeticError:
-            eq = same_value(u, v)
-            if eq is True: return 0
-            return _fields_cmp(u, v)
+        eq = same_value(u, v)
+        if eq is True: return 0
+        return _fields_cmp(u, v)
     return sign_of(u - v)
 
 

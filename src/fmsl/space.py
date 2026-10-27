@@ -540,9 +540,24 @@ def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None
     if what[0] == "z" and "a" in region:
         new_region["a"] = tuple(None if t is None else t * q for t in region["a"])
     planes = (ctx or {}).get("planes", True)
-    jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
-    if planes: _planes(N2, D2, depth + 1, lab, out)
-    _finish_vertices(jobs, out)
+    shifts = [v for sh_ in sh if sh_ for v in (sh_[1],)]
+    if not any(isinstance(v, A) for v in shifts):
+        jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
+        if planes: _planes(N2, D2, depth + 1, lab, out)
+        _finish_vertices(jobs, out)
+        return
+    # irrational zoom point: the analysis below runs over a number field.  If the fields grow
+    # too large (algebraic.MAX_FIELD_DEGREE) this branch is reported unresolved, never guessed;
+    # nothing from a branch that did not finish is kept.
+    tmp = []
+    try:
+        jobs = _analyze(N2, D2, depth + 1, (1,), lab, tmp, budget, new_region or None, planes)
+        if planes: _planes(N2, D2, depth + 1, lab, tmp)
+        _finish_vertices(jobs, tmp)
+    except ArithmeticError as exc:
+        out.append({"kind": "unresolved", "why": f"irrational zoom point ({exc})", "where": where})
+        return
+    out.extend(tmp)
 
 def _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
     """Vertex with f -> 0 away from fD = 0, where fD alone depends only on u = c^v0 d^v1
