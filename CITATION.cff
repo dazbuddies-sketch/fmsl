@@ -6,6 +6,7 @@ authors:
 version: 0.6.0
 date-released: 2026-10-27
 license: MIT
+doi: 10.5281/zenodo.23682015
 repository-code: "https://github.com/dazbuddies-sketch/fmsl"
 keywords:
   - multivariate limits

@@ -1,4 +1,17 @@
-# FMSL — proven-safe code for formulas with 0/0 traps
+# FMSL — exact fluid states of 0/0 points
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23682015.svg)](https://doi.org/10.5281/zenodo.23682015)
+[![tests](https://github.com/dazbuddies-sketch/fmsl/actions/workflows/tests.yml/badge.svg)](https://github.com/dazbuddies-sketch/fmsl/actions/workflows/tests.yml)
+
+By **MJ Celedon**. FMSL computes exactly what a function does at a 0/0 point: the limit with a
+proof when it exists, and otherwise the complete set of values it approaches (its *fluid
+state*), for rational functions of two and three variables. It also generates proven-safe code
+for one-variable formulas with 0/0 traps.
+
+**Cite:** Celedon, MJ (2026). *FMSL: exact fluid states of 0/0 points.* Zenodo.
+https://doi.org/10.5281/zenodo.23682015
+
+## Proven-safe code for formulas with 0/0 traps
 
 Formulas like `sin(t)/t`, `(1 - cos t)/t²`, `(1 - e^(-10r))/r` and the quantum-mechanics
 "φ functions" `(e^(iz) - 1 - iz)/(iz)²` are everywhere in robotics, graphics, finance and
