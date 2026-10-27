@@ -31,6 +31,23 @@ class Space(unittest.TestCase):
 
 
 class Plane(unittest.TestCase):
+    def test_curve_zoom(self):
+        # the denominator vanishes to high order along the curve yz = x^2 (issue #1)
+        self.assertEqual(st("x^4/((y*z-x^2)^2+x^6)"), "[0, +oo]")
+        r = profile3("x^2*y*z/((y*z-x^2)^2+x^6)")            # t/(t-1)^2 has minimum -1/4
+        self.assertEqual(r["signed_text"], "[-1/4, +oo]")
+        self.assertTrue(r["complete"])
+        # a common monomial factor must not change the answer
+        self.assertEqual(st("x^2*y*z^2/(z*(y*z-x^2)^2+z*x^6)"), "[-1/4, +oo]")
+
+    def test_double_zero_curve_is_not_a_pole_surface(self):
+        # (y^2 z - x)^2 + x^4 > 0 off the axes: a squared form touches 0 without crossing it.
+        # 0.6.0 wrongly reported [-oo, +oo] here (found by the cube cross-check).
+        self.assertEqual(profile3("2*x^3*y^2*z^2/((y^2*z-x)^2+x^4)")["verdict"], "LIMIT = 0 (proven)")
+        r = profile3("x^3*y/((y*z-x)^2+x^4)")               # equals 1/z along x = yz
+        self.assertEqual(r["signed_text"], "[-oo, +oo]")
+        self.assertTrue(r["complete"])
+
     def test_resultant_and_gcd(self):
         P = {(1, 0): Fr(1), (0, 1): Fr(-1)}                 # c - d
         Q = {(2, 0): Fr(1), (0, 2): Fr(1), (0, 0): Fr(-2)}  # c^2 + d^2 - 2

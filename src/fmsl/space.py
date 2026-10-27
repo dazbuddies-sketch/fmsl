@@ -118,17 +118,37 @@ def _line_points(L):
         # b = (ga - al a)/be ; a > 0 and b > 0
         lo, hi = Fr(0), None
         if al != 0:
-            t = Fr(ga, al)                                   # where b = 0
+            t = Fr(ga) / al                                  # where b = 0
             if (be > 0 and al > 0) or (be < 0 and al < 0): hi = t if hi is None else min(hi, t)
             else: lo = max(lo, t)
         to_ab = lambda a, al=al, be=be, ga=ga: (a, Fr(ga - al * a) / be) if not isinstance(a, Fr) else (a, (ga - al * a) / be)
         return lo, hi, (lambda a: (Fr(a), (Fr(ga) - al * Fr(a)) / be)), (lambda a, b: a)
-    return Fr(0), None, (lambda b: (Fr(ga, al), Fr(b))), (lambda a, b: b)
+    return Fr(0), None, (lambda b: (Fr(ga) / al, Fr(b))), (lambda a, b: b)
 
-def _cells(N, D):
-    """sample weights: vertices, one point per edge piece, and points in the faces next to them.
-       Returns list of (a, b, kind)."""
-    Ls = _lines(N, D)
+def _in_region(region, a, b):
+    if not region: return True
+    for val, key in ((a, "a"), (b, "b")):
+        lo, hi = region.get(key, (None, None))
+        if lo is not None and not val > lo: return False
+        if hi is not None and not val < hi: return False
+    return True
+
+def _cells(N, D, region=None):
+    """sample weights: vertices, one point per edge piece, and points in the faces next to them,
+       restricted to the open region (bounds on a and b; their boundary lines take part in the
+       arrangement so that faces next to them are sampled).  Returns list of (a, b, kind)."""
+    out = _cells_raw(N, D, _region_lines(region))
+    return [c for c in out if _in_region(region, c[0], c[1])]
+
+def _region_lines(region):
+    extra = []
+    for key, (al, be) in (("a", (1, 0)), ("b", (0, 1))):
+        for t in (region or {}).get(key, (None, None)):
+            if t is not None and t > 0: extra.append((Fr(al), Fr(be), Fr(t)))
+    return extra
+
+def _cells_raw(N, D, extra_lines=()):
+    Ls = _lines(N, D) + [L for L in extra_lines]
     if not Ls: return [(Fr(1), Fr(1), "face")]
     verts = set()
     for i in range(len(Ls)):
@@ -136,7 +156,7 @@ def _cells(N, D):
             (a1, b1, g1), (a2, b2, g2) = Ls[i], Ls[j]
             det = a1 * b2 - a2 * b1
             if det == 0: continue
-            a = Fr(g1 * b2 - g2 * b1, det); b = Fr(a1 * g2 - a2 * g1, det)
+            a = Fr(g1 * b2 - g2 * b1) / det; b = Fr(a1 * g2 - a2 * g1) / det
             if a > 0 and b > 0: verts.add((a, b))
     out = [(a, b, "vertex") for a, b in sorted(verts)]
     for L in Ls:
@@ -264,10 +284,16 @@ def _regular_crossing(F, Gc):
     if r: bps += _poly_roots_in(r)
     for c0 in _samples(bps):
         if c0 == 0: continue
-        g = squarefree(at_c(F, c0))
+        p = at_c(F, c0)
+        g = squarefree(p)
         if len(g) <= 1: continue
+        from .algebraic import pderiv
+        dp = pderiv(p)
         for d0 in _poly_roots_in(g):
             if cmp(d0, 0) == 0: continue
+            # only a SIMPLE root is a sign-changing smooth crossing; a repeated root (e.g. of a
+            # square such as (y^2 z - x)^2) touches zero without crossing
+            if sign_of(peval_any(dp, d0)) == 0: continue
             if sign_of(beval(Gc, c0, d0)) != 0: return True
     return False
 
@@ -360,9 +386,10 @@ def _zoom(P, sigma, q, shifts):
     return {m: w for m, w in out.items() if w != 0}
 
 # ------------------------------------------------------------------ the analysis
-def _analyze(N, D, depth, sigmas, label, out, budget):
+def _analyze(N, D, depth, sigmas, label, out, budget, region=None, planes=True):
     vertex_jobs = []
-    for (a, b, kind) in _cells(N, D):
+    ctx = {"region": region, "planes": planes, "sigmas": sigmas}
+    for (a, b, kind) in _cells(N, D, region):
         for sigma in sigmas:
             if budget[0] <= 0:
                 out.append({"kind": "unresolved", "why": "work budget", "where": label}); return vertex_jobs
@@ -390,7 +417,7 @@ def _analyze(N, D, depth, sigmas, label, out, budget):
                     out.append({"kind": "interval", "iv": [iv], "where": where + " (monomial ratio)"})
                 continue
             if st == "line":
-                _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget)
+                _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget, ctx)
                 continue
             # vertex: genuine two-variable forms
             if delta > 0:
@@ -398,20 +425,22 @@ def _analyze(N, D, depth, sigmas, label, out, budget):
                 if _regular_crossing(fD, fN):
                     out.append({"kind": "all", "where": where, "why": "a smooth real pole surface crosses here while f is near 0"})
                     continue
-                _vertex_zoom(N, D, fD, fN, a, b, sigma, depth, label, where, out, budget, zero_of="D")
+                if _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
+                    continue
+                _vertex_zoom(N, D, fD, fN, a, b, sigma, depth, label, where, out, budget, zero_of="D", ctx=ctx)
             elif delta < 0:
                 sg = _sign_set_2d(fN, fD)
                 out.append({"kind": "inf", "signs": sg or {1, -1}, "where": where})
                 if _regular_crossing(fN, fD):
                     out.append({"kind": "all", "where": where, "why": "f changes sign through 0 here while it is unbounded"})
                     continue
-                _vertex_zoom(N, D, fN, fD, a, b, sigma, depth, label, where, out, budget, zero_of="N")
+                _vertex_zoom(N, D, fN, fD, a, b, sigma, depth, label, where, out, budget, zero_of="N", ctx=ctx)
             else:
                 vertex_jobs.append((fN, fD, where))
-                _vertex_zoom(N, D, fD, fN, a, b, sigma, depth, label, where, out, budget, zero_of="D", only_special=True)
+                _vertex_zoom(N, D, fD, fN, a, b, sigma, depth, label, where, out, budget, zero_of="D", only_special=True, ctx=ctx)
     return vertex_jobs
 
-def _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget):
+def _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget, ctx=None):
     eN, gN = _to_u(fN, v); eD, gD = _to_u(fD, v)
     # domain of u = c^v0 d^v1 over c, d != 0
     pos_only = (v[0] % 2 == 0) and (v[1] % 2 == 0)
@@ -460,13 +489,15 @@ def _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget)
             roots.append(u0)
     for u0 in set_unique(roots):
         if v[1] == 0 and v[0] == 1:
-            _do_zoom(N, D, a, b, sigma, ("y", u0), depth, label, where, out, budget)
+            _do_zoom(N, D, a, b, sigma, ("y", u0), depth, label, where, out, budget, ctx)
         elif v[0] == 0 and v[1] == 1:
-            _do_zoom(N, D, a, b, sigma, ("z", u0), depth, label, where, out, budget)
+            _do_zoom(N, D, a, b, sigma, ("z", u0), depth, label, where, out, budget, ctx)
+        elif abs(v[0]) == 1 or abs(v[1]) == 1:
+            _curve_zoom(N, D, a, b, sigma, v, u0, depth, label, where, out, budget, ctx)
         else:
             out.append({"kind": "unresolved", "why": f"zoom along the curve c^{v[0]} d^{v[1]} = {u0}", "where": where})
 
-def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zero_of, only_special=False):
+def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zero_of, only_special=False, ctx=None):
     """zoom at the special real points of F = 0 (singular, or shared with Gc)"""
     if not has_real_points(F, avoid_zero=True) and not only_special:
         return
@@ -478,9 +509,9 @@ def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zer
     if other:
         out.append({"kind": "unresolved", "why": "zoom at irrational or non-isolated special points", "where": where})
     for (c0, d0) in pts:
-        _do_zoom(N, D, a, b, sigma, ("yz", (c0, d0)), depth, label, where, out, budget)
+        _do_zoom(N, D, a, b, sigma, ("yz", (c0, d0)), depth, label, where, out, budget, ctx)
 
-def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget):
+def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None):
     if depth >= MAX_DEPTH:
         out.append({"kind": "unresolved", "why": "depth limit", "where": where}); return
     q = a.denominator * b.denominator // gcd(a.denominator, b.denominator)
@@ -498,8 +529,113 @@ def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget):
         sh = ((p, c0), (r, d0)); txt = f"y = {c0}*|x|^{a}+..., z = {d0}*|x|^{b}+..."
     N2, D2 = _zoom(N, sigma, q, sh), _zoom(D, sigma, q, sh)
     lab = f"{label}[{txt} x{'>' if sigma > 0 else '<'}0] "
-    jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget)
-    _planes(N2, D2, depth + 1, lab, out)
+    # the new first coordinate is s with x = sigma s^q: weights of a kept coordinate scale by q
+    region = (ctx or {}).get("region") or {}
+    new_region = {}
+    if what[0] == "y" and "b" in region:
+        new_region["b"] = tuple(None if t is None else t * q for t in region["b"])
+    if what[0] == "z" and "a" in region:
+        new_region["a"] = tuple(None if t is None else t * q for t in region["a"])
+    planes = (ctx or {}).get("planes", True)
+    jobs = _analyze(N2, D2, depth + 1, (1,), lab, out, budget, new_region or None, planes)
+    if planes: _planes(N2, D2, depth + 1, lab, out)
+    _finish_vertices(jobs, out)
+
+def _binomial_zero_set_zoom(N, D, fD, a, b, sigma, depth, label, where, out, budget, ctx):
+    """Vertex with f -> 0 away from fD = 0, where fD alone depends only on u = c^v0 d^v1
+       (e.g. fD = (c^2 d - 1)^2).  Then fD = 0 on the torus is the union of the curves
+       u = u0 over the real roots u0 of gD, and zooming along each one covers every path that
+       stays near fD = 0, exactly as for an edge.  Returns False if this does not apply."""
+    if len(fD) < 2: return False
+    st, v = _structure({}, fD)
+    if st != "line": return False
+    if not (abs(v[0]) == 1 or abs(v[1]) == 1): return False
+    _, gD = _to_u(fD, v)
+    pos_only = (v[0] % 2 == 0) and (v[1] % 2 == 0)
+    roots = [u0 for u0 in _poly_roots_in(gD) if cmp(u0, 0) != 0 and not (pos_only and cmp(u0, 0) < 0)]
+    for u0 in set_unique(roots):
+        if v == (1, 0):
+            _do_zoom(N, D, a, b, sigma, ("y", u0), depth, label, where, out, budget, ctx)
+        elif v == (0, 1):
+            _do_zoom(N, D, a, b, sigma, ("z", u0), depth, label, where, out, budget, ctx)
+        else:
+            _curve_zoom(N, D, a, b, sigma, v, u0, depth, label, where, out, budget, ctx)
+    return True
+
+def _curve_zoom(N, D, a, b, sigma, v, u0, depth, label, where, out, budget, ctx):
+    """zoom along the curve c^v0 d^v1 = u0 of an edge, where one exponent is +-1.
+       W = x^k y^v0 z^v1 (k = -(v0 a + v1 b)) has weight 0 along the edge and tends to
+       w0 = sigma^k u0.  If v0 = +-1, y = (W x^-k z^-v1)^v0 exactly (x, z != 0): the new
+       coordinates (x, W - w0, z) turn the curve into a coordinate point.  A path in the new
+       coordinates is a genuine path into the origin only if y -> 0 too, i.e. the old weight
+       of y, -(k + v1 b')/v0 ... is positive: this is passed on as a bound on the weight of z."""
+    if depth >= MAX_DEPTH:
+        out.append({"kind": "unresolved", "why": "depth limit", "where": where}); return
+    if isinstance(u0, A):
+        out.append({"kind": "unresolved", "why": "irrational zoom point", "where": where}); return
+    k = -(v[0] * a + v[1] * b)
+    if k.denominator != 1:
+        out.append({"kind": "unresolved", "why": "curve zoom: non-integral exponent", "where": where}); return
+    k = int(k)
+    w0 = Fr(sigma) ** k * u0
+    # solve for the coordinate with exponent +-1
+    if abs(v[0]) == 1: sol, oth, e_sol, e_oth, kept_key = 1, 2, v[0], v[1], "b"
+    else:              sol, oth, e_sol, e_oth, kept_key = 2, 1, v[1], v[0], "a"
+    # y_sol = (W x^-k y_oth^-e_oth)^(1/e_sol) with e_sol = +-1  ->  exponents of W, x, y_oth
+    sgn = e_sol                                    # 1/e_sol = e_sol for +-1
+    def sub(P):
+        R = {}
+        for m, val in P.items():
+            j = m[sol]                              # power of the eliminated coordinate
+            ex = [m[0] - k * sgn * j, 0, 0]
+            ex[oth] = m[oth] - e_oth * sgn * j
+            wpow = sgn * j                          # power of W (may be negative)
+            key = (ex[0], wpow, ex[oth])
+            R[key] = R.get(key, 0) + val
+        # clear negative powers of x, W, the other coordinate (same factor for N and D)
+        return R
+    Ns, Ds = sub(N), sub(D)
+    shift = [max(0, -min(key[i] for key in list(Ns) + list(Ds))) for i in range(3)]
+    def finish(R):
+        out_ = {}
+        from math import comb
+        for (ix, iw, io), val in R.items():
+            ix += shift[0]; iw += shift[1]; io += shift[2]
+            # W = w0 + Y
+            for t in range(iw + 1):
+                c = comb(iw, t) * w0 ** (iw - t)
+                if c == 0: continue
+                key = [ix, 0, 0]; key[sol] = t; key[oth] = io
+                key = tuple(key)
+                out_[key] = out_.get(key, 0) + val * c
+        return {kk: vv for kk, vv in out_.items() if vv != 0}
+    N2, D2 = finish(Ns), finish(Ds)
+    if not D2:
+        out.append({"kind": "unresolved", "why": "curve zoom: denominator vanishes on the curve", "where": where}); return
+    # genuine-path condition: old weight of the eliminated coordinate > 0
+    #   weight(y_sol) = sgn * (weight(W) - k - e_oth * w_oth) with weight(W) = 0 along W -> w0
+    #   => sgn * (-k - e_oth * w) > 0, a bound on w = weight of the other coordinate
+    old_region = (ctx or {}).get("region") or {}
+    elim_key = "a" if sol == 1 else "b"
+    lo, hi = old_region.get(kept_key, (None, None))
+    # old weight of the eliminated coordinate as a function of w (weight of the kept one):
+    #   L(w) = sgn * (-k - e_oth * w);  it must lie in (max(0, lo_e), hi_e)
+    lo_e, hi_e = old_region.get(elim_key, (None, None))
+    lo_e = Fr(0) if lo_e is None else max(Fr(0), lo_e)
+    cons = [(-sgn * e_oth, -sgn * k - lo_e)]                 # L(w) - lo_e > 0
+    if hi_e is not None: cons.append((sgn * e_oth, hi_e + sgn * k))   # hi_e - L(w) > 0
+    for coef, const in cons:                                # coef*w + const > 0
+        if coef > 0:
+            t = Fr(-const) / coef; lo = t if lo is None else max(lo, t)
+        elif coef < 0:
+            t = Fr(-const) / coef; hi = t if hi is None else min(hi, t)
+        elif const <= 0:
+            return                                          # no genuine paths on this curve
+    if lo is not None and hi is not None and lo >= hi: return
+    if hi is not None and hi <= 0: return
+    region = {kept_key: (lo, hi)}
+    lab = f"{label}[c^{v[0]} d^{v[1]} = {u0} x{'>' if sigma > 0 else '<'}0] "
+    jobs = _analyze(N2, D2, depth + 1, (ctx or {}).get("sigmas", (1, -1)), lab, out, budget, region, planes=False)
     _finish_vertices(jobs, out)
 
 def _planes(N, D, depth, label, out):
@@ -542,7 +678,18 @@ def profile3(text):
     N, D = parse3(text)
     return profile3_polys(N, D)
 
+def _cancel_monomial_content(N, D):
+    """divide N and D by their common monomial factor x^a y^b z^c (f is unchanged where defined;
+       a common factor that vanishes on a coordinate plane would otherwise look like a whole
+       surface of 0/0 points)"""
+    if not N or not D: return N, D
+    common = tuple(min(m[i] for m in list(N) + list(D)) for i in range(3))
+    if common == (0, 0, 0): return N, D
+    sub = lambda P: {tuple(m[i] - common[i] for i in range(3)): v for m, v in P.items()}
+    return sub(N), sub(D)
+
 def profile3_polys(N, D):
+    N, D = _cancel_monomial_content(N, D)
     out, budget = [], [BUDGET]
     jobs = _analyze(N, D, 0, (1, -1), "", out, budget)
     _planes(N, D, 0, "", out)

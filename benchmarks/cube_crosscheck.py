@@ -31,6 +31,52 @@ def face_poly(P, axis, sign, r):
         out[key] = out.get(key, 0) + coef
     return {k: v for k, v in out.items() if v != 0}
 
+def _shift(P, c0, d0):
+    """P(c0 + u, d0 + v) as a dict in (u, v)"""
+    from math import comb
+    out = {}
+    for (i, j), v in P.items():
+        for a in range(i + 1):
+            for b in range(j + 1):
+                k = (a, b)
+                out[k] = out.get(k, 0) + v * comb(i, a) * comb(j, b) * Fr(c0) ** (i - a) * Fr(d0) ** (j - b)
+    return {k: v for k, v in out.items() if v != 0}
+
+def base_point_values(P, Q):
+    """Points inside the face where P = Q = 0 (after cancelling common factors): the face
+       function is 0/0 there, and every value of its two-variable fluid state at that point is
+       a limit of values on the face.  image_2d only sees values AT points, so these are added
+       here, computed by the two-variable engine (itself checked by benchmarks/loop_crosscheck).
+       Returns (intervals, exact); irrational or boundary base points make the result inexact."""
+    from fmsl.plane import resultant_d, at_c, bgcd, bdivexact, _poly_roots_in
+    from fmsl.multivar import profile_polys
+    from fmsl.algebraic import A
+    from fmsl.cluster import cmp
+    g = bgcd(P, Q)
+    if len(g) > 1 or (g and next(iter(g)) != (0, 0)):
+        P, Q = bdivexact(P, g), bdivexact(Q, g)
+    res = resultant_d(P, Q)
+    if not res or all(v == 0 for v in res): return [], False
+    ivs, exact = [], True
+    for c0 in _poly_roots_in(res, Fr(-1), Fr(1)) if len(res) > 1 else []:
+        p, q = at_c(P, c0), at_c(Q, c0)
+        if isinstance(c0, A):
+            # check whether an irrational c0 carries a common zero at all
+            exact = False; continue
+        from fmsl.cluster import _real_roots
+        for d0 in (_poly_roots_in(q, Fr(-1), Fr(1)) if len(q) > 1 else []):
+            if isinstance(d0, A):
+                exact = False; continue
+            from fmsl.algebraic import peval
+            if peval(p, d0) != 0: continue
+            if abs(c0) == 1 or abs(d0) == 1:          # on the face boundary: not handled
+                exact = False; continue
+            cl = profile_polys(_shift(P, c0, d0), _shift(Q, c0, d0))["cluster"]
+            if not cl.get("exact", False) or "signed_components" not in cl:
+                exact = False; continue
+            ivs += [tuple(iv) for iv in cl["signed_components"]]
+    return ivs, exact
+
 def cube_image(N, D, r):
     ivs, exact = [], True
     for axis in range(3):
@@ -38,6 +84,8 @@ def cube_image(N, D, r):
             P, Q = face_poly(N, axis, sign, r), face_poly(D, axis, sign, r)
             if not Q: return None, False
             iv, ex = image_2d(P, Q, box=(Fr(-1), Fr(1)))
+            ivs += iv; exact = exact and ex
+            iv, ex = base_point_values(P, Q)
             ivs += iv; exact = exact and ex
     return ivs, exact
 
