@@ -1,2 +1,13 @@
-36 of 50 calls failed, e.g. ERROR: BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CgTYqHdmRuSga5idp5ink'}
-Too many failed calls: nothing recorded. Fix the cause (e.g. API credits) and rerun.
+### anthropic_claude-haiku-5-5  (50 items)
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 50 | 94.0% | 92.0% | 3 |
+| tier 1 | 21 | 85.7% | 81.0% | 3 |
+| tier 2 | 4 | 100.0% | 100.0% | 0 |
+| tier 3 | 21 | 100.0% | 100.0% | 0 |
+| tier 4 | 4 | 100.0% | 100.0% | 0 |
+| path-test traps | 17 | 100.0% | 100.0% | 0 |
+
+Tokens used: 16,427 input, 86,271 output.
+
