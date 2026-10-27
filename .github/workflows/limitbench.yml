@@ -28,12 +28,15 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then echo "No ANTHROPIC_API_KEY secret: skipping model runs."; exit 0; fi
+          mkdir -p benchmarks/limitbench/results; : > benchmarks/limitbench/results/last_run.log
+          if [ -z "$ANTHROPIC_API_KEY" ]; then echo "No ANTHROPIC_API_KEY secret: skipping model runs." | tee benchmarks/limitbench/results/last_run.log; exit 0; fi
           LIMIT=$(python -c "import json;v=json.load(open('benchmarks/limitbench/RUN.json')).get('limit');print(v or '')")
           for m in $(python -c "import json;print(' '.join(json.load(open('benchmarks/limitbench/RUN.json'))['models']))"); do
-            python benchmarks/limitbench/evaluate.py --method anthropic --model "$m" ${LIMIT:+--limit $LIMIT} --workers 4
+            python benchmarks/limitbench/evaluate.py --method anthropic --model "$m" ${LIMIT:+--limit $LIMIT} --workers 4 2>&1 | tee -a benchmarks/limitbench/results/last_run.log
+            test "${PIPESTATUS[0]}" -eq 0 || exit 1
           done
-      - name: Commit results
+      - name: Commit results (always, so the log of a failed run is kept)
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
