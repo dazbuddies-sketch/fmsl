@@ -106,7 +106,7 @@ def gen_one_variable(gen, n_per):
         if kind == 0: e, t = f"Abs({k}*x)/x", (Fr(-k), Fr(k))
         elif kind == 1: e, t = f"x/Abs(x)^{2}", (NINF, INF)
         else: e, t = f"(Abs(x)+{k}*x)/x", (Fr(k - 1), Fr(k + 1))
-        out.append(("5 piecewise", e, t, False))
+        out.append(("5 piecewise", e, t, True))
     # 6. catastrophic cancellation (Taylor remainders)
     for _ in range(n_per):
         k = gen.choice([1, 2, 3])
@@ -215,10 +215,20 @@ def verdict_of(S):
 def fmsl_one(expr):
     from fmsl.compiler import run
     lines = []
-    prog = f"fluid f(x) = {expr}\nat x -> 0: f\n"
+    prog = f"fluid f(x) = {expr.replace('Abs(', 'abs(')}\nat x -> 0: f\n"
     run(prog, out=lines.append)
     txt = " ".join(lines)
     if "ERROR" in txt: return None
+    if "one-sided analysis" in txt:
+        if "UNPROVEN" in txt: return None
+        conv = lambda v: {"+oo": INF, "-oo": NINF}.get(v) or (Fr(v) if re.fullmatch(r"-?\d+(/\d+)?", v) else None)
+        m = re.search(r"limit (\S+) on both sides", txt)
+        if m:
+            v = conv(m.group(1)); return None if v is None else (v, v)
+        l, r = re.search(r"x->0-: (\S+?);", txt), re.search(r"x->0\+: (\S+?)(;| \[)", txt)
+        if not l or not r: return None
+        l, r = conv(l.group(1)), conv(r.group(1))
+        return None if l is None or r is None else (l, r)
     if "ESSENTIAL" in txt:                                # check first: its text mentions poles
         if "UNPROVEN" in txt or "not decided" in txt: return None
         if "limit 0 on both sides" in txt: return (Fr(0), Fr(0))

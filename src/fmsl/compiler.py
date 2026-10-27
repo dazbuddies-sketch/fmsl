@@ -84,7 +84,8 @@ class Parser:
             e = s.expr(); s.take(")"); return e
         raise SyntaxError(f"unexpected {v!r}")
 
-FUNCS = ("sin", "cos", "exp")
+FUNCS = ("sin", "cos", "exp", "abs", "sign")
+SIDED = ("abs", "sign")        # functions analysed separately on each side of 0
 
 def free_vars(e, defs):
     t = e[0]
@@ -123,19 +124,46 @@ def subst(e, p, a):
     return (t, subst(e[1], p, a), subst(e[2], p, a))
 
 # ============================ FMS semantics ============================
-def build(e, var):
-    """AST -> certified fluid value (fms4) at var -> 0."""
+class NeedsSides(Exception):
+    """the expression contains abs/sign: it must be analysed on each side of 0 separately"""
+
+
+def _side_sign(f, side, fn):
+    """the sign of f on the side `side` (+1: x > 0, -1: x < 0) of 0, exactly.
+       Near 0, f = c x^k (1 + o(1)) with c != 0, so its sign there is sgn(c) * side^k."""
+    if isinstance(f, EssFactor):
+        raise Essential(f._undecided(f"inside {fn}(...)"))
+    vv = f.val()
+    if vv[0] == "zero":
+        if vv[1]: return 0
+        raise ValueError(f"{fn}(...) of a quantity indistinguishable from 0 through order {vv[2]}: "
+                         f"its sign is not decided")
+    k, c = vv[1], G(f.coeff(vv[1]))
+    if not c.is_real(): raise ValueError(f"{fn}(...) of a complex quantity")
+    sg = 1 if c.re > 0 else -1
+    return sg * (side ** (k % 2))
+
+
+def build(e, var, side=None):
+    """AST -> certified fluid value (fms4) at var -> 0.  With abs/sign, `side` (+1 or -1) says
+       which side of 0 is analysed; without a side, NeedsSides is raised."""
     t = e[0]
+    if t == "call" and e[1] in SIDED:
+        if side is None: raise NeedsSides(f"{e[1]}(...) is analysed on each side of 0: use 'at x -> 0'")
+        f = build(e[2], var, side)
+        sg = _side_sign(f, side, e[1])
+        if e[1] == "sign": return V.rat([sg])
+        return f * sg if sg != 0 else V.rat([0])
     if t == "num": return V.rat([e[1]])
     if t == "var":
         if e[1] != var: raise NameError(f"unknown name {e[1]!r}")
         return fms4.x
-    if t == "neg": return -build(e[1], var)
+    if t == "neg": return -build(e[1], var, side)
     if t == "pow":
-        b = build(e[1], var)
+        b = build(e[1], var, side)
         return b ** e[2] if e[2] >= 0 else 1 / (b ** -e[2])
-    if t == "call": return {"sin": Sin, "cos": Cos, "exp": Exp}[e[1]](build(e[2], var), keep=True)
-    a, b = build(e[1], var), build(e[2], var)
+    if t == "call": return {"sin": Sin, "cos": Cos, "exp": Exp}[e[1]](build(e[2], var, side), keep=True)
+    a, b = build(e[1], var, side), build(e[2], var, side)
     import operator
     return {"+": operator.add, "-": operator.sub, "*": operator.mul, "/": operator.truediv}[t](a, b)
 
@@ -184,6 +212,8 @@ def to_c(e, var, cx=False):
 
 def analyze(v):
     """Return (kind, text, proven) for a fluid value."""
+    if isinstance(v, _SidedValue):
+        return _analyze_sided(v)
     if isinstance(v, EssFactor):
         lim = v.limits()
         if lim is None:
@@ -427,6 +457,8 @@ def run(program, out=print):
                 var, ast, _ = values[name]
                 v = _value(values, name)
                 kind, text, proven = analyze(v)
+                if kind == "sided":
+                    out(f"[{lineno}] emit refused for {name}: code generation for abs/sign is not supported yet"); continue
                 if kind in ("essential", "zero"):
                     out(f"[{lineno}] emit refused for {name}: {text}"); continue
                 d = design(v, ast, var)
@@ -459,8 +491,49 @@ def _value(values, name):
     if v is None:
         try: v = build(ast, var)
         except Essential as ex: v = _EssentialValue(str(ex))
+        except NeedsSides: v = _SidedValue(ast, var)
         values[name] = (var, ast, v)
     return v
+
+
+class _SidedValue:
+    """an expression with abs/sign: one fluid value per side of 0"""
+    def __init__(s, ast, var):
+        s.sides = {}
+        for sd in (-1, 1):
+            try: s.sides[sd] = build(ast, var, sd)
+            except Essential as ex: s.sides[sd] = _EssentialValue(str(ex))
+    def val(s): raise ValueError("abs/sign: analysed on each side of 0 separately")
+
+
+def _one_side(v, sd):
+    """the limit of v as x -> 0 from side sd: a printable value, or None if not decided"""
+    if isinstance(v, EssFactor):
+        lim = v.limits()
+        return None if lim is None else str(lim[0] if sd < 0 else lim[1])
+    try:
+        vv = v.val()
+    except Essential:
+        return None
+    if vv[0] == "zero": return "0" if vv[1] else None
+    k, c = vv[1], G(v.coeff(vv[1]))
+    if k > 0: return "0"
+    if k == 0: return str(c)
+    if not c.is_real(): return None
+    sgn = (1 if c.re > 0 else -1) * (sd ** ((-k) % 2))
+    return "+oo" if sgn > 0 else "-oo"
+
+
+def _analyze_sided(v):
+    l, r = _one_side(v.sides[-1], -1), _one_side(v.sides[1], 1)
+    if l is None or r is None:
+        return ("essential", f"one-sided analysis (abs/sign): x->0-: {l or 'not decided'}; "
+                             f"x->0+: {r or 'not decided'} [UNPROVEN]", False)
+    if l == r and "oo" not in l:
+        return ("sided", f"limit {l} on both sides (one-sided analysis: abs/sign) [proven]", True)
+    if l == r:
+        return ("sided", f"one-sided analysis (abs/sign): x->0-: {l}; x->0+: {r} [proven]", True)
+    return ("sided", f"one-sided analysis (abs/sign): x->0-: {l}; x->0+: {r}; no limit [proven]", True)
 
 class _EssentialValue:
     def __init__(s, msg): s.msg = msg
