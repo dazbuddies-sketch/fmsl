@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fmsl"
+version = "0.6.0"
+description = "Exact fluid states of 0/0 points: proven limits and the full set of limit values of rational functions in two and three variables, plus proven-safe code for formulas with 0/0 traps"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "MJ Celedon" }]
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["symbolic", "limits", "multivariate-limits", "cluster-set", "puiseux", "newton-polygon", "singularity", "code-generation", "numerical-stability", "robotics", "quantum", "verified-computation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+]
+
+[project.urls]
+Homepage = "https://github.com/dazbuddies-sketch/fmsl"
+Issues = "https://github.com/dazbuddies-sketch/fmsl/issues"
+
+[project.optional-dependencies]
+matrix = ["numpy>=1.20"]
+
+[project.scripts]
+fmsl = "fmsl.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

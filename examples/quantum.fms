@@ -1,0 +1,49 @@
+# Quantum-mechanics formulas with 0/0 traps (units hbar = 1).
+context T = 3            # evolution time (Meta-Value context parameter)
+
+# Time-evolution phase integral  int_0^T e^(-i w s) ds   as the frequency w -> 0
+fluid prop(w) = (exp(-T*i*w) - 1)/(-i*w)
+
+# phi functions of exponential integrators (Schrodinger / Lindblad solvers), imaginary argument
+fluid phi1(z) = (exp(i*z) - 1)/(i*z)
+fluid phi2(z) = (exp(i*z) - 1 - i*z)/(i*z)^2
+fluid phi3(z) = (exp(i*z) - 1 - i*z + z^2/2)/(i*z)^3
+
+# Second-order time-dependent perturbation theory kernel, energy gap d -> 0
+fluid dyson(d) = (exp(-T*i*d) - 1 + T*i*d)/d^2
+
+# Fermi's golden rule transition factor, detuning d -> 0
+fluid golden(d) = sin(T*d/2)^2/(d/2)^2
+
+# Open-system decay kernel, decay rate g -> 0
+fluid decay(g) = (exp(-T*g) - 1 + T*g)/g^2
+
+# Resolvent near an energy level: a genuine pole
+fluid resolvent(w) = i*exp(T*i*w)/w
+
+at w -> 0: prop
+at z -> 0: phi1
+at z -> 0: phi2
+at z -> 0: phi3
+at d -> 0: dyson
+at d -> 0: golden
+at g -> 0: decay
+at w -> 0: resolvent
+
+# exact identities used in quantum codes
+check exp(i*t) - cos(t) - i*sin(t)
+check exp(T*i*t)*exp(-T*i*t) - 1
+check exp(i*t)^2 - exp(2*i*t)
+
+# a quantum-style essential singularity: phase that spins infinitely fast
+fluid spin(t) = exp(i/t)
+at t -> 0: spin
+
+emit c prop
+emit c phi1
+emit c phi2
+emit c phi3
+emit c dyson
+emit c golden
+emit c decay
+emit python phi2

@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use FMSL, please cite it as below."
+title: "FMSL: exact fluid states of 0/0 points"
+authors:
+  - alias: "MJ Celedon"
+version: 0.6.0
+date-released: 2026-10-27
+license: MIT
+repository-code: "https://github.com/dazbuddies-sketch/fmsl"
+keywords:
+  - multivariate limits
+  - cluster set
+  - Newton polygon
+  - Puiseux series
+  - real algebraic numbers
+  - verified computation
+abstract: >-
+  FMSL computes, exactly, what a function does at a 0/0 point: the limit when it exists, and
+  otherwise the full set of values it approaches (its fluid state, always a point, an arc or the
+  whole circle R u {oo}), for rational functions of two and three variables, including
+  denominators that vanish along curves. Results are cross-checked by independent algorithms.

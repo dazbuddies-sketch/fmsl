@@ -1,0 +1,43 @@
+# ---- Robotics: SO(3) rotation (Rodrigues formula) coefficients, angle t -> 0 ----
+fluid A(t) = sin(t)/t
+fluid B(t) = (1 - cos(t))/t^2
+fluid C(t) = (t - sin(t))/t^3
+fluid D(t) = (1 - t*sin(t)/(2*(1 - cos(t))))/t^2      # SO(3) log-map Jacobian term
+
+# ---- Finance: 10-year annuity factor as the interest rate r -> 0 ----
+fluid annuity(r) = (1 - exp(-10*r))/r
+
+# ---- Graphics: slerp weight at u = 1/3, angle t -> 0 ----
+fluid slerp(t) = sin(2*t/3)/sin(t)
+
+# ---- Composition with a defined value ----
+fluid B2(t) = B(t^2) - 1/2 + t^4/24
+
+at t -> 0: A
+at t -> 0: B
+at t -> 0: C
+at t -> 0: D
+at r -> 0: annuity
+at t -> 0: slerp
+at t -> 0: B2
+
+# ---- three-valued zero tests ----
+check sin(t)^2 + cos(t)^2 - 1
+check exp(t^2)*exp(-t^2) - 1
+check exp(t^61) - 1
+check exp(sin(t))*exp(-sin(t)) - 1
+
+# ---- type system: unsafe equality is rejected ----
+if B == 0.5
+
+# ---- essential singularity ----
+fluid E(t) = exp(-1/t^2)
+at t -> 0: E
+emit c E
+
+# ---- code generation ----
+emit python B
+emit c C
+emit c D
+emit python annuity
+emit c slerp
