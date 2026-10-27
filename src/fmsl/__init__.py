@@ -4,7 +4,7 @@ from .gauss import G, I
 from .compiler import run, compile_text, analyze
 from .siletz import proven_series_error
 
-__version__ = "0.10.0"
+__version__ = "0.10.1"
 # Matrix functions (requires numpy):  from fmsl import matrix
 # Two variables / exact arcs / algebraic numbers / iteration:
 #   from fmsl import multivar, cluster, algebraic, bifurcation

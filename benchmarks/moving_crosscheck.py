@@ -3,9 +3,9 @@
 For random families f(x, y, t) = N/D with coefficients polynomial in t:
   1. every snapshot reported by fmsl.moving (a sample time in each interval) is compared with
      the exact image of f_t on small squares |x|, |y| = r  (benchmarks/loop_crosscheck.py);
-  2. the moving state at every rational special time is compared with the exact image of
+  2. the moving state at every rational Celedon point is compared with the exact image of
      f(x, y, t0 + z) on the surface of small cubes  (benchmarks/cube_crosscheck.py);
-  3. completeness of the special times: 12 extra sample times per interval; any change of
+  3. completeness of the Celedon points: 12 extra sample times per interval; any change of
      type there that the module did not report is counted as MISSED.
 Run:  python benchmarks/moving_crosscheck.py [n_random]
 """

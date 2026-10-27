@@ -352,7 +352,7 @@ the target moving along a path (p₁(t), p₂(t)), and reports:
 
 * **snapshots** -- the fluid state at each fixed time t, grouped into stretches of the same type;
 * **how the ends move** -- an exact relation E(t, v) = 0 for each finite end v;
-* **special times** -- the exact times (rational or algebraic) where the snapshot changes
+* **Celedon points** -- the exact times (rational or algebraic) where the snapshot changes
   character, and at each one the fluid state of the *moving* target: all limits as
   (x, y, t) → (0, 0, t₀) together, computed by the three-variable engine.
 
@@ -364,16 +364,16 @@ snapshots (fluid state at a fixed time):
       ends move with t as:  v = 1;  v = -t
   -1 < t < +oo:  at t = -1/2: [1/2, 1];  at t = 2: [-2, 1]
       ends move with t as:  v = -t;  v = 1
-special times (the snapshot changes character):
+Celedon points (the times where the snapshot changes character):
   t = -1:  snapshot {1};  moving target {1}
       why: a critical point meets a pole; numerator and denominator forms share a root
 ```
 
 For x²y/(x⁴ + t·y²) the ends satisfy 4t·v² = 1 (that is, ±1/(2√t)) for t > 0, and every value
-is taken for t ≤ 0. For (xy + t·x²)/(x² + (t − 1)y²) the special time is the real root
+is taken for t ≤ 0. For (xy + t·x²)/(x² + (t − 1)y²) the Celedon point is the real root
 t ≈ −0.754878 of t³ − t² + 1, where a gap in the range closes.
 
-**What is proven.** Every reported fluid state is exact. Candidate special times are the real
+**What is proven.** Every reported fluid state is exact. Candidate Celedon points are the real
 roots of exact polynomials in t: the coefficients of N and D, and the discriminants and
 resultants of the initial forms (computed over Q[t]). Changes that arise only deeper in the
 zoom are found by sampling three times in every interval and reported as "change near ...",
@@ -382,7 +382,7 @@ rational times and interpolation, with the degree bounded in advance and two ext
 
 **Independent check** (`benchmarks/moving_crosscheck.py`, 8 classic and 30 random families):
 snapshots agree with the square-loop image at sample times 75 of 75; moving states agree with
-the cube image at rational special times 36 of 36; dense sampling (12 times per interval)
+the cube image at rational Celedon points 36 of 36; dense sampling (12 times per interval)
 found no unreported change of type. The closest prior work I found decides limits of
 two-variable rational functions with Sturm's theorem (J. Symbolic Comput., 2019); I did not
 find a tool that computes exact fluid states for families with a parameter, but my search was
@@ -595,6 +595,7 @@ continuation of FMS: each FMS goal that could be made rigorous appears here in a
 | FMS idea | FMSL counterpart |
 |---|---|
 | Zero Intermedium (𝓩): division by zero as a transition state | Exact 0/0 states: removable value, pole, or essential singularity |
+| Celedon Point (Cₑ): a transition between mathematical regimes | **Celedon points** of a family (`fmsl.moving`): the exact times where the fluid state changes character |
 | Celedon Point (Cₑ): x − x as balance | `C_e`, returned only when *proven* identically zero |
 | Infinity Flow (𝓘): infinity as directed flow | Poles report the exact direction to infinity from each side |
 | Siletz Precision System (𝓢): structured precision | Siletz bounds: proven error enclosures for emitted code |
