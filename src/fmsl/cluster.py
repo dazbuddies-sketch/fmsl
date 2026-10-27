@@ -99,9 +99,19 @@ def cmp(u, v):
         kv = v.sgn if isinstance(v, _Inf) else 0
         return (ku > kv) - (ku < kv)
     if isinstance(u, A) and isinstance(v, A) and u.F is not v.F:
-        eq = same_value(u, v)
-        if eq is True: return 0
-        return _fields_cmp(u, v)
+        from .algebraic import _ieval
+        for _ in range(3):                             # usually the enclosures separate fast
+            a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
+            a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
+            if b1 < a2: return -1
+            if b2 < a1: return 1
+            u.F.refine(); v.F.refine()
+        try:
+            return sign_of(u - v)                      # exact, in a common field
+        except ArithmeticError:
+            eq = same_value(u, v)
+            if eq is True: return 0
+            return _fields_cmp(u, v)
     return sign_of(u - v)
 
 
@@ -136,7 +146,7 @@ def _real_roots(p, lo=None, hi=None):
        Rational roots are found exactly and divided out first, so that an algebraic number
        is only used for a genuinely irrational root."""
     from .multivar import _rational_roots
-    from .algebraic import pdivmod, is_alg_poly, roots_alg
+    from .algebraic import pdivmod, is_alg_poly, roots_alg, field_for
     if is_alg_poly(p):
         return sorted(set_unique(roots_alg(p, lo, hi)), key=cmp_to_key(cmp))
     p = squarefree(ptrim([Fr(v) for v in p]))

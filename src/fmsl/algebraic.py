@@ -184,9 +184,22 @@ class AlgField:
         assert count_roots(s.p, s.lo, s.hi) == 1, "interval must isolate exactly one root"
 
     def refine(s):
+        # alpha is the only root of the square-free p in (lo, hi], and it is simple, so p
+        # changes sign exactly there: one sign evaluation halves the interval
         mid = (s.lo + s.hi) / 2
-        if count_roots(s.p, s.lo, mid) == 1: s.hi = mid
-        else: s.lo = mid
+        ip = _sturm_of(s.p)[1]
+        if not ip:
+            if count_roots(s.p, s.lo, mid) == 1: s.hi = mid
+            else: s.lo = mid
+            return
+        P = ip[0]                                  # p scaled by a positive constant, integers
+        sm = _sign_at(P, mid)
+        if sm == 0:                                # alpha = mid exactly (rational)
+            s.lo, s.hi = (s.lo + mid) / 2, mid
+            return
+        sh = _sign_at(P, s.hi)
+        if sh == 0 or sh != sm: s.lo = mid         # root in (mid, hi]
+        else: s.hi = mid                           # root in (lo, mid]
 
     def reduce(s, g):
         return pdivmod(g, s.p)[1] if len(ptrim(g)) >= len(s.p) else ptrim(g)
@@ -224,6 +237,31 @@ class AlgField:
             u0, u1 = u1, psub(u0, pmul(q, u1))
         if not r1: raise ArithmeticError("unexpected common factor")
         return s.reduce([v / r1[0] for v in u1])
+
+
+_FIELDS = {}     # square-free polynomial (primitive integer form) -> fields already made for its roots
+
+def field_for(p, lo, hi):
+    """the field of the unique root of p in (lo, hi], reusing an existing field object for the
+       same root (so that the same number found twice is not treated as two fields)"""
+    sq = squarefree(ptrim([Fr(v) for v in p]))
+    key = tuple(_primitive_positive(sq))
+    lo, hi = Fr(lo), Fr(hi)
+    for F in _FIELDS.get(key, ()):
+        # same polynomial: the same root iff F's root lies in (lo, hi]
+        while True:
+            if F.hi <= lo or F.lo >= hi:
+                break                                   # disjoint: a different root
+            if lo <= F.lo and F.hi <= hi:
+                if F.lo < F.hi and (F.lo > lo or count_roots(sq, lo, F.lo) == 0):
+                    return F
+                break
+            F.refine()
+            if F.hi - F.lo < Fr(1, 10 ** 60): break
+    F = AlgField(sq, lo, hi)
+    lst = _FIELDS.setdefault(key, [])
+    if len(lst) < 50: lst.append(F)
+    return F
 
 
 class A:
@@ -333,12 +371,15 @@ def same_value(u, v):
     """exact equality across Fractions and algebraic numbers. Returns True/False, or None
        if the two numbers live in different algebraic fields and could not be separated."""
     if isinstance(u, A) and isinstance(v, A) and u.F is not v.F:
-        for _ in range(200):
+        for _ in range(3):
             a1, b1 = _ieval(u.F.reduce(u.c), u.F.lo, u.F.hi)
             a2, b2 = _ieval(v.F.reduce(v.c), v.F.lo, v.F.hi)
             if b1 < a2 or b2 < a1: return False
             u.F.refine(); v.F.refine()
-        return None
+        try:
+            return (u - v) == 0                        # exact, in a common field
+        except ArithmeticError:
+            return None
     return u == v
 
 
