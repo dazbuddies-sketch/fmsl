@@ -388,6 +388,39 @@ two-variable rational functions with Sturm's theorem (J. Symbolic Comput., 2019)
 find a tool that computes exact fluid states for families with a parameter, but my search was
 brief, so this is provisional.
 
+## Experiment A: a head-to-head test from the FMS research brief
+
+MJ Celedon's original FMS brief asks for "a benchmark of at least 1,000 mathematical expressions"
+across ten kinds of local behaviour, compared with established methods "using independently
+established ground truth", counting correct and false classifications and unresolved cases.
+`benchmarks/experiment_a.py` does this with **1,120 expressions** (112 per category; the
+parameter-dependent and multivariable categories are two-and three-variable problems). Ground
+truth comes from how each expression is built (known series, AM-GM bounds, eigenvalues), never
+from a method under test. It runs in GitHub Actions against SymPy 1.13.3
+(`.github/workflows/experiment_a.yml`); the full tables are in `benchmarks/results/`.
+
+| method | correct | wrong | unresolved |
+|---|---|---|---|
+| FMSL | 1008 | 0 | 112 |
+| SymPy (one variable: `limit` from each side; several variables: limits along 8 standard paths) | 963 | 147 | 10 |
+| naive floating point (probing at 10⁻⁴ and 10⁻⁷) | 557 | 279 | 60 (of 896) |
+
+What this shows, and what it does not:
+
+* **One variable: a tie.** FMSL and SymPy are both correct on all 784 removable, pole,
+  one-sided, oscillatory, cancellation, ill-conditioned and essential cases. SymPy also handles
+  the 112 piecewise cases (|x|, sign); FMSL does not support them (all 112 FMSL "unresolved").
+* **Several variables and parameters: the difference.** SymPy has no multivariable limit
+  routine, so the baseline is the common practice of limits along paths. It found the exact set
+  of limit values in 67 of 224 cases, and got the yes/no question "does the limit exist?" wrong
+  or unresolved in 19, e.g. x³y/(x⁶ + y²): all eight paths give 0, but along y = x³ the value is
+  1/2 (the fluid state is [−1/2, 1/2]). FMSL found the exact set in 224 of 224.
+* **Floating point** fails on cancellation exactly as expected; the brief rightly warns that
+  beating it proves nothing on its own, which is why SymPy is the main baseline.
+* Running the experiment exposed one FMSL error before release: x·sin(1/x) was reported as
+  oscillating (the limit is 0, by the squeeze theorem). It is fixed in 0.10.0, together with a
+  related problem (sums of essential factors now say "not decided" instead of borrowing a verdict).
+
 ## Iteration: bifurcations are balance points
 
 Iterating a map x → f(x, r), new orbits are born at bifurcations. At a bifurcation point the

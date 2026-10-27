@@ -171,3 +171,25 @@ class Context(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EssentialFactors(unittest.TestCase):
+    def _at0(self, expr):
+        from fmsl.compiler import run
+        lines = []
+        run(f"fluid f(x) = {expr}\nat x -> 0: f\n", out=lines.append)
+        return " ".join(lines)
+
+    def test_squeeze(self):
+        self.assertIn("limit 0 on both sides", self._at0("x*sin(2/x)"))      # was "oscillates"
+        self.assertIn("limit 0 on both sides", self._at0("x^2*cos(1/x^2)"))
+
+    def test_exp_sides(self):
+        t = self._at0("-exp(-1/x)/x^3")
+        self.assertIn("x->0-: +oo; x->0+: 0", t)
+
+    def test_sum_is_not_decided(self):
+        # sin(1/x) - sin(1/x) is identically 0: no verdict may be borrowed from sin(1/x)
+        t = self._at0("sin(1/x)-sin(1/x)")
+        self.assertIn("not decided", t)
+        self.assertNotIn("oscillates", t)
