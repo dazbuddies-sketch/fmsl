@@ -81,11 +81,49 @@ functions). The exact multivariate engines handle rational functions; for
 expressions mixing exponentials and absolute values, equality can be undecidable
 [@richardson1968].
 
+# State of the field
+
+Computer algebra systems compute one-variable limits well [@gruntz1996; @sympy]. For several
+variables, the closest work is @dgnp2022, which computes the range of limit values when the
+denominator has an isolated zero, and leaves the non-isolated case to future work.
+Quantifier elimination by cylindrical algebraic decomposition [@collins1975] decides any such
+question in principle, but it does not return the structure of the answer (which paths give
+which values), and its cost limits practical use. FMSL was built as a separate package rather
+than a contribution to an existing system for three reasons: it needs exact real algebraic
+numbers throughout; it returns proofs and paths, not only values; and it carries independent
+cross-checks for every result. Contributing the two-variable engine to SymPy is planned.
+
+# Software design
+
+The engines are pure Python with exact rational arithmetic and no required dependencies.
+Real algebraic numbers are represented by a square-free polynomial and an isolating interval;
+zero and sign tests use Sturm sequences, and equality across different number fields uses the
+characteristic polynomial of multiplication. The two-variable engine follows the Newton
+polygon and Newton–Puiseux zooming. The three-variable engine works on the arrangement of tie
+lines in the weight plane: faces (monomial forms), edges (one-variable forms) and vertices,
+where the exact range of a two-variable rational function is computed by `fmsl.plane`.
+The main trade-off is speed for certainty: every decision is exact, and anything that cannot be
+decided is reported as UNPROVEN rather than guessed.
+
+# Research impact statement
+
+FMSL reproduces all 21 published examples of @dgnp2022 and computes the case that paper left
+open. It provides, to our knowledge, the first open implementation that computes complete
+fluid states (cluster sets) of rational functions of three variables. Every result is checked
+by an independent algorithm, which makes FMSL usable as a reference for testing other limit
+implementations, and as a teaching tool that shows why a multivariable limit fails.
+
+# AI usage disclosure
+
+Generative AI was used extensively. Anthropic's Claude (model Claude Opus 5.5, via Claude Code)
+wrote most of the source code, tests, benchmarks, documentation and the first draft of this
+paper, working under the author's direction. The author set the goals and the research
+direction, reviewed the results, and decided what to keep. All results are validated by the
+automated tests and by independent cross-check algorithms in the repository: loop images in
+two variables, cube images in three variables, and agreement with all published examples.
+
 # Acknowledgements
 
-FMSL is the rigorous continuation of the author's Fluid Mathematics System. Development was
-assisted by an AI system (Anthropic's Claude), which wrote much of the code and tests under the
-author's direction; all results are verified by the tests and independent cross-checks in the
-repository.
+FMSL is the rigorous continuation of the author's Fluid Mathematics System.
 
 # References
