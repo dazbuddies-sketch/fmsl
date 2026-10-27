@@ -8,6 +8,9 @@ proof when it exists, and otherwise the complete set of values it approaches (it
 state*), for rational functions of two and three variables. It also generates proven-safe code
 for one-variable formulas with 0/0 traps.
 
+**Try it in your browser, nothing to install:** [dazbuddies-sketch.github.io/fmsl](https://dazbuddies-sketch.github.io/fmsl/)
+Type a formula and see every value it approaches, next to what the usual "try a few paths" test concludes.
+
 **Cite:** Celedon, MJ (2026). *FMSL: exact fluid states of 0/0 points.* Zenodo.
 https://doi.org/10.5281/zenodo.23682015
 

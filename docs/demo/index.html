@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fluid State Explorer</title>
+<meta name="description" content="Type a formula with a 0/0 point and see every value it approaches, computed exactly by FMSL, next to what the usual try-a-few-paths test concludes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one working column -- input, then two result panels side by side (exact vs paths), then the scaling map. */
+:root {
+  --paper: #f6f7f9; --panel: #ffffff; --ink: #172033; --muted: #5b6577; --rule: #d9dee7;
+  --exact: #1f4fd1; --exact-soft: #e3ebff; --warn: #b4530a; --warn-soft: #fdeedd; --ok: #11795a; --ok-soft: #dcf3ea;
+  --grid: rgba(31, 79, 209, 0.06);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1420; --panel: #161d2c; --ink: #e6eaf2; --muted: #9aa5b8; --rule: #2a3346;
+    --exact: #8fb0ff; --exact-soft: #1d2a4a; --warn: #f5a35b; --warn-soft: #3a2614; --ok: #5fd3a8; --ok-soft: #13332a;
+    --grid: rgba(143, 176, 255, 0.06); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1420; --panel: #161d2c; --ink: #e6eaf2; --muted: #9aa5b8; --rule: #2a3346;
+  --exact: #8fb0ff; --exact-soft: #1d2a4a; --warn: #f5a35b; --warn-soft: #3a2614; --ok: #5fd3a8; --ok-soft: #13332a;
+  --grid: rgba(143, 176, 255, 0.06); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink); font: 400 17px/1.55 var(--f-body);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px;
+}
+header { display: grid; gap: 10px; max-width: 70ch; }
+.kicker { font: 600 13px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--exact); }
+h1 { font: 700 clamp(30px, 5vw, 48px)/1.05 var(--f-display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.lede { margin: 0; color: var(--muted); font-size: 18px; }
+form { display: grid; gap: 12px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+label.lab { font: 600 14px/1 var(--f-body); color: var(--muted); }
+input#formula {
+  flex: 1 1 320px; min-width: 0; font: 400 19px/1.3 var(--f-mono); color: var(--ink); background: var(--panel);
+  border: 1.5px solid var(--rule); border-radius: 8px; padding: 12px 14px;
+}
+input#formula:focus-visible, button:focus-visible { outline: 3px solid var(--exact); outline-offset: 2px; }
+button#go {
+  font: 600 17px/1 var(--f-body); color: #fff; background: var(--exact); border: 0; border-radius: 8px; padding: 0 22px; min-height: 48px; cursor: pointer;
+}
+:root[data-theme="dark"] button#go { color: #0f1420; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) button#go { color: #0f1420; } }
+button#go:disabled { opacity: 0.55; cursor: progress; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  font: 400 14px/1 var(--f-mono); color: var(--ink); background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 999px; padding: 8px 12px; cursor: pointer;
+}
+.chip:hover { border-color: var(--exact); }
+.hint { margin: 0; font-size: 14px; color: var(--muted); }
+#status { font: 400 14px/1.4 var(--f-mono); color: var(--muted); min-height: 1.4em; }
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: grid; gap: 14px; min-width: 0; align-content: start; }
+.panel h2 { margin: 0; font: 700 20px/1.2 var(--f-display); }
+.who { font: 600 12px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.who.exact { color: var(--exact); } .who.paths { color: var(--muted); }
+.state { font: 600 clamp(24px, 4vw, 32px)/1.2 var(--f-mono); color: var(--exact); overflow-wrap: anywhere; }
+.verdict { font: 400 15px/1.4 var(--f-body); color: var(--muted); }
+.circle-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+svg.circle { width: 170px; height: 170px; max-width: 100%; flex: none; }
+.circle text { font: 400 12px var(--f-mono); fill: var(--muted); }
+.legend { font-size: 14px; color: var(--muted); min-width: 0; flex: 1 1 160px; margin: 0; }
+table { width: 100%; border-collapse: collapse; font: 400 14px/1.4 var(--f-mono); }
+td { padding: 6px 0; border-bottom: 1px solid var(--rule); }
+td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.badge { display: inline-block; font: 600 13px/1 var(--f-body); border-radius: 999px; padding: 6px 10px; }
+.badge.bad { color: var(--warn); background: var(--warn-soft); }
+.badge.good { color: var(--ok); background: var(--ok-soft); }
+.concl { margin: 0; font-size: 15px; }
+.report { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: grid; gap: 10px; min-width: 0; }
+.report h2 { margin: 0; font: 700 20px/1.2 var(--f-display); }
+.report p { margin: 0; color: var(--muted); font-size: 15px; max-width: 70ch; }
+pre { margin: 0; font: 400 13.5px/1.55 var(--f-mono); overflow-x: auto; white-space: pre; color: var(--ink); }
+footer { font-size: 14px; color: var(--muted); display: grid; gap: 6px; max-width: 80ch; }
+footer a { color: var(--exact); }
+@media (prefers-reduced-motion: no-preference) { .panel, .report { transition: opacity .2s ease; } }
+.stale { opacity: 0.55; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="kicker">FMSL · by MJ Celedon</span>
+    <h1>What does a formula do at 0/0?</h1>
+    <p class="lede">Type a formula in x and y (or x, y, z; or add a time t). FMSL computes every value it approaches near the origin, exactly and with proof. Beside it is what the usual "try a few paths" test would conclude.</p>
+  </header>
+
+  <form id="f" autocomplete="off">
+    <label class="lab" for="formula">Formula (a fraction of polynomials; use ^ for powers)</label>
+    <div class="row">
+      <input id="formula" name="formula" value="x^3*y/(x^6+y^2)" spellcheck="false" aria-describedby="status">
+      <button id="go" type="submit" disabled>Loading…</button>
+    </div>
+    <div class="chips" role="group" aria-label="Examples">
+      <button type="button" class="chip" data-f="x^3*y/(x^6+y^2)">x³y/(x⁶+y²)</button>
+      <button type="button" class="chip" data-f="x*y/(x^2+y^2)">xy/(x²+y²)</button>
+      <button type="button" class="chip" data-f="x^4/((x-y)^2+x^4)">x⁴/((x−y)²+x⁴)</button>
+      <button type="button" class="chip" data-f="x^2*y^2/(x^2+y^2)">x²y²/(x²+y²)</button>
+      <button type="button" class="chip" data-f="(x*y+y*z+z*x)/(x^2+y^2+z^2)">3 variables</button>
+      <button type="button" class="chip" data-f="(x^2-t*y^2)/(x^2+y^2)">moving target (t)</button>
+    </div>
+    <div id="status" role="status">Loading Python in your browser (about 10 seconds the first time)…</div>
+  </form>
+
+  <section class="panels" id="panels">
+    <div class="panel" id="exactPanel">
+      <span class="who exact">Exact · FMSL</span>
+      <h2>Every value it approaches</h2>
+      <div class="circle-row">
+        <svg class="circle" id="circle" viewBox="0 0 170 170" role="img" aria-label="The fluid state drawn on the circle of real numbers plus infinity"></svg>
+        <p class="legend">The real line closed up into a circle: 0 at the bottom, ∞ at the top. The answer is always a point, an arc, or the whole circle.</p>
+      </div>
+      <div class="state" id="state">[-1/2, 1/2]</div>
+      <div class="verdict" id="verdict">NO LIMIT (proven)</div>
+    </div>
+    <div class="panel" id="pathPanel">
+      <span class="who paths">The usual method</span>
+      <h2>Limits along a few paths</h2>
+      <table id="paths"><tbody>
+        <tr><td>along y = 0</td><td>0</td></tr><tr><td>along x = 0</td><td>0</td></tr>
+        <tr><td>along y = x</td><td>0</td></tr><tr><td>along y = -x</td><td>0</td></tr>
+        <tr><td>along y = 2x</td><td>0</td></tr><tr><td>along y = x^2</td><td>0</td></tr>
+        <tr><td>along y = -x^2</td><td>0</td></tr><tr><td>along x = y^2</td><td>0</td></tr>
+      </tbody></table>
+      <p class="concl" id="concl">All paths give 0: the path test concludes the limit is 0.</p>
+      <div><span class="badge bad" id="badge">Wrong: misses values the formula really takes</span></div>
+    </div>
+  </section>
+
+  <section class="report" id="reportBox">
+    <h2 id="reportTitle">Scaling map</h2>
+    <p id="reportNote">Which scale y ~ c·|x|^a decides the answer: at each scale the smallest-power terms win.</p>
+    <pre id="report">scaling map (y ~ c|x|^a; size of f ~ |x|^delta):
+  0 < a < 3        N ~ x^3*y,  D ~ y^2:  f -> 0
+  a = 3            BALANCE  N ~ x^3*y,  D ~ y^2 + x^6:  balance: f of order 1, depends on c
+  a > 3            N ~ x^3*y,  D ~ x^6:  f -> 0
+fluid state: [-1/2, 1/2]
+  the end -1/2 is decided on: y = c*|x|^3  (x>0); y = c*|x|^3  (x<0)
+  the end 1/2 is decided on: y = c*|x|^3  (x>0); y = c*|x|^3  (x<0)</pre>
+  </section>
+
+  <footer>
+    <span>Free and open source. Source, tests and the reproducible benchmark: <a href="https://github.com/dazbuddies-sketch/fmsl" rel="noopener">github.com/dazbuddies-sketch/fmsl</a>. Install: <code>pip install fmsl</code>.</span>
+    <span>In a benchmark of 1,120 expressions (Experiment A in the repository), FMSL was exact in all 224 multivariable cases; the path test found the exact set of values in 67.</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const FMSL_VERSION = "0.12.0";
+let py = null, analyze = null;
+
+// ---------- the circle R u {oo}: v -> angle, 0 at the bottom, oo at the top ----------
+function parseVal(s) {
+  s = s.trim();
+  if (s === "+oo") return Infinity; if (s === "-oo") return -Infinity;
+  const m = s.match(/^(-?[\d.]+)(?:\s*\(algebraic\))?$/); if (m) return parseFloat(m[1]);
+  const q = s.match(/^(-?\d+)\/(\d+)$/); if (q) return parseInt(q[1]) / parseInt(q[2]);
+  return NaN;
+}
+function comps(text) {   // "[a, b] u {c}" -> [[a,b],[c,c]]
+  const out = [];
+  for (const part of text.split(" u ")) {
+    let m = part.match(/^\[(.+), (.+)\]$/); if (m) { out.push([parseVal(m[1]), parseVal(m[2])]); continue; }
+    m = part.match(/^\{(.+)\}$/); if (m) { const v = parseVal(m[1]); out.push([v, v]); }
+  }
+  return out;
+}
+const ang = (v) => v === Infinity ? Math.PI : (v === -Infinity ? -Math.PI : 2 * Math.atan(v));   // 0 -> 0, +-oo -> +-pi (the same top point)
+function pt(theta, r) { return [85 + r * Math.sin(theta), 85 + r * Math.cos(theta)]; }   // bottom = 0
+function drawCircle(text) {
+  const css = getComputedStyle(document.documentElement);
+  const exact = css.getPropertyValue("--exact").trim(), rule = css.getPropertyValue("--rule").trim();
+  const R = 62; let s = "";
+  s += `<circle cx="85" cy="85" r="${R}" fill="none" stroke="${rule}" stroke-width="6"/>`;
+  for (const [lab, v] of [["0", 0], ["∞", Infinity], ["1", 1], ["-1", -1]]) {
+    const [x, y] = pt(ang(v), R + 14);
+    s += `<text x="${x}" y="${y + 4}" text-anchor="middle">${lab}</text>`;
+  }
+  for (const [a, b] of comps(text)) {
+    if (isNaN(a) || isNaN(b)) continue;
+    if (a === -Infinity && b === Infinity) { s += `<circle cx="85" cy="85" r="${R}" fill="none" stroke="${exact}" stroke-width="6"/>`; continue; }
+    const t1 = ang(a), t2 = ang(b);
+    if (Math.abs(t2 - t1) < 1e-9) { const [x, y] = pt(t1, R); s += `<circle cx="${x}" cy="${y}" r="7" fill="${exact}"/>`; continue; }
+    const [x1, y1] = pt(t1, R), [x2, y2] = pt(t2, R);
+    const large = (t2 - t1) > Math.PI ? 1 : 0;
+    s += `<path d="M ${x1} ${y1} A ${R} ${R} 0 ${large} 0 ${x2} ${y2}" fill="none" stroke="${exact}" stroke-width="7" stroke-linecap="round"/>`;
+  }
+  $("circle").innerHTML = s;
+}
+
+function setBusy(b, msg) { $("go").disabled = b || !analyze; $("go").textContent = b ? "Working…" : "Analyze"; if (msg !== undefined) $("status").textContent = msg; }
+
+function show(r, formula) {
+  const pp = $("pathPanel");
+  if (r.mode === "2d") {
+    $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
+    drawCircle(r.state);
+    $("paths").innerHTML = "<tbody>" + r.paths.map(([n, v]) => `<tr><td>${n}</td><td>${v}</td></tr>`).join("") + "</tbody>";
+    $("concl").textContent = r.path_conclusion.charAt(0).toUpperCase() + r.path_conclusion.slice(1) + ".";
+    const single = /^\{.*\}$/.test(r.state);
+    const pathSays = r.path_conclusion.startsWith("all paths give") ? r.path_conclusion.match(/give (\S+):/)[1] : null;
+    const ok = (single && pathSays !== null && r.state === "{" + pathSays + "}") || (!single && pathSays === null);
+    $("badge").className = "badge " + (ok ? "good" : "bad");
+    $("badge").textContent = ok ? (single ? "Agrees with the exact answer" : "Right that there is no limit, but cannot say which values")
+                                 : "Wrong: misses values the formula really takes";
+    pp.hidden = false;
+    $("reportTitle").textContent = "Scaling map";
+    $("reportNote").textContent = "Which scale y ~ c·|x|^a decides the answer: at each scale the smallest-power terms win.";
+    $("report").textContent = r.scaling.split("\n").slice(1).join("\n");
+  } else if (r.mode === "3d") {
+    $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
+    drawCircle(r.state); pp.hidden = true;
+    $("reportTitle").textContent = "Three variables";
+    $("reportNote").textContent = "The exact fluid state at the origin of a function of x, y and z, from FMSL's three-variable engine.";
+    $("report").textContent = `${formula}\nfluid state: ${r.state}\n${r.verdict}`;
+  } else {
+    $("state").textContent = "see the report below"; $("verdict").textContent = "a family with a time t";
+    $("circle").innerHTML = ""; pp.hidden = true;
+    $("reportTitle").textContent = "Moving target";
+    $("reportNote").textContent = "The fluid state at each time t, how its ends move, and the Celedon points: the exact times where it changes character.";
+    $("report").textContent = r.report;
+  }
+}
+
+async function run() {
+  const formula = $("formula").value.trim();
+  if (!formula || !analyze) return;
+  setBusy(true, "Computing exactly…");
+  for (const id of ["panels", "reportBox"]) $(id).classList.add("stale");
+  await new Promise(requestAnimationFrame);
+  try {
+    const t0 = performance.now();
+    const res = analyze(formula).toJs({ dict_converter: Object.fromEntries });
+    show(res, formula);
+    setBusy(false, `Done in ${((performance.now() - t0) / 1000).toFixed(2)} s · exact arithmetic, FMSL ${FMSL_VERSION}`);
+  } catch (e) {
+    const msg = String(e.message || e).trim().split("\n").filter(Boolean).pop();
+    setBusy(false, "Could not analyze this formula: " + msg + ". Use x, y (z, t), numbers, + - * / and ^ with whole-number powers.");
+  } finally {
+    for (const id of ["panels", "reportBox"]) $(id).classList.remove("stale");
+  }
+}
+
+$("f").addEventListener("submit", (e) => { e.preventDefault(); run(); });
+document.querySelectorAll(".chip").forEach((c) => c.addEventListener("click", () => { $("formula").value = c.dataset.f; run(); }));
+drawCircle($("state").textContent);
+
+(async () => {
+  try {
+    py = await loadPyodide();
+    await py.loadPackage("micropip");
+    const micropip = py.pyimport("micropip");
+    await micropip.install("fmsl==" + FMSL_VERSION);
+    const src = await (await fetch("explorer.py")).text();
+    py.FS.writeFile("/home/pyodide/explorer.py", src);
+    py.runPython("import sys; sys.path.insert(0, '/home/pyodide')");
+    analyze = py.pyimport("explorer").analyze;
+    setBusy(false, "Ready. Try your own formula, or an example above.");
+    document.body.dataset.ready = "1";
+  } catch (e) {
+    $("status").textContent = "Python could not load in this browser (" + (e.message || e) + "). The example above is precomputed.";
+  }
+})();
+</script>
+</body>
+</html>
