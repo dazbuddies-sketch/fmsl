@@ -424,6 +424,33 @@ What this shows, and what it does not:
   oscillating (the limit is 0, by the squeeze theorem). It is fixed in 0.10.0, together with a
   related problem (sums of essential factors now say "not decided" instead of borrowing a verdict).
 
+## The scaling map (DUS)
+
+MJ Celedon's FMS proposed *Dimensional Unit Scaling* (DUS): transformations across numerical
+scales. Its rigorous form is the step at the heart of FMSL's engine: probe the 0/0 point at every
+scale y ~ c·|x|^a (y has "dimension" a relative to x). At each scale the smallest-power terms
+dominate, so f behaves like |x|^δ times a constant. `fmsl.scaling` shows this as a map:
+
+```
+>>> from fmsl.scaling import describe_scaling
+>>> print(describe_scaling("(x^2-y^2)/(x^2+y^2)"))
+scaling map (y ~ c|x|^a; size of f ~ |x|^delta):
+  0 < a < 1        N ~ -y^2,  D ~ y^2:  f -> -1
+  a = 1            BALANCE  N ~ -y^2 + x^2,  D ~ y^2 + x^2:  balance: f of order 1, depends on c
+  a > 1            N ~ x^2,  D ~ x^2:  f -> 1
+fluid state: [-1, 1]
+```
+
+* **Regimes** are ranges of a where one term of N and one of D dominate; f → 0, → ∞, or a value.
+* **Balance scales** are the finitely many a where terms tie (corners of the Newton polygons).
+  Only there can the leading terms interact, so that is where the interesting values come from.
+  When the denominator's leading form vanishes at some c, the map says so: a finer scale (a
+  zoom) decides there, as for x⁴/((x − y)² + x⁴), whose end value 1 lives on y = x exactly.
+* **Which scale decides each end** of the fluid state is listed (the paths from the exact analysis).
+
+The regimes are computed exactly from the exponents; this is weighted (quasi-homogeneous)
+scaling, the standard idea behind Newton polygons and tropical geometry, shown to the user.
+
 ## Iteration: bifurcations are balance points
 
 Iterating a map x → f(x, r), new orbits are born at bifurcations. At a bifurcation point the
@@ -602,6 +629,7 @@ continuation of FMS: each FMS goal that could be made rigorous appears here in a
 | Celedon Point (Cₑ): x − x as balance | `C_e`, returned only when *proven* identically zero |
 | Infinity Flow (𝓘): infinity as directed flow | Poles report the exact direction to infinity from each side |
 | Siletz Precision System (𝓢): structured precision | Siletz bounds: proven error enclosures for emitted code |
+| Dimensional Unit Scaling (DUS): transformations across scales | The scaling map (`fmsl.scaling`): which scale y ~ c\|x\|^a decides each part of a fluid state |
 | Meta-Value Processor (𝓜): context-dependent values | `context` parameters |
 | Uniqueness (𝓤): values keep their identity | Values carry their full construction (provenance graph) |
 

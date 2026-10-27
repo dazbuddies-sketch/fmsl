@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+- The scaling map (`fmsl.scaling`), the rigorous form of DUS (Dimensional Unit Scaling) from MJ
+  Celedon's FMS: for a two-variable 0/0 point, the regimes of scales y ~ c|x|^a with their
+  dominant terms and behaviour, the balance scales (corners of the Newton polygons), a flag where
+  a finer scale (zoom) decides, and which scale decides each end of the fluid state.
+
 ## 0.11.0
 - One variable: `abs` and `sign`, analysed exactly on each side of 0 (near 0, f = c x^k (1 + o(1))
   fixes its sign on each side, so |f| = +-f and sign(f) = +-1 there).  An undecidable sign is
