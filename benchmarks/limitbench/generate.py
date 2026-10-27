@@ -103,6 +103,20 @@ def main():
         for b in (-2, -1, 1, 2):
             for c in range(-2, 3):
                 add(item_from_fmsl(f"(({a})*x^2+({b})*x*y+({c})*y^2)/(x^2+y^2)", "quadratic form", 1, "range = eigenvalues"))
+    # tier 1b: the limit EXISTS (so that "no limit" is not a winning default answer)
+    for p_ in range(0, 4):
+        for q_ in range(0, 4):
+            if p_ + q_ < 3: continue
+            for k in (1, 2, -1):
+                add(item_from_fmsl(f"({k})*x^{p_}*y^{q_}/(x^2+y^2)", "limit exists", 1, "numerator of higher order: limit 0"))
+    for c in (-3, -2, -1, 1, 2, 3):
+        for extra in ("x^3", "x*y^2", "x^2*y", "y^3", "x^4"):
+            add(item_from_fmsl(f"({c}*x^2+{c}*y^2+{extra})/(x^2+y^2)", "limit exists", 1, f"limit {c}"))
+            add(item_from_fmsl(f"({c}*x^4+{c}*y^2+{extra}*y)/(x^4+y^2)", "limit exists", 2, f"limit {c} at scale y ~ x^2"))
+    for a_ in (1, 2):
+        for b_ in (1, 2):
+            add(item_from_fmsl(f"x^{2*a_+1}*y^{2*b_}/(x^{2*a_}+y^{2*b_})", "limit exists", 2, "AM-GM bound times a vanishing factor"))
+            add(item_from_fmsl(f"(x^2*y^2)/(x^{2*a_}+y^{2*b_})", "limit exists", 2, "limit 0 when the degree wins"))
     # tier 2: path traps (curves y = c x^k that standard paths miss)
     for k in (3, 4, 5):
         for c in (1, 2, 3):

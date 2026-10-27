@@ -1,0 +1,450 @@
+{"id": "LB-0001", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1/2} u {2/5}"}
+{"id": "LB-0002", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {4/5}"}
+{"id": "LB-0003", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3/2} u {0} u {3/2} u {6/5}"}
+{"id": "LB-0004", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2}"}
+{"id": "LB-0005", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0006", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {3/2}"}
+{"id": "LB-0007", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1/2}"}
+{"id": "LB-0008", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1}"}
+{"id": "LB-0009", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3/2} u {0} u {3/2}"}
+{"id": "LB-0010", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0011", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0012", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0013", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0014", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0015", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0016", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0017", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0018", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0019", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0020", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0021", "tier": 1, "category": "AM-GM ratio", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0022", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {4/17}"}
+{"id": "LB-0023", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {8/17}"}
+{"id": "LB-0024", "tier": 1, "category": "AM-GM ratio", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {12/17} u {3/2}"}
+{"id": "LB-0025", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-14/5} u {-2} u {-3}"}
+{"id": "LB-0026", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-2} u {-5/2}"}
+{"id": "LB-0027", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-6/5} u {0}"}
+{"id": "LB-0028", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-2/5} u {-3/2} u {1} u {1/2}"}
+{"id": "LB-0029", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {1} u {2} u {2/5}"}
+{"id": "LB-0030", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-12/5} u {-2} u {-3/2} u {-5/2}"}
+{"id": "LB-0031", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-8/5}"}
+{"id": "LB-0032", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-3/2} u {-4/5} u {0}"}
+{"id": "LB-0033", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {0} u {1}"}
+{"id": "LB-0034", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {1/2} u {2} u {4/5}"}
+{"id": "LB-0035", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-3/2} u {-5/2} u {-8/5}"}
+{"id": "LB-0036", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-4/5}"}
+{"id": "LB-0037", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-3/2} u {0}"}
+{"id": "LB-0038", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {0} u {1} u {4/5}"}
+{"id": "LB-0039", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {1/2} u {2} u {8/5}"}
+{"id": "LB-0040", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-3} u {-6/5}"}
+{"id": "LB-0041", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-2} u {-2/5} u {-5/2}"}
+{"id": "LB-0042", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {0} u {2/5}"}
+{"id": "LB-0043", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-3/2} u {1} u {1/2} u {6/5}"}
+{"id": "LB-0044", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {1} u {2}"}
+{"id": "LB-0045", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-13/5} u {-2} u {-5/2}"}
+{"id": "LB-0046", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-9/5} u {0}"}
+{"id": "LB-0047", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/2} u {0} u {1/2}"}
+{"id": "LB-0048", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/5} u {1}"}
+{"id": "LB-0049", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {2} u {3/2} u {3/5}"}
+{"id": "LB-0050", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-11/5} u {-2}"}
+{"id": "LB-0051", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-3/2} u {-7/5}"}
+{"id": "LB-0052", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/5} u {0}"}
+{"id": "LB-0053", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {1} u {1/2} u {1/5}"}
+{"id": "LB-0054", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {2}"}
+{"id": "LB-0055", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-7/5}"}
+{"id": "LB-0056", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-3/2} u {-3/5}"}
+{"id": "LB-0057", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1/5}"}
+{"id": "LB-0058", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {1} u {1/2}"}
+{"id": "LB-0059", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {2} u {9/5}"}
+{"id": "LB-0060", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-2} u {-5/2}"}
+{"id": "LB-0061", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/5} u {-2} u {0}"}
+{"id": "LB-0062", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/2} u {0} u {1/2} u {3/5}"}
+{"id": "LB-0063", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {1} u {7/5}"}
+{"id": "LB-0064", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {11/5} u {2} u {3/2}"}
+{"id": "LB-0065", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-12/5} u {-2} u {0}"}
+{"id": "LB-0066", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/2} u {-8/5} u {0} u {1/2}"}
+{"id": "LB-0067", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-4/5} u {0} u {1}"}
+{"id": "LB-0068", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1} u {3/2}"}
+{"id": "LB-0069", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {2} u {4/5}"}
+{"id": "LB-0070", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-3/2} u {0}"}
+{"id": "LB-0071", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-6/5} u {0}"}
+{"id": "LB-0072", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2/5} u {0} u {1/2}"}
+{"id": "LB-0073", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {2/5}"}
+{"id": "LB-0074", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {2} u {3/2} u {6/5}"}
+{"id": "LB-0075", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-3/2} u {-6/5} u {0}"}
+{"id": "LB-0076", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2/5} u {0}"}
+{"id": "LB-0077", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1/2} u {2/5}"}
+{"id": "LB-0078", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {6/5}"}
+{"id": "LB-0079", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {2} u {3/2}"}
+{"id": "LB-0080", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-4/5} u {0}"}
+{"id": "LB-0081", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/2} u {0} u {1/2}"}
+{"id": "LB-0082", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {4/5}"}
+{"id": "LB-0083", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1} u {3/2} u {8/5}"}
+{"id": "LB-0084", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {12/5} u {2}"}
+{"id": "LB-0085", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-11/5} u {-2} u {-3/2} u {1} u {1/2}"}
+{"id": "LB-0086", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-7/5} u {1}"}
+{"id": "LB-0087", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-3/5} u {0} u {1} u {3/2}"}
+{"id": "LB-0088", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {1/5} u {2}"}
+{"id": "LB-0089", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {2} u {5/2}"}
+{"id": "LB-0090", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-9/5} u {0} u {1}"}
+{"id": "LB-0091", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {1} u {1/2}"}
+{"id": "LB-0092", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/5} u {0} u {1}"}
+{"id": "LB-0093", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {3/2} u {3/5}"}
+{"id": "LB-0094", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {2} u {7/5}"}
+{"id": "LB-0095", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {0} u {1}"}
+{"id": "LB-0096", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-1/5} u {1} u {1/2}"}
+{"id": "LB-0097", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {3/5}"}
+{"id": "LB-0098", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {3/2} u {7/5}"}
+{"id": "LB-0099", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {11/5} u {2}"}
+{"id": "LB-0100", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-3/2} u {-3/5} u {1} u {1/2}"}
+{"id": "LB-0101", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {1} u {1/5}"}
+{"id": "LB-0102", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0} u {1} u {3/2}"}
+{"id": "LB-0103", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {2} u {9/5}"}
+{"id": "LB-0104", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {13/5} u {2} u {5/2}"}
+{"id": "LB-0105", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {1} u {2}"}
+{"id": "LB-0106", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-6/5} u {2} u {3/2}"}
+{"id": "LB-0107", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2/5} u {0} u {2}"}
+{"id": "LB-0108", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {2} u {2/5} u {5/2}"}
+{"id": "LB-0109", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {2} u {3} u {6/5}"}
+{"id": "LB-0110", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-8/5} u {1/2} u {2}"}
+{"id": "LB-0111", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-4/5} u {0} u {1} u {2}"}
+{"id": "LB-0112", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {2} u {3/2}"}
+{"id": "LB-0113", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {2} u {4/5}"}
+{"id": "LB-0114", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {2} u {3/2} u {5/2} u {8/5}"}
+{"id": "LB-0115", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-4/5} u {1/2} u {2}"}
+{"id": "LB-0116", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {2}"}
+{"id": "LB-0117", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {2} u {3/2} u {4/5}"}
+{"id": "LB-0118", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {2} u {8/5}"}
+{"id": "LB-0119", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {12/5} u {2} u {3/2} u {5/2}"}
+{"id": "LB-0120", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-2/5} u {1} u {2}"}
+{"id": "LB-0121", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {2} u {2/5} u {3/2}"}
+{"id": "LB-0122", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {2} u {6/5}"}
+{"id": "LB-0123", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {1/2} u {2} u {5/2}"}
+{"id": "LB-0124", "tier": 1, "category": "quadratic form", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {1} u {14/5} u {2} u {3}"}
+{"id": "LB-0125", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0126", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0127", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0128", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0129", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0130", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0131", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0132", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0133", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0134", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0135", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0136", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0137", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0138", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0139", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0140", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0141", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0142", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0143", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0144", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0145", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0146", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0147", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0148", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0149", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0150", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0151", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0152", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0153", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0154", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0155", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0156", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0157", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0158", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0159", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0160", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0161", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0162", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0163", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0164", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -3"}
+{"id": "LB-0165", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0166", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0167", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0168", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0169", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0170", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0171", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0172", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0173", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0174", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -2"}
+{"id": "LB-0175", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0176", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0177", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0178", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0179", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0180", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0181", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0182", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0183", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0184", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0185", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0186", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0187", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0188", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0189", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0190", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0191", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0192", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0193", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0194", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 1"}
+{"id": "LB-0195", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0196", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0197", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0198", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0199", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0200", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0201", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0202", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0203", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0204", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 2"}
+{"id": "LB-0205", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0206", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0207", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0208", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0209", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0210", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0211", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0212", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0213", "tier": 1, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0214", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 3"}
+{"id": "LB-0215", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0216", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0217", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0218", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0219", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0220", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0221", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0222", "tier": 2, "category": "limit exists", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {4/17}"}
+{"id": "LB-0223", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0224", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0225", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0226", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/4}"}
+{"id": "LB-0227", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0228", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/9}"}
+{"id": "LB-0229", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0230", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0231", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0232", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/4}"}
+{"id": "LB-0233", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0234", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/9}"}
+{"id": "LB-0235", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0236", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0237", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0238", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/4}"}
+{"id": "LB-0239", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0240", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/9}"}
+{"id": "LB-0241", "tier": 2, "category": "hidden curve", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {4/17}"}
+{"id": "LB-0242", "tier": 2, "category": "hidden curve", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0243", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0244", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0245", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {16/17}"}
+{"id": "LB-0246", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {3}"}
+{"id": "LB-0247", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-3/4} u {-oo} u {0}"}
+{"id": "LB-0248", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0249", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0250", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0251", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0252", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1}"}
+{"id": "LB-0253", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0254", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0255", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0256", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-oo} u {0} u {1/2} u {1/4}"}
+{"id": "LB-0257", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0258", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT -1"}
+{"id": "LB-0259", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0260", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0}"}
+{"id": "LB-0261", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0262", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1}"}
+{"id": "LB-0263", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0}"}
+{"id": "LB-0264", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0265", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {1/2}"}
+{"id": "LB-0266", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0267", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0268", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0269", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0270", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0271", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0} u {2/3}"}
+{"id": "LB-0272", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2/11} u {-2/3} u {-2/5} u {0}"}
+{"id": "LB-0273", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0}"}
+{"id": "LB-0274", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0275", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0276", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-5/2} u {-56/41} u {0} u {5/2}"}
+{"id": "LB-0277", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0278", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {-2/23} u {-4} u {0}"}
+{"id": "LB-0279", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-2} u {0} u {2}"}
+{"id": "LB-0280", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0281", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-1/4} u {-oo} u {0} u {1/2}"}
+{"id": "LB-0282", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0283", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1/6} u {2/3}"}
+{"id": "LB-0284", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0285", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0286", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {0} u {2} u {4}"}
+{"id": "LB-0287", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0288", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0289", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0290", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0291", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0292", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0293", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-oo} u {0}"}
+{"id": "LB-0294", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0295", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0296", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0297", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0298", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1} u {4}"}
+{"id": "LB-0299", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0}"}
+{"id": "LB-0300", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0301", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0302", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0303", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0304", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0305", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0306", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/3}"}
+{"id": "LB-0307", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0308", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0309", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0310", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0311", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0312", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3} u {0}"}
+{"id": "LB-0313", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0314", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0315", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0316", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0317", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0318", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-2} u {-oo} u {0} u {1}"}
+{"id": "LB-0319", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3/2} u {0}"}
+{"id": "LB-0320", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {0} u {1/16} u {1/2}"}
+{"id": "LB-0321", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-oo} u {0} u {1/2}"}
+{"id": "LB-0322", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-2} u {0} u {1} u {2}"}
+{"id": "LB-0323", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0324", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0325", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0326", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0327", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {-2/3} u {-oo} u {0}"}
+{"id": "LB-0328", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0}"}
+{"id": "LB-0329", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-2} u {-oo} u {0}"}
+{"id": "LB-0330", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0331", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1} u {-3/2} u {1/2}"}
+{"id": "LB-0332", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0333", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2} u {3/4}"}
+{"id": "LB-0334", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0335", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0336", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0337", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0} u {1/3}"}
+{"id": "LB-0338", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0339", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0340", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0341", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3} u {-3/2} u {-3/5} u {0}"}
+{"id": "LB-0342", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0343", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-oo} u {0}"}
+{"id": "LB-0344", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0345", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0346", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2} u {0} u {2/3} u {32/41}"}
+{"id": "LB-0347", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0348", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1} u {-oo} u {0} u {1}"}
+{"id": "LB-0349", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0}"}
+{"id": "LB-0350", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0} u {1/3}"}
+{"id": "LB-0351", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0352", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0353", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0354", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3/2} u {-3/8} u {-oo} u {0}"}
+{"id": "LB-0355", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0356", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0357", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0358", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0359", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {3} u {6/5}"}
+{"id": "LB-0360", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0}"}
+{"id": "LB-0361", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0362", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0363", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0364", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/3}"}
+{"id": "LB-0365", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0366", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/2} u {0} u {1/2}"}
+{"id": "LB-0367", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0368", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0369", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0370", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0371", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1}"}
+{"id": "LB-0372", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1/4}"}
+{"id": "LB-0373", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0374", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0375", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1/2}"}
+{"id": "LB-0376", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-oo} u {0} u {1/2}"}
+{"id": "LB-0377", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0378", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-2/3} u {-4/3} u {0} u {2/3}"}
+{"id": "LB-0379", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {-1/5} u {0} u {1} u {1/4}"}
+{"id": "LB-0380", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0381", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-oo} u {0} u {1/2}"}
+{"id": "LB-0382", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0}"}
+{"id": "LB-0383", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1} u {1/2} u {2} u {2/3}"}
+{"id": "LB-0384", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0385", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0} u {1}"}
+{"id": "LB-0386", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0387", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0388", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-3/4} u {-3/7} u {0}"}
+{"id": "LB-0389", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0}"}
+{"id": "LB-0390", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0391", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0392", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0393", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0394", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0395", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0396", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0397", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-oo} u {0} u {1/2}"}
+{"id": "LB-0398", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0399", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0400", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0401", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0402", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0403", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0404", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0405", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-oo} u {0}"}
+{"id": "LB-0406", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-oo} u {0}"}
+{"id": "LB-0407", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-3/2} u {-oo} u {0} u {3/2}"}
+{"id": "LB-0408", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-oo} u {0}"}
+{"id": "LB-0409", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/3} u {-oo} u {0} u {1/3} u {2/3}"}
+{"id": "LB-0410", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0411", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3/8} u {0} u {3/2} u {6/11}"}
+{"id": "LB-0412", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0413", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {0} u {1/3} u {2/3}"}
+{"id": "LB-0414", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1}"}
+{"id": "LB-0415", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0416", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/3} u {-oo} u {0} u {1/3}"}
+{"id": "LB-0417", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0418", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0419", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/2}"}
+{"id": "LB-0420", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0421", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0422", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0423", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0424", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0425", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {-1/4} u {0}"}
+{"id": "LB-0426", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0427", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3} u {-3/2} u {-3/4} u {0} u {3/2}"}
+{"id": "LB-0428", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0429", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0430", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0431", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0} u {1} u {1/2}"}
+{"id": "LB-0432", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0433", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0434", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0435", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1/2} u {0}"}
+{"id": "LB-0436", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0437", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0438", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-1} u {0}"}
+{"id": "LB-0439", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0440", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0441", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0442", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0443", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {0} u {1/3}"}
+{"id": "LB-0444", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-1/2} u {-2} u {-oo} u {0} u {2}"}
+{"id": "LB-0445", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0446", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0447", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {-3} u {0}"}
+{"id": "LB-0448", "tier": 3, "category": "random rational", "trap": true, "parsed": true, "verdict": false, "exact": false, "answer_tail": "ANSWER: LIMIT 0"}
+{"id": "LB-0449", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
+{"id": "LB-0450", "tier": 3, "category": "random rational", "trap": false, "parsed": true, "verdict": true, "exact": false, "answer_tail": "ANSWER: SET {+oo} u {-oo} u {0}"}
