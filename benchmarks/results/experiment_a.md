@@ -19,7 +19,7 @@ Unresolved = no answer, undecided, timed out, or not supported. Several variable
 | 4 oscillatory | FMSL | 112 | 112 | 0 | 0 | - | 0.0 |
 | 4 oscillatory | SymPy | 112 | 112 | 0 | 0 | - | 0.1 |
 | 4 oscillatory | float | 112 | 77 | 35 | 0 | - | 0.0 |
-| 5 piecewise | FMSL | 112 | 0 | 0 | 112 | - | 0.0 |
+| 5 piecewise | FMSL | 112 | 112 | 0 | 0 | - | 0.0 |
 | 5 piecewise | SymPy | 112 | 112 | 0 | 0 | - | 0.1 |
 | 5 piecewise | float | 112 | 112 | 0 | 0 | - | 0.0 |
 | 6 catastrophic cancellation | FMSL | 112 | 112 | 0 | 0 | - | 0.1 |
@@ -36,6 +36,6 @@ Unresolved = no answer, undecided, timed out, or not supported. Several variable
 
 | method | n | correct | wrong | unresolved | time (s) |
 |---|---|---|---|---|---|
-| FMSL | 1120 | 1008 | 0 | 112 | 1.8 |
-| SymPy | 1120 | 963 | 147 | 10 | 2.8 |
+| FMSL | 1120 | 1120 | 0 | 0 | 1.8 |
+| SymPy | 1120 | 963 | 147 | 10 | 2.9 |
 | float | 896 | 557 | 279 | 60 | 0.1 |

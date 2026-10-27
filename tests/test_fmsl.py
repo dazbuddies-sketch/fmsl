@@ -193,3 +193,22 @@ class EssentialFactors(unittest.TestCase):
         t = self._at0("sin(1/x)-sin(1/x)")
         self.assertIn("not decided", t)
         self.assertNotIn("oscillates", t)
+
+
+class AbsAndSign(unittest.TestCase):
+    def _at0(self, expr):
+        from fmsl.compiler import run
+        lines = []
+        run(f"fluid f(x) = {expr}\nat x -> 0: f\n", out=lines.append)
+        return " ".join(lines)
+
+    def test_jump(self):
+        self.assertIn("x->0-: -2; x->0+: 2; no limit [proven]", self._at0("abs(2*x)/x"))
+        self.assertIn("x->0-: 2; x->0+: 4", self._at0("(abs(x)+3*x)/x"))
+
+    def test_limit_through_abs(self):
+        self.assertIn("limit 1 on both sides", self._at0("abs(x^3-x^2)/x^2"))      # |x - 1|
+        self.assertIn("limit 0 on both sides", self._at0("abs(sin(x))*sin(1/x)"))   # squeeze
+
+    def test_sign_of_a_transcendental(self):
+        self.assertIn("x->0-: -2; x->0+: 2", self._at0("sign(sin(x))*x^2/(1-cos(x))"))

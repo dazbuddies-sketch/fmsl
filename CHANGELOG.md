@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+- One variable: `abs` and `sign`, analysed exactly on each side of 0 (near 0, f = c x^k (1 + o(1))
+  fixes its sign on each side, so |f| = +-f and sign(f) = +-1 there).  An undecidable sign is
+  reported, never guessed; code generation for abs/sign is refused for now.
+- Experiment A rerun: FMSL 1120 correct, 0 wrong, 0 unresolved (was 1008 / 0 / 112); SymPy
+  unchanged at 963 / 147 / 10.  A repeat run of 0.10.0 reproduced its tables exactly.
+
 ## 0.10.1
 - The special times of `fmsl.moving` are named **Celedon points**, by MJ Celedon, after the
   Celedon Point of the Fluid Mathematics System (a transition between mathematical regimes):
