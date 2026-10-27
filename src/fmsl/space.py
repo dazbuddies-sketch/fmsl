@@ -33,6 +33,9 @@ from .plane import (bclean, bdc, bdd, in_d, at_c, has_real_points, image_2d, ima
                     bdivexact, resultant_d, beval, _poly_roots_in, _samples, _gcd_any)
 from .multivar import profile_polys
 
+# zoom at irrational (real algebraic) points; off until it passes the cross-checks
+ALLOW_ALG = False
+
 MAX_DEPTH = 4
 BUDGET = 4000
 
@@ -317,12 +320,12 @@ def _common_points(A_, B_):
         cs = _poly_roots_in(in_d(U)[0])
         for c0 in cs:
             if cmp(c0, 0) == 0: continue
-            if isinstance(c0, A): other = True; continue
+            if isinstance(c0, A) and not ALLOW_ALG: other = True; continue
             gv = at_c(V, c0)
             if not gv: other = True; continue                 # V vanishes on the whole line
             for d0 in _poly_roots_in(gv):
                 if cmp(d0, 0) == 0: continue
-                if isinstance(d0, A): other = True
+                if isinstance(d0, A) and not ALLOW_ALG: other = True
                 else: pts.append((c0, d0))
         return pts, other
     res = resultant_d(A_, B_)
@@ -331,10 +334,10 @@ def _common_points(A_, B_):
         if cmp(c0, 0) == 0: continue
         gg = _gcd_any(at_c(A_, c0), at_c(B_, c0))
         if len(gg) <= 1: continue
-        if isinstance(c0, A) or any(isinstance(v, A) for v in gg): other = True; continue
+        if (isinstance(c0, A) or any(isinstance(v, A) for v in gg)) and not ALLOW_ALG: other = True; continue
         for d0 in _poly_roots_in(gg):
             if cmp(d0, 0) == 0: continue
-            if isinstance(d0, A): other = True
+            if isinstance(d0, A) and not ALLOW_ALG: other = True
             else: pts.append((c0, d0))
     return pts, other
 
@@ -510,8 +513,6 @@ def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zer
         out.append({"kind": "unresolved", "why": "zoom at irrational or non-isolated special points", "where": where})
     for (c0, d0) in pts:
         _do_zoom(N, D, a, b, sigma, ("yz", (c0, d0)), depth, label, where, out, budget, ctx)
-
-ALLOW_ALG = False
 
 def _do_zoom(N, D, a, b, sigma, what, depth, label, where, out, budget, ctx=None):
     if depth >= MAX_DEPTH:
