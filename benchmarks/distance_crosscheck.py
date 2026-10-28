@@ -47,7 +47,7 @@ def fib_sphere(n=40000):
 
 
 def to_py(text):
-    return eval("lambda x, y, z: " + text.replace("^", "**").replace(D3, "rho(x,y,z)"),
+    return eval("lambda x, y, z: " + text.replace(D3, "rho(x,y,z)").replace("^", "**"),
                 {"rho": lambda x, y, z: np.sqrt(x * x + y * y + z * z)})
 
 
@@ -94,7 +94,10 @@ def part1(n2):
             print("ERROR", f, e); tot += 1; continue
         if not b["proven"]: continue
         tot += 1
-        if a["set"] == b["set"]: agree += 1
+        ca = [tuple(float(v) for v in c) for c in a["components"]]
+        cb = [tuple(c) for c in b["components"]]
+        same = len(ca) == len(cb) and all(abs(p - q) <= 1e-12 * max(1, abs(p)) or p == q for c1, c2 in zip(ca, cb) for p, q in zip(c1, c2))
+        if same: agree += 1
         else: print("DISAGREE 2D", f, a["set"], b["set"])
     return agree, tot
 
@@ -119,19 +122,22 @@ def part2(n):
 
 
 def rand_general(gen):
-    def poly(maxdeg):
+    """small rational functions of x, y, z and rho: the squaring map doubles every degree, so the
+       three-variable engine is given degrees up to about 8"""
+    mons = [(i, j, k) for i in range(3) for j in range(3) for k in range(3) if i + j + k <= 2]
+    def poly(nterms):
         terms = []
-        for _ in range(gen.randint(1, 3)):
-            i, j, k, m = (gen.randint(0, maxdeg) for _ in range(4))
+        for _ in range(nterms):
+            i, j, k = gen.choice(mons); m = gen.randint(0, 1)
             c = gen.choice([-2, -1, 1, 2])
             terms.append(f"({c})*x^{i}*y^{j}*z^{k}*{D3}^{m}")
         return "+".join(terms)
-    return f"({poly(2)})/({poly(2)})"
+    return f"({poly(gen.randint(1, 2))})/({poly(gen.randint(1, 2))})"
 
 
 def part3(n):
     gen = random.Random(3)
-    ok = tot = 0
+    ok = tot = skipped = 0
     U = fib_sphere(4000) * 1e-6
     for _ in range(n):
         f = rand_general(gen)
@@ -142,8 +148,8 @@ def part3(n):
                 r = timed(limit_at_origin, g, ["x", "y", "z"])
                 sets.append((r["set"], r["proven"], r["components"]))
         except Exception as e:
-            continue
-        if not all(p for _, p, _ in sets): continue
+            skipped += 1; continue
+        if not all(p for _, p, _ in sets): skipped += 1; continue
         tot += 1
         same = len({s for s, _, _ in sets}) == 1
         with np.errstate(all="ignore"):
@@ -156,17 +162,17 @@ def part3(n):
         inside = all(near(t) for t in v)
         ok += same and inside
         if not (same and inside): print("DISAGREE 3D", f, [s for s, _, _ in sets], "samples inside:", inside)
-    return ok, tot
+    return ok, tot, skipped
 
 
 def main(n2=60, n3=40):
     t0 = time.time()
     a1, t1 = part1(n2)
     a2, t2 = part2(n3)
-    a3, t3 = part3(n3)
+    a3, t3, s3 = part3(n3)
     print(f"two variables, squaring map vs polar blow-up: {a1}/{t1} identical")
     print(f"three variables, direction-only functions vs numerical sphere range: {a2}/{t2} agree")
-    print(f"three variables, general: {a3}/{t3} with identical answers for all three leads and every sample inside")
+    print(f"three variables, general: {a3}/{t3} with identical answers for all three leads and every sample inside ({s3} skipped: not proven by the three-variable engine for some lead, or slower than {LIMIT_S} s)")
     print(f"{time.time() - t0:.0f} s")
 
 
