@@ -111,13 +111,16 @@ def _two_variables(expr):
     return comps, proven, verdict + ("; " + "; ".join(reasons) if reasons else ""), witnesses
 
 
-def _distance(expr):
-    """two variables with the distance sqrt(x^2+y^2): the polar blow-up of fmsl.radial"""
-    from fmsl.radial import radial_limit
-    r = radial_limit(expr)
-    if r["components"] is None: return None, False, " ".join(r["notes"]), []
-    comps = [(_f(a), _f(b)) for a, b in r["components"]]
-    return comps, bool(r["proven"]), "distance r = sqrt(x^2+y^2) by the polar blow-up; " + "; ".join(r["notes"]), []
+def _with_distance(expr, vs, point):
+    """a Euclidean distance under the square root: square it away (fmsl.distance) and use the
+       rational engines on the result; witnesses are dropped (they live in the new variables)"""
+    from fmsl.distance import reduce_distance
+    g = reduce_distance(expr, vs, point)
+    r = limit_at_origin(g, vs)
+    r.update(expression=expr, witnesses=[],
+             explanation="distance removed by the squaring map (fmsl.distance); " + r["explanation"])
+    if point is not None: r["point"] = [str(Fr(p)) for p in point]
+    return r
 
 
 def _three_variables(expr):
@@ -137,8 +140,8 @@ def limit_at_origin(expr, variables=None):
     vs = _variables(expr, variables)
     if len(vs) == 1:
         comps, proven, expl, wit = _one_variable(_rename(expr, vs, ["x"]), "x")
-    elif len(vs) == 2 and "sqrt" in expr:
-        comps, proven, expl, wit = _distance(_rename(expr, vs, ["x", "y"]))
+    elif "sqrt" in expr:
+        return _with_distance(expr, vs, None)
     elif len(vs) == 2:
         comps, proven, expl, wit = _two_variables(_rename(expr, vs, ["x", "y"]))
     elif len(vs) == 3:
@@ -299,6 +302,9 @@ def limit_at(expr, point, variables=None, side=None):
     vs = _variables(expr, variables)
     pts = list(point) if isinstance(point, (list, tuple)) else [point]
     if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
+    if "sqrt" in expr and len(vs) > 1:
+        if side is not None: raise ValueError("one-sided limits are for one variable")
+        return _with_distance(expr, vs, pts)
     shifted = expr
     tmp = {v: f"__s{k}__" for k, v in enumerate(vs)}
     for v, t in tmp.items(): shifted = re.sub(rf"\b{re.escape(v)}\b", t, shifted)

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.21.0
+- Distances in three variables: `fmsl.distance` removes sqrt(x^2+y^2+z^2) (or a distance in two
+  of three variables, or in two variables) exactly by the squaring map x = u^2 - v^2 - w^2,
+  y = 2uv, z = 2uw, under which the distance is u^2 + v^2 + w^2. The map is onto and |q|^2 is the
+  distance, so the fluid state is that of a rational function at 0, proven by the existing engines.
+- `limit_at_origin`, `limit_at` (distance to any rational point), `check_claim` and the MCP tools
+  use it in two and three variables.
+- Cross-check `benchmarks/distance_crosscheck.py`: in two variables the squaring map and the polar
+  blow-up of `fmsl.radial` (unrelated methods) must agree; in three variables, direction-only
+  functions against numerical sphere ranges, and general functions across the three choices of
+  leading variable, with sampled values inside every proven set.
+
 ## 0.20.0
 - Distances: `fmsl.radial.radial_limit` gives the exact fluid state of functions of x, y and
   r = sqrt(x^2+y^2) at a point, by the rational polar blow-up (generic directions as an exact
