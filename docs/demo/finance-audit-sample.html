@@ -1,0 +1,158 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Sample formula audit</title>
+<style>
+:root { --ink:#1b1f24; --muted:#5b6470; --bg:#fff; --rule:#e3e6ea; --bad:#b42318; --ok:#067647; --warn:#b54708; }
+@media (prefers-color-scheme: dark) { :root { --ink:#e8eaed; --muted:#a6adb7; --bg:#15181c; --rule:#2b3036; --bad:#f97066; --ok:#47cd89; --warn:#fdb022; } }
+body { background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; margin:0; padding:24px 16px; }
+main { max-width:1180px; margin:0 auto; } h1 { margin:0 0 4px; font-size:26px; } .muted, small { color:var(--muted); }
+.summary { display:flex; gap:12px; flex-wrap:wrap; margin:20px 0; } .card { border:1px solid var(--rule); border-radius:10px; padding:12px 16px; min-width:150px; }
+.card b { font-size:24px; display:block; } table { border-collapse:collapse; width:100%; font-size:13.5px; }
+th, td { border-bottom:1px solid var(--rule); padding:8px 6px; text-align:left; vertical-align:top; }
+.wrap { overflow-x:auto; } td.bad { color:var(--bad); font-weight:600; } code { font-size:12.5px; }
+.status { font-weight:700; } .risk, .unstable, .failsatpoint, .inaccurate { color:var(--bad); } .ok { color:var(--ok); } .pole { color:var(--warn); }
+pre { background:rgba(127,127,127,.08); padding:12px; overflow-x:auto; font-size:12px; border-radius:8px; }
+details { border:1px solid var(--rule); border-radius:8px; padding:8px 12px; margin:8px 0; } summary { cursor:pointer; font-weight:600; }
+</style></head><body><main>
+<h1>Formula audit</h1>
+<div class="muted">Public sample, prepared by MJ Celedon · 2026-10-28 · FMSL Finance Audit 0.1.0 on the FMSL engine 0.19.0</div>
+<div class="summary">
+<div class="card"><b>16</b>formulas audited</div>
+<div class="card"><b class="risk">13</b>fail exactly at the point (e.g. a 0% rate)</div>
+<div class="card"><b class="risk">1</b>lose accuracy at realistic distances (down to 1e-10)</div>
+<div class="card"><b class="pole">2</b>genuinely blow up (sides reported)</div>
+<div class="card"><b class="unstable">1</b>have no stable answer</div>
+<div class="card"><b class="ok">0</b>accurate as written</div></div>
+<h2>What each formula does at its problem point</h2>
+<p class="muted">The value at the point is proven exactly (exact rational arithmetic). "As written, at
+the point" is what ordinary double-precision code computes exactly there. The next five columns show
+its relative error at distance h from the point (the worse of the two sides); red means above 1e-6. The last column is the measured error of the
+safe replacement in the appendix.</p>
+<div class="wrap"><table><thead><tr><th>Formula</th><th>Point</th><th>Exact value</th><th>Status</th><th>As written, at the point</th><th>1e-04</th><th>1e-06</th><th>1e-08</th><th>1e-10</th><th>1e-12</th><th>Safe version</th></tr></thead>
+<tbody><tr>
+<td><b>Loan payment per 1 borrowed</b><br><code>r*(1+r)^n/((1+r)^n-1)</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>1/12<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.0e-13</td><td class="">7.4e-11</td><td class="">5.6e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>3.7e-16</td></tr><tr>
+<td><b>Present-value annuity factor</b><br><code>(1-(1+r)^(-n))/r</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>12<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">8.6e-14</td><td class="">8.0e-11</td><td class="">5.8e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>0.0e+00</td></tr><tr>
+<td><b>Future-value annuity factor</b><br><code>((1+r)^n-1)/r</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>12<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.0e-13</td><td class="">7.4e-11</td><td class="">5.6e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>1.1e-15</td></tr><tr>
+<td><b>Sinking fund factor</b><br><code>r/((1+r)^n-1)</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>1/12<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.0e-13</td><td class="">7.4e-11</td><td class="">5.6e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>3.6e-16</td></tr><tr>
+<td><b>Annuity-due present-value factor</b><br><code>(1-(1+r)^(-n))*(1+r)/r</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>12<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">8.6e-14</td><td class="">8.0e-11</td><td class="">5.8e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>1.6e-16</td></tr><tr>
+<td><b>Loan balance after k payments (per 1 borrowed)</b><br><code>((1+r)^n-(1+r)^k)/((1+r)^n-1)</code><br><small>n = 12, k = 4</small></td>
+<td><code>r = 0</code></td>
+<td>2/3<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.4e-13</td><td class="">6.7e-12</td><td class="">5.7e-10</td><td class="">2.0e-10</td><td class="">2.0e-12</td>
+<td>2.1e-16</td></tr><tr>
+<td><b>Macaulay duration of a level annuity</b><br><code>(1+r)/r-n/((1+r)^n-1)</code><br><small>n = 12</small></td>
+<td><code>r = 0</code></td>
+<td>13/2<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.6e-10</td><td class="bad">1.1e-05</td><td class="bad">8.6e-02</td><td class="bad">1.3e+02</td><td class="bad">1.4e+07</td>
+<td>1.2e-16</td></tr><tr>
+<td><b>Growing annuity factor at r = g</b><br><code>(1-((1+g)/(1+r))^n)/(r-g)</code><br><small>n = 12, g = 1/50</small></td>
+<td><code>r = 1/50</code></td>
+<td>200/17<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">6.2e-13</td><td class="">1.4e-10</td><td class="">2.1e-09</td><td class="">8.6e-07</td><td class="bad">1.6e-04</td>
+<td>1.7e-15</td></tr><tr>
+<td><b>Monthly nominal rate / annual effective rate</b><br><code>((1+r)^(1/12)-1)*12/r</code></td>
+<td><code>r = 0</code></td>
+<td>1<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">5.7e-12</td><td class="">1.7e-10</td><td class="">8.7e-08</td><td class="">8.3e-08</td><td class="bad">8.0e-04</td>
+<td>0.0e+00</td></tr><tr>
+<td><b>Effective annual rate / nominal rate (monthly compounding)</b><br><code>((1+r/m)^m-1)/r</code><br><small>m = 12</small></td>
+<td><code>r = 0</code></td>
+<td>1<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">7.3e-12</td><td class="">1.7e-10</td><td class="">7.8e-08</td><td class="">8.3e-08</td><td class="bad">8.0e-04</td>
+<td>1.4e-15</td></tr><tr>
+<td><b>Continuous rate / simple rate</b><br><code>log(1+r)/r</code></td>
+<td><code>r = 0</code></td>
+<td>1<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">1.1e-13</td><td class="">8.2e-11</td><td class="">6.1e-09</td><td class="">8.3e-08</td><td class="bad">8.9e-05</td>
+<td>1.1e-16</td></tr><tr>
+<td><b>Continuous annuity factor</b><br><code>(1-exp(-r*T))/r</code><br><small>T = 10</small></td>
+<td><code>r = 0</code></td>
+<td>10<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">4.3e-14</td><td class="">9.7e-12</td><td class="">5.7e-10</td><td class="">8.2e-08</td><td class="">8.3e-08</td>
+<td>2.0e-16</td></tr><tr>
+<td><b>Continuous-rate loan payment per 1 borrowed</b><br><code>r/(1-exp(-r*T))</code><br><small>T = 10</small></td>
+<td><code>r = 0</code></td>
+<td>1/10<br><small>proven · matches the textbook value</small></td>
+<td class="status failsatpoint">FAILS AT POINT</td>
+<td class="bad">division by zero</td>
+<td class="">4.3e-14</td><td class="">9.7e-12</td><td class="">5.7e-10</td><td class="">8.2e-08</td><td class="">8.3e-08</td>
+<td>2.5e-16</td></tr><tr>
+<td><b>Growing perpetuity factor at r = g</b><br><code>1/(r-g)</code><br><small>g = 1/50</small></td>
+<td><code>r = 1/50</code></td>
+<td>from below -oo, from above +oo<br><small>proven · matches the textbook value</small></td>
+<td class="status pole">POLE</td>
+<td class="">-</td>
+<td colspan="5">no finite value: the formula really blows up here (see the sides)</td>
+<td>-</td></tr><tr>
+<td><b>Perpetuity factor at r = 0</b><br><code>1/r</code></td>
+<td><code>r = 0</code></td>
+<td>from below -oo, from above +oo<br><small>proven · matches the textbook value</small></td>
+<td class="status pole">POLE</td>
+<td class="">-</td>
+<td colspan="5">no finite value: the formula really blows up here (see the sides)</td>
+<td>-</td></tr></tbody></table></div>
+<h2>Formulas of several variables</h2>
+<div class="wrap"><table><thead><tr><th>Formula</th><th>All values approached</th><th>Status</th><th>Meaning</th></tr></thead>
+<tbody><tr><td><b>Two-asset minimum-variance weight, identical assets</b><br><code>(1-(1-e)*(1+d))/((1+d)^2+1-2*(1-e)*(1+d))</code><br>
+<small>d = sigma1/sigma2 - 1 (volatility gap), e = 1 - rho (correlation gap)</small></td><td>[-oo, +oo]<br><small>proven</small></td>
+<td class="status unstable">UNSTABLE</td><td>As two assets become identical, the hedge weight has no limit: any value is possible.</td></tr></tbody></table></div>
+<h2>Check it yourself: the exact values by hand</h2>
+<p class="muted">You do not need to trust our software for the exact values. Each one follows from a
+one-line textbook argument, given here so a reviewer can confirm it independently.</p>
+<div class="wrap"><table><thead><tr><th>Formula</th><th>Exact value</th><th>Why (by hand)</th></tr></thead><tbody>
+<tr><td>Loan payment per 1 borrowed</td><td>1/12</td><td>As r -&gt; 0, (1+r)^n - 1 ~ n r, so r(1+r)^n/((1+r)^n - 1) -&gt; 1/n = 1/12.</td></tr><tr><td>Present-value annuity factor</td><td>12</td><td>1 - (1+r)^(-n) ~ n r, so the factor -&gt; n = 12.</td></tr><tr><td>Future-value annuity factor</td><td>12</td><td>(1+r)^n - 1 ~ n r, so the factor -&gt; n = 12.</td></tr><tr><td>Sinking fund factor</td><td>1/12</td><td>The reciprocal of the future-value factor: -&gt; 1/n = 1/12.</td></tr><tr><td>Annuity-due present-value factor</td><td>12</td><td>The present-value factor times (1+r) -&gt; n * 1 = 12.</td></tr><tr><td>Loan balance after k payments (per 1 borrowed)</td><td>2/3</td><td>At r = 0 the balance falls linearly: (n - k)/n = 8/12 = 2/3.</td></tr><tr><td>Macaulay duration of a level annuity</td><td>13/2</td><td>At r = 0 every payment has equal weight: the mean time (1 + ... + n)/n = (n+1)/2 = 13/2.</td></tr><tr><td>Growing annuity factor at r = g</td><td>200/17</td><td>At r = g each of the n payments is worth 1/(1+g) today: n/(1+g) = 12/1.02 = 200/17.</td></tr><tr><td>Monthly nominal rate / annual effective rate</td><td>1</td><td>(1+r)^(1/12) - 1 ~ r/12, so 12 times it, divided by r, -&gt; 1.</td></tr><tr><td>Effective annual rate / nominal rate (monthly compounding)</td><td>1</td><td>(1 + r/m)^m - 1 ~ r, so the ratio -&gt; 1.</td></tr><tr><td>Continuous rate / simple rate</td><td>1</td><td>log(1+r) ~ r, so the ratio -&gt; 1.</td></tr><tr><td>Continuous annuity factor</td><td>10</td><td>1 - exp(-rT) ~ r T, so the factor -&gt; T = 10.</td></tr><tr><td>Continuous-rate loan payment per 1 borrowed</td><td>1/10</td><td>The reciprocal of the continuous annuity factor: -&gt; 1/T = 1/10.</td></tr><tr><td>Growing perpetuity factor at r = g</td><td>-oo / +oo</td><td>1/(r - g): below g it is negative and unbounded, above g positive and unbounded.</td></tr><tr><td>Perpetuity factor at r = 0</td><td>-oo / +oo</td><td>1/r: -oo from negative rates, +oo from positive rates.</td></tr>
+</tbody></table></div>
+<h2>Appendix: safe replacements</h2>
+<p class="muted">In a client audit, this appendix contains a short, readable drop-in replacement for each formula with its measured accuracy. Omitted from this public sample.</p>
+<h2>Method and validation</h2>
+<p>Exact values come from FMSL's proven one-variable and multivariable engines; nothing is estimated,
+and each is also derived by hand above. The safe replacements are short, readable functions (an exact
+value at the point, a polynomial near it, the original formula elsewhere) that can be reviewed line by
+line.
+Floating-point errors are measured, not proven. For points other than 0, the measured error also
+includes the rounding of the point itself. As a check of the audit itself, 16 of
+16 results match the textbook closed forms.</p>
+</main></body></html>
