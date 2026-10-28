@@ -391,6 +391,13 @@ limit_at_origin("z/sqrt(x^2+y^2)")["set"]                  # [-oo, +oo]   (a cyl
 limit_at("(x-1)/sqrt((x-1)^2+(y-2)^2+z^2)", [1, 2, 0])     # other points: the distance to that point
 ```
 
+Checked by `benchmarks/distance_crosscheck.py`: in two variables the squaring map and the polar
+blow-up (unrelated methods) give identical sets on all 74 functions; in three variables, 36 of 36
+direction-only functions match a numerical search over the sphere, and 13 of 13 general functions
+give the same proven answer for all three choices of leading variable, with every sampled value
+inside it (27 more were skipped because the engine could not finish a proof for some choice within
+60 s; none disagreed).
+
 Write `r` or `sqrt(x^2+y^2)`; other square roots are refused with a clear message. Checked by
 `benchmarks/radial_crosscheck.py`: 74 functions (14 hand-picked, 60 random) against the exact
 image of the circle of radius 10⁻¹² — all agree, and deliberately damaged answers (an end moved
