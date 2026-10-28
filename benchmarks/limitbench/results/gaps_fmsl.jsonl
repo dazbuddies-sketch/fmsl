@@ -1,0 +1,225 @@
+{"id": "LBG-0001", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5] u [-1, +oo]"}
+{"id": "LBG-0002", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [2, +oo]"}
+{"id": "LBG-0003", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4, +oo]"}
+{"id": "LBG-0004", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.82843] u [-0.171573, +oo]"}
+{"id": "LBG-0005", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.82843] u [2.82843, +oo]"}
+{"id": "LBG-0006", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.828427] u [4.82843, +oo]"}
+{"id": "LBG-0007", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0008", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.4641] u [3.4641, +oo]"}
+{"id": "LBG-0009", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.4641] u [5.4641, +oo]"}
+{"id": "LBG-0010", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -7.47214] u [1.47214, +oo]"}
+{"id": "LBG-0011", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4.47214] u [4.47214, +oo]"}
+{"id": "LBG-0012", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.47214] u [6.47214, +oo]"}
+{"id": "LBG-0013", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5] u [-1, +oo]"}
+{"id": "LBG-0014", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [2, +oo]"}
+{"id": "LBG-0015", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4, +oo]"}
+{"id": "LBG-0016", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.82843] u [-0.171573, +oo]"}
+{"id": "LBG-0017", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.82843] u [2.82843, +oo]"}
+{"id": "LBG-0018", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.828427] u [4.82843, +oo]"}
+{"id": "LBG-0019", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0020", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.4641] u [3.4641, +oo]"}
+{"id": "LBG-0021", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.4641] u [5.4641, +oo]"}
+{"id": "LBG-0022", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -7.47214] u [1.47214, +oo]"}
+{"id": "LBG-0023", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4.47214] u [4.47214, +oo]"}
+{"id": "LBG-0024", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.47214] u [6.47214, +oo]"}
+{"id": "LBG-0025", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5] u [-1, +oo]"}
+{"id": "LBG-0026", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [2, +oo]"}
+{"id": "LBG-0027", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4, +oo]"}
+{"id": "LBG-0028", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.82843] u [-0.171573, +oo]"}
+{"id": "LBG-0029", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.82843] u [2.82843, +oo]"}
+{"id": "LBG-0030", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.828427] u [4.82843, +oo]"}
+{"id": "LBG-0031", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0032", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.4641] u [3.4641, +oo]"}
+{"id": "LBG-0033", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.4641] u [5.4641, +oo]"}
+{"id": "LBG-0034", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -7.47214] u [1.47214, +oo]"}
+{"id": "LBG-0035", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4.47214] u [4.47214, +oo]"}
+{"id": "LBG-0036", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.47214] u [6.47214, +oo]"}
+{"id": "LBG-0037", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5] u [-1, +oo]"}
+{"id": "LBG-0038", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [2, +oo]"}
+{"id": "LBG-0039", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4, +oo]"}
+{"id": "LBG-0040", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.82843] u [-0.171573, +oo]"}
+{"id": "LBG-0041", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.82843] u [2.82843, +oo]"}
+{"id": "LBG-0042", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.828427] u [4.82843, +oo]"}
+{"id": "LBG-0043", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0044", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.4641] u [3.4641, +oo]"}
+{"id": "LBG-0045", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.4641] u [5.4641, +oo]"}
+{"id": "LBG-0046", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -7.47214] u [1.47214, +oo]"}
+{"id": "LBG-0047", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4.47214] u [4.47214, +oo]"}
+{"id": "LBG-0048", "tier": 5, "category": "gap: hidden quadratic", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.47214] u [6.47214, +oo]"}
+{"id": "LBG-0049", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0050", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0051", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/4] u [1, +oo]"}
+{"id": "LBG-0052", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [1, +oo]"}
+{"id": "LBG-0053", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0054", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0055", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3] u [1, +oo]"}
+{"id": "LBG-0056", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/2] u [1, +oo]"}
+{"id": "LBG-0057", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/4] u [1, +oo]"}
+{"id": "LBG-0058", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0059", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0060", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/4] u [1, +oo]"}
+{"id": "LBG-0061", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [1, +oo]"}
+{"id": "LBG-0062", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0063", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0064", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3] u [1, +oo]"}
+{"id": "LBG-0065", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/2] u [1, +oo]"}
+{"id": "LBG-0066", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/4] u [1, +oo]"}
+{"id": "LBG-0067", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0068", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0069", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/4] u [1, +oo]"}
+{"id": "LBG-0070", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [1, +oo]"}
+{"id": "LBG-0071", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [1, +oo]"}
+{"id": "LBG-0072", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1, +oo]"}
+{"id": "LBG-0073", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3] u [1, +oo]"}
+{"id": "LBG-0074", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/2] u [1, +oo]"}
+{"id": "LBG-0075", "tier": 5, "category": "gap: shifted squares", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/4] u [1, +oo]"}
+{"id": "LBG-0076", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-2.18767, 1.04482]"}
+{"id": "LBG-0077", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -19.798] u [-0.202041, +oo]"}
+{"id": "LBG-0078", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4/5, +oo]"}
+{"id": "LBG-0079", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.57071] u [0.570714, +oo]"}
+{"id": "LBG-0080", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.82288] u [-0.177124, +oo]"}
+{"id": "LBG-0081", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0]"}
+{"id": "LBG-0082", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1/4]"}
+{"id": "LBG-0083", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -38.5959] u [0.595918, +oo]"}
+{"id": "LBG-0084", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.806831] u [0.663974, +oo]"}
+{"id": "LBG-0085", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.01379, 1.01379]"}
+{"id": "LBG-0086", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1]"}
+{"id": "LBG-0087", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [2/3, +oo]"}
+{"id": "LBG-0088", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-17/12, +oo]"}
+{"id": "LBG-0089", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.4641] u [4.4641, +oo]"}
+{"id": "LBG-0090", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -8/21] u [0, +oo]"}
+{"id": "LBG-0091", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [0, 3/2]"}
+{"id": "LBG-0092", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [1, 5]"}
+{"id": "LBG-0093", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -9.08258] u [0.0825757, +oo]"}
+{"id": "LBG-0094", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [1/2, +oo]"}
+{"id": "LBG-0095", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1, 2]"}
+{"id": "LBG-0096", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.514719] u [17.4853, +oo]"}
+{"id": "LBG-0097", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-25/8, +oo]"}
+{"id": "LBG-0098", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-3.18767, 0.0448155]"}
+{"id": "LBG-0099", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.0857864] u [2.91421, +oo]"}
+{"id": "LBG-0100", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.28078] u [0.780776, +oo]"}
+{"id": "LBG-0101", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -22.9545] u [-1.04555, +oo]"}
+{"id": "LBG-0102", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [-1/2, +oo]"}
+{"id": "LBG-0103", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.0790086] u [0.744521, +oo]"}
+{"id": "LBG-0104", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [8/3, +oo]"}
+{"id": "LBG-0105", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.934259, 0.267592]"}
+{"id": "LBG-0106", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2/3] u [3/2, +oo]"}
+{"id": "LBG-0107", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.88936, 1.38936]"}
+{"id": "LBG-0108", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2/7] u [2/3, +oo]"}
+{"id": "LBG-0109", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1, 1]"}
+{"id": "LBG-0110", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0111", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [2/3, +oo]"}
+{"id": "LBG-0112", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.322876] u [2.32288, +oo]"}
+{"id": "LBG-0113", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.09384, 0.522408]"}
+{"id": "LBG-0114", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-8/5, 0]"}
+{"id": "LBG-0115", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.697224] u [4.30278, +oo]"}
+{"id": "LBG-0116", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -15.9282] u [-2.0718, +oo]"}
+{"id": "LBG-0117", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.430501, 3.09717]"}
+{"id": "LBG-0118", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1, 1]"}
+{"id": "LBG-0119", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.516685] u [15.4833, +oo]"}
+{"id": "LBG-0120", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6/7] u [0, +oo]"}
+{"id": "LBG-0121", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.746422] u [1.19087, +oo]"}
+{"id": "LBG-0122", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/4]"}
+{"id": "LBG-0123", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.0240999] u [1.9759, +oo]"}
+{"id": "LBG-0124", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.07417, -0.325834]"}
+{"id": "LBG-0125", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1.03852] u [26.9615, +oo]"}
+{"id": "LBG-0126", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.26376, 0.263763]"}
+{"id": "LBG-0127", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.485281] u [16.4853, +oo]"}
+{"id": "LBG-0128", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6/7] u [0, +oo]"}
+{"id": "LBG-0129", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.39564] u [0.895644, +oo]"}
+{"id": "LBG-0130", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [-1/33, +oo]"}
+{"id": "LBG-0131", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-2, 1/3]"}
+{"id": "LBG-0132", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.4641] u [0.464102, +oo]"}
+{"id": "LBG-0133", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-3/2, 3]"}
+{"id": "LBG-0134", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -17.4853] u [-0.514719, +oo]"}
+{"id": "LBG-0135", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.398979] u [9.39898, +oo]"}
+{"id": "LBG-0136", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4/13, +oo]"}
+{"id": "LBG-0137", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4/17] u [0, +oo]"}
+{"id": "LBG-0138", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -8/3] u [0, +oo]"}
+{"id": "LBG-0139", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.0531973, 1.2532]"}
+{"id": "LBG-0140", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.372281, 5.37228]"}
+{"id": "LBG-0141", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4/3] u [0, +oo]"}
+{"id": "LBG-0142", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.0741657, 0.674166]"}
+{"id": "LBG-0143", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.853553] u [-0.146447, +oo]"}
+{"id": "LBG-0144", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [1/3, +oo]"}
+{"id": "LBG-0145", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.870829] u [2.87083, +oo]"}
+{"id": "LBG-0146", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 3]"}
+{"id": "LBG-0147", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4/3] u [0, +oo]"}
+{"id": "LBG-0148", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-0.0645775, 0.673273]"}
+{"id": "LBG-0149", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [0, +oo]"}
+{"id": "LBG-0150", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4, +oo]"}
+{"id": "LBG-0151", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 3/2]"}
+{"id": "LBG-0152", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-3, -1/3]"}
+{"id": "LBG-0153", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [0, +oo]"}
+{"id": "LBG-0154", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-2.21525, -0.451416]"}
+{"id": "LBG-0155", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.59787] u [1.48676, +oo]"}
+{"id": "LBG-0156", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [11/4, +oo]"}
+{"id": "LBG-0157", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.898979] u [8.89898, +oo]"}
+{"id": "LBG-0158", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/10] u [0, +oo]"}
+{"id": "LBG-0159", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.491933] u [30.4919, +oo]"}
+{"id": "LBG-0160", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.491356] u [2.71358, +oo]"}
+{"id": "LBG-0161", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.30278] u [0.302776, +oo]"}
+{"id": "LBG-0162", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-3/4, +oo]"}
+{"id": "LBG-0163", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [0, +oo]"}
+{"id": "LBG-0164", "tier": 6, "category": "decoy: no gap", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [0, +oo]"}
+{"id": "LBG-0165", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.87083] u [0.870829, +oo]"}
+{"id": "LBG-0166", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2]"}
+{"id": "LBG-0167", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-1.36603, 0.366025]"}
+{"id": "LBG-0168", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1.03852] u [26.9615, +oo]"}
+{"id": "LBG-0169", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-8/15, 0]"}
+{"id": "LBG-0170", "tier": 6, "category": "decoy: no gap", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/2]"}
+{"id": "LBG-0171", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3/4] u [0, +oo]"}
+{"id": "LBG-0172", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.0463328] u [2.39811, +oo]"}
+{"id": "LBG-0173", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.350889] u [25.6491, +oo]"}
+{"id": "LBG-0174", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.297055] u [1.96372, +oo]"}
+{"id": "LBG-0175", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -4/3] u [0, +oo]"}
+{"id": "LBG-0176", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.93019] u [-0.403144, +oo]"}
+{"id": "LBG-0177", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -15] u [1, +oo]"}
+{"id": "LBG-0178", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -12] u [0, +oo]"}
+{"id": "LBG-0179", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [2, +oo]"}
+{"id": "LBG-0180", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1/8] u {+oo}"}
+{"id": "LBG-0181", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4/5, +oo]"}
+{"id": "LBG-0182", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.65831] u [1.65831, +oo]"}
+{"id": "LBG-0183", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.346688] u [8.65331, +oo]"}
+{"id": "LBG-0184", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1] u [11/9, +oo]"}
+{"id": "LBG-0185", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.94949] u [2.94949, +oo]"}
+{"id": "LBG-0186", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [0, +oo]"}
+{"id": "LBG-0187", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -6.59808] u [-1.40192, +oo]"}
+{"id": "LBG-0188", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3] u [-1/3, +oo]"}
+{"id": "LBG-0189", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.872983] u [6.87298, +oo]"}
+{"id": "LBG-0190", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [1/3, +oo]"}
+{"id": "LBG-0191", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1.08404] u [1.47596, +oo]"}
+{"id": "LBG-0192", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.774852] u [3.44152, +oo]"}
+{"id": "LBG-0193", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [0, +oo]"}
+{"id": "LBG-0194", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.866025] u [0.866025, +oo]"}
+{"id": "LBG-0195", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1/2] u [3, +oo]"}
+{"id": "LBG-0196", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -32.9706] u [0.970563, +oo]"}
+{"id": "LBG-0197", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2/3] u [3/2, +oo]"}
+{"id": "LBG-0198", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.59808] u [-0.401924, +oo]"}
+{"id": "LBG-0199", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2/3] u [0, +oo]"}
+{"id": "LBG-0200", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2.06338] u [0.25386, +oo]"}
+{"id": "LBG-0201", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.318729] u [1.56873, +oo]"}
+{"id": "LBG-0202", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.94281] u [-0.057191, +oo]"}
+{"id": "LBG-0203", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1.29966] u [1.96633, +oo]"}
+{"id": "LBG-0204", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0.171573] u [5.82843, +oo]"}
+{"id": "LBG-0205", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [4/5, +oo]"}
+{"id": "LBG-0206", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -5.66228] u [0.662278, +oo]"}
+{"id": "LBG-0207", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -29.6969] u [-0.303062, +oo]"}
+{"id": "LBG-0208", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [8/3, +oo]"}
+{"id": "LBG-0209", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 3/5] u [1, +oo]"}
+{"id": "LBG-0210", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1.1459] u [7.8541, +oo]"}
+{"id": "LBG-0211", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [1/2, +oo]"}
+{"id": "LBG-0212", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.596856] u [-0.0698102, +oo]"}
+{"id": "LBG-0213", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 1/2] u [5/6, +oo]"}
+{"id": "LBG-0214", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -25.49] u [-0.510004, +oo]"}
+{"id": "LBG-0215", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/2] u [3/2, +oo]"}
+{"id": "LBG-0216", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.615069] u [0.948403, +oo]"}
+{"id": "LBG-0217", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -8.74264] u [-0.257359, +oo]"}
+{"id": "LBG-0218", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -3.29966] u [-0.0336735, +oo]"}
+{"id": "LBG-0219", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -1/4] u [0, +oo]"}
+{"id": "LBG-0220", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET {-oo} u [-1/8, +oo]"}
+{"id": "LBG-0221", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -2] u [0, +oo]"}
+{"id": "LBG-0222", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -10.899] u [-1.10102, +oo]"}
+{"id": "LBG-0223", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 25/8] u {+oo}"}
+{"id": "LBG-0224", "tier": 6, "category": "gap: random", "trap": true, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, -0.356789] u [1.24568, +oo]"}
+{"id": "LBG-0225", "tier": 6, "category": "gap: random", "trap": false, "parsed": true, "verdict": true, "exact": true, "answer_tail": "ANSWER: SET [-oo, 0] u [12/13, +oo]"}

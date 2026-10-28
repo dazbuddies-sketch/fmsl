@@ -1,5 +1,5 @@
 # LimitBench: evaluates AI models on limits with proven answers.
-# Trigger: commit benchmarks/limitbench/RUN.json ({"models": [...], "limit": null}) or run by hand.
+# Trigger: commit benchmarks/limitbench/RUN.json ({"models": [...], "limit": null, "set": "main" or "gaps"}).
 # Needs the repository secret ANTHROPIC_API_KEY (Settings -> Secrets and variables -> Actions).
 # Results are committed back to the branch under benchmarks/limitbench/results/.
 name: limitbench
@@ -21,18 +21,20 @@ jobs:
       - run: pip install -e . anthropic
       - name: Reference methods
         run: |
-          rm -f benchmarks/limitbench/results/SUMMARY.md
-          python benchmarks/limitbench/evaluate.py --method fmsl
-          python benchmarks/limitbench/evaluate.py --method paths
+          SET=$(python -c "import json;print(json.load(open('benchmarks/limitbench/RUN.json')).get('set','main'))")
+          if [ "$SET" = gaps ]; then rm -f benchmarks/limitbench/results/SUMMARY_GAPS.md; else rm -f benchmarks/limitbench/results/SUMMARY.md; fi
+          python benchmarks/limitbench/evaluate.py --set "$SET" --method fmsl
+          python benchmarks/limitbench/evaluate.py --set "$SET" --method paths
       - name: Models
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           mkdir -p benchmarks/limitbench/results; : > benchmarks/limitbench/results/last_run.log
           if [ -z "$ANTHROPIC_API_KEY" ]; then echo "No ANTHROPIC_API_KEY secret: skipping model runs." | tee benchmarks/limitbench/results/last_run.log; exit 0; fi
+          SET=$(python -c "import json;print(json.load(open('benchmarks/limitbench/RUN.json')).get('set','main'))")
           LIMIT=$(python -c "import json;v=json.load(open('benchmarks/limitbench/RUN.json')).get('limit');print(v or '')")
           for m in $(python -c "import json;print(' '.join(json.load(open('benchmarks/limitbench/RUN.json'))['models']))"); do
-            python benchmarks/limitbench/evaluate.py --method anthropic --model "$m" ${LIMIT:+--limit $LIMIT} --workers 4 2>&1 | tee -a benchmarks/limitbench/results/last_run.log
+            python benchmarks/limitbench/evaluate.py --set "$SET" --method anthropic --model "$m" ${LIMIT:+--limit $LIMIT} --workers 4 2>&1 | tee -a benchmarks/limitbench/results/last_run.log
             test "${PIPESTATUS[0]}" -eq 0 || exit 1
           done
       - name: Commit results (always, so the log of a failed run is kept)

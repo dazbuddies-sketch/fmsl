@@ -34,3 +34,16 @@ curves like y = c·x^k). 3: random rational functions. 4: three variables.
 Add an `ANTHROPIC_API_KEY` repository secret (Settings -> Secrets and variables -> Actions), then
 commit `benchmarks/limitbench/RUN.json`, for example `{"models": ["claude-sonnet-5-5"], "limit": null}`.
 Model runs use the key's account and are billed to it.
+
+## LimitBench-Gaps (the harder set)
+
+The first full runs (October 2026) showed that Claude Haiku 5.5 and Sonnet 5.5 solve LimitBench
+almost perfectly (489/491 each). Their only real mistakes had one shape: they said f approaches
+every value when a whole range of values is in fact never approached. Finding the values f reaches
+is the easy half; proving that the values in between are never reached is the hard half.
+
+`limitbench_gaps.jsonl` (225 items, `generate_gaps.py`) is built around that: 185 functions whose
+set of limit values has a gap, for example (x^2 + y^2 - 3xy)/(xy) -> [-oo, -5] u [-1, +oo], and 40
+decoys built the same way with no gap. Ground truth is checked exactly as for LimitBench. The
+"try a few paths" method gets 0% of the exact answers. Run with `--set gaps`, or put
+`"set": "gaps"` in RUN.json; scores go to `results/SUMMARY_GAPS.md`.

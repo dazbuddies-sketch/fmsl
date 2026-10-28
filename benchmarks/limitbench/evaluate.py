@@ -4,7 +4,7 @@
   python evaluate.py --method fmsl                  FMSL itself (sanity check: must be 100%)
   python evaluate.py --method anthropic --model M   a Claude model via the Anthropic API
                                                     (needs ANTHROPIC_API_KEY in the environment)
-Options: --limit N (N items spread evenly over the set), --workers K (parallel API calls, default 4).
+Options: --set main|gaps (default main), --limit N (N items spread evenly over the set), --workers K (parallel API calls, default 4).
 Writes results/<method>[_<model>].jsonl and prints a summary table (also appended to results/SUMMARY.md).
 """
 import argparse, json, math, os, sys, time
@@ -15,8 +15,11 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "..", "..", "src
 from grade import prompt_for, grade
 
 
-def load(limit=None):
-    items = [json.loads(l) for l in open(os.path.join(HERE, "limitbench.jsonl"))]
+SETS = {"main": "limitbench.jsonl", "gaps": "limitbench_gaps.jsonl"}
+
+
+def load(limit=None, which="main"):
+    items = [json.loads(l) for l in open(os.path.join(HERE, SETS[which]))]
     if not limit or limit >= len(items): return items
     step = len(items) / limit                         # an even spread over all tiers, deterministic
     return [items[int(k * step)] for k in range(limit)]
@@ -68,10 +71,11 @@ def main():
     ap.add_argument("--method", required=True, choices=["paths", "fmsl", "anthropic"])
     ap.add_argument("--model", default="claude-sonnet-5-5")
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--set", default="main", choices=sorted(SETS), help="main LimitBench, or the harder gaps set")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=8000)
     a = ap.parse_args()
-    items = load(a.limit)
+    items = load(a.limit, a.set)
     if a.method == "paths": f = answer_paths
     elif a.method == "fmsl": f = answer_fmsl
     else: f = lambda it: answer_anthropic(it, a.model, a.max_tokens)
@@ -89,14 +93,15 @@ def main():
         g = grade(it, ans)
         rows.append({"id": it["id"], "tier": it["tier"], "category": it["category"], "trap": bool(it["path_test"] and it["path_test"]["trap"]),
                      **g, "answer_tail": ans[-400:]})
-    name = a.method + (f"_{a.model}" if a.method == "anthropic" else "")
+    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "")
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     with open(os.path.join(HERE, "results", name + ".jsonl"), "w") as fh:
         for r in rows: fh.write(json.dumps(r) + "\n")
     def pct(sub, k): return f"{100 * sum(r[k] for r in sub) / len(sub):.1f}%" if sub else "-"
     lines = [f"### {name}  ({len(rows)} items)", "",
              "| subset | n | verdict right | exact answer | unparsed |", "|---|---|---|---|---|"]
-    subsets = [("all", rows)] + [(f"tier {t}", [r for r in rows if r["tier"] == t]) for t in (1, 2, 3, 4)] + \
+    subsets = [("all", rows)] + [(f"tier {t}", [r for r in rows if r["tier"] == t]) for t in (1, 2, 3, 4, 5, 6)] + \
+              [(c, [r for r in rows if r["category"] == c]) for c in sorted({r["category"] for r in rows}) if c.startswith(("gap", "decoy"))] + \
               [("path-test traps", [r for r in rows if r["trap"]])]
     for nm, sub in subsets:
         if sub:
@@ -106,7 +111,7 @@ def main():
         lines += ["", f"Tokens used: {USAGE['input_tokens']:,} input, {USAGE['output_tokens']:,} output."]
     text = "\n".join(lines) + "\n"
     print(text)
-    with open(os.path.join(HERE, "results", "SUMMARY.md"), "a") as fh: fh.write(text + "\n")
+    with open(os.path.join(HERE, "results", "SUMMARY_GAPS.md" if a.set == "gaps" else "SUMMARY.md"), "a") as fh: fh.write(text + "\n")
 
 
 if __name__ == "__main__":
