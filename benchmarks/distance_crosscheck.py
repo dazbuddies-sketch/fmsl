@@ -94,7 +94,8 @@ def part1(n2):
             print("ERROR", f, e); tot += 1; continue
         if not b["proven"]: continue
         tot += 1
-        ca = [tuple(float(v) for v in c) for c in a["components"]]
+        fl = lambda v: (math.inf if v.sgn > 0 else -math.inf) if isinstance(v, _Inf) else float(v)
+        ca = [tuple(fl(v) for v in c) for c in a["components"]]
         cb = [tuple(c) for c in b["components"]]
         same = len(ca) == len(cb) and all(abs(p - q) <= 1e-12 * max(1, abs(p)) or p == q for c1, c2 in zip(ca, cb) for p, q in zip(c1, c2))
         if same: agree += 1
