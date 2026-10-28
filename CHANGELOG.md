@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.0
+- The rate (`fmsl.rate`, roadmap #4): for a two-variable rational function with a limit L at the
+  origin, the exact best exponent theta with |f - L| <= C r^theta, and a curve along which it is
+  attained (a Lojasiewicz-type exponent), by Newton-Puiseux zooming on the real roots of the
+  denominator's initial forms. `rate_1d` in one variable. Cross-check
+  `benchmarks/rate_crosscheck.py`: 139 functions, 36/36 closed forms, no sample point refutes a
+  bound, every reported curve attains it.
+- `fmsl.verify.rate_at_origin` and the MCP tool `fmsl_rate`.
+
 ## 0.13.0
 - `fmsl.verify`: `limit_at_origin(expr)` (the proven set of limit values at the origin, in one,
   two or three variables, with witness curves in two variables) and `check_claim(expr, claim)`

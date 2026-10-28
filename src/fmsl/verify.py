@@ -254,3 +254,27 @@ def check_claim(expr, claim, variables=None, tol=1e-3):
         if missing: bits.append(f"these values are approached but missing from the claim: {_pieces_text(missing)}")
         res["verdict"] = f"Incorrect: the proven set is {truth['set']}; " + "; ".join(bits) + "."
     return res
+
+
+# ------------------------------------------------------------------ the rate
+def rate_at_origin(expr, variables=None):
+    """How fast the limit is approached: the best theta with |f - L| <= C r^theta near the origin
+    (proven, and attained along the reported arc). One or two variables."""
+    from fractions import Fraction
+    from .rate import rate, rate_1d
+    vs = _variables(expr, variables)
+    if len(vs) == 1:
+        r = rate_1d(_rename(expr, vs, ["x"]), "x")
+        text = r["text"].replace("|x|", f"|{vs[0]}|").replace("x ->", f"{vs[0]} ->")
+    elif len(vs) == 2:
+        r = rate(_rename(expr, vs, ["x", "y"]))
+        back = dict(zip(["x", "y"], vs))
+        text = re.sub(r"\b([xy])\b", lambda m: back[m.group(1)], r["text"])
+    else:
+        raise ValueError("the rate is computed in one or two variables")
+    th = r.get("exponent")
+    L = r.get("limit")
+    return {"expression": expr, "variables": vs,
+            "limit": None if L is None else (_fmt(float(L)) if not isinstance(L, str) else L),
+            "exponent": None if th is None else (str(th) if isinstance(th, Fraction) else str(th)),
+            "proven": r.get("proven", False), "explanation": text}

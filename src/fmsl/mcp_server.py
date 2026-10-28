@@ -10,12 +10,13 @@ Claude Desktop / Claude Code configuration:
 Tools:
     fmsl_limit(expression, variables?)          the complete set of limit values at the origin, proven
     fmsl_check_limit(expression, claim, ...)    is a claimed limit or set right? what is missing or extra?
+    fmsl_rate(expression, variables?)           how fast the limit is approached: |f - L| <= C r^theta
 """
 import multiprocessing as mp
 from typing import List, Optional
 
 from . import __version__
-from .verify import check_claim, limit_at_origin
+from .verify import check_claim, limit_at_origin, rate_at_origin
 
 TIMEOUT = 60          # seconds per call; hard cases are reported, not left hanging
 
@@ -68,6 +69,14 @@ def fmsl_check_limit(expression: str, claim: str, variables: Optional[List[str]]
     return _run(check_claim, expression, claim, variables)
 
 
+def fmsl_rate(expression: str, variables: Optional[List[str]] = None) -> dict:
+    """How fast `expression` approaches its limit L at the origin: the best exponent theta with
+    |f - L| <= C * r^theta near the origin (r = distance to the origin), proven and attained along
+    the reported curve. One or two variables; for example "x^2*y/(x^2+y^2)" gives theta = 1.
+    """
+    return _run(rate_at_origin, expression, variables)
+
+
 def build_server():
     try:
         from mcp.server.mcpserver import MCPServer as Server      # mcp >= 2
@@ -76,6 +85,7 @@ def build_server():
     server = Server("fmsl", instructions=INSTRUCTIONS)
     server.tool()(fmsl_limit)
     server.tool()(fmsl_check_limit)
+    server.tool()(fmsl_rate)
     return server
 
 

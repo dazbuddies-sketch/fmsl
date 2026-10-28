@@ -392,6 +392,36 @@ two-variable rational functions with Sturm's theorem (Zeng and Xiao, J. Symbolic
 find a tool that computes exact fluid states for families with a parameter, but my search was
 brief, so this is provisional.
 
+## The rate: how fast a limit is approached
+
+Knowing that f → L is weaker than knowing how fast. `fmsl.rate` computes the best exponent θ in
+
+    |f(x, y) − L| ≤ C·r^θ   near the origin   (r = distance to the origin),
+
+exactly, together with a curve along which the difference is of exact order r^θ, so no larger
+exponent works. This is a Łojasiewicz-type exponent; it decides, for example, how fast an
+iteration or a controller settles near the point.
+
+```python
+from fmsl.rate import rate
+rate("x^2*y/(x^2+y^2)")["exponent"]        # 1
+rate("x^2*y^2/(x^2+y^4)")["exponent"]      # 2, attained along x = c y^2
+rate("x^7/((y-x^2)^2+x^6)")["exponent"]    # 1, attained only along y = x^2 + c x^3
+```
+The last example is the reason for exactness: away from the curve y = x² the difference is of
+order r³, and no grid of sample points finds the thin region where it is of order r.
+
+How: along curves y = c|x|^b the order of f − L is a piecewise linear function of b for all but
+finitely many c, minimal at a corner of the Newton polygons; the exceptional c are real roots of
+the denominator's initial form, where FMSL zooms (y = |x|^b (c + y₁)) and repeats. Roots of the
+numerator's initial form only make f − L smaller, so they cannot lower the minimum.
+
+Checked by `benchmarks/rate_crosscheck.py` on 139 functions (the 103 two-variable LimitBench
+functions with a limit, and 36 that need zooming, with a closed-form answer): all 36 match the
+closed form; exact rational sample points very close to the origin never contradict the bound;
+and on every reported curve the measured order agrees with θ (to 0.02). One variable:
+`rate_1d`; the MCP server has the tool `fmsl_rate`. Three variables are not covered yet.
+
 ## Experiment A: a head-to-head test from the FMS research brief
 
 MJ Celedon's original FMS brief asks for "a benchmark of at least 1,000 mathematical expressions"
@@ -464,10 +494,11 @@ What this shows, and what it does not:
 
 ## FMSL for AI assistants (MCP server)
 
-`fmsl-mcp` gives an AI assistant two tools over the Model Context Protocol:
+`fmsl-mcp` gives an AI assistant three tools over the Model Context Protocol:
 
 * `fmsl_limit(expression)`: the complete set of values the expression approaches at the origin,
   proven, with the curves along which the end values are approached (two variables).
+* `fmsl_rate(expression)`: how fast the limit is approached (see *The rate* above).
 * `fmsl_check_limit(expression, claim)`: checks the assistant's own answer, and says exactly what
   is missing and what is never approached, e.g. *Incorrect: the proven set is [-oo, -4/3] u
   [0, +oo]; these claimed values are never approached: (-4/3, 0).*
