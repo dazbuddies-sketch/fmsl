@@ -35,7 +35,7 @@ def _num(s):
     s = s.strip().replace(" ", "")
     if s in ("+oo", "oo", "+inf", "inf", "+infinity", "infinity", "∞", "+∞"): return math.inf
     if s in ("-oo", "-inf", "-infinity", "-∞"): return -math.inf
-    s = s.replace("√", "sqrt").replace("^", "**")
+    s = re.sub(r"√\s*(\d+(?:\.\d+)?)", r"sqrt(\1)", s).replace("√", "sqrt").replace("^", "**")
     s = re.sub(r"(\d)\s*(sqrt|\()", r"\1*\2", s)              # implicit product: 2sqrt(3), 2(1+x)
     return _arith(ast.parse(s, mode="eval").body)
 

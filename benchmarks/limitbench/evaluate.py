@@ -88,15 +88,23 @@ def _call_tool(name, args):
     return {"error": f"unknown tool {name}"}
 
 
-def answer_anthropic_tools(item, model, max_tokens):
-    """The same prompt, but the model may call FMSL (as it would through the MCP server)."""
+VERIFY_SYSTEM = ("You have FMSL, a tool that proves limits. Before you give your final answer, check it with "
+                 "fmsl_check_limit. If FMSL says it is wrong, correct it and give the proven answer.")
+CALLS_PER_ITEM = {}
+
+
+def answer_anthropic_tools(item, model, max_tokens, verify=False):
+    """The same prompt, but the model may call FMSL (as it would through the MCP server); with
+    verify, it is also told to check its answer with FMSL before giving it."""
     import anthropic
     client = anthropic.Anthropic()
     messages = [{"role": "user", "content": prompt_for(item)}]
+    extra = {"system": VERIFY_SYSTEM} if verify else {}
+    CALLS_PER_ITEM[item["id"]] = 0
     for _turn in range(8):
         for attempt in range(5):
             try:
-                msg = client.messages.create(model=model, max_tokens=max_tokens, tools=TOOLS, messages=messages)
+                msg = client.messages.create(model=model, max_tokens=max_tokens, tools=TOOLS, messages=messages, **extra)
                 break
             except Exception as exc:
                 if attempt == 4: return f"ERROR: {type(exc).__name__}: {exc}"
@@ -107,6 +115,7 @@ def answer_anthropic_tools(item, model, max_tokens):
         if msg.stop_reason != "tool_use":
             return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
         messages.append({"role": "assistant", "content": msg.content})
+        CALLS_PER_ITEM[item["id"]] += sum(1 for b in msg.content if getattr(b, "type", "") == "tool_use")
         results = [{"type": "tool_result", "tool_use_id": b.id, "content": json.dumps(_call_tool(b.name, b.input))}
                    for b in msg.content if getattr(b, "type", "") == "tool_use"]
         messages.append({"role": "user", "content": results})
@@ -122,11 +131,12 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=8000)
     ap.add_argument("--tools", action="store_true", help="give the model FMSL's two tools (as through the MCP server)")
+    ap.add_argument("--verify", action="store_true", help="with --tools: tell the model to check its answer with FMSL")
     a = ap.parse_args()
     items = load(a.limit, a.set)
     if a.method == "paths": f = answer_paths
     elif a.method == "fmsl": f = answer_fmsl
-    elif a.tools: f = lambda it: answer_anthropic_tools(it, a.model, a.max_tokens)
+    elif a.tools: f = lambda it: answer_anthropic_tools(it, a.model, a.max_tokens, a.verify)
     else: f = lambda it: answer_anthropic(it, a.model, a.max_tokens)
     with ThreadPoolExecutor(max_workers=a.workers if a.method == "anthropic" else 1) as ex:
         answers = list(ex.map(f, items))
@@ -141,8 +151,8 @@ def main():
         if ans is None or (isinstance(ans, str) and ans.startswith("ERROR:")): continue
         g = grade(it, ans)
         rows.append({"id": it["id"], "tier": it["tier"], "category": it["category"], "trap": bool(it["path_test"] and it["path_test"]["trap"]),
-                     **g, "answer_tail": ans[-400:]})
-    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "") + ("_tools" if a.tools else "")
+                     **g, "answer_tail": ans[-400:], **({"tool_calls": CALLS_PER_ITEM.get(it["id"], 0)} if a.tools else {})})
+    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "") + ("_verify" if a.tools and a.verify else "_tools" if a.tools else "")
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     with open(os.path.join(HERE, "results", name + ".jsonl"), "w") as fh:
         for r in rows: fh.write(json.dumps(r) + "\n")
