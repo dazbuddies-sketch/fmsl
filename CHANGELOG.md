@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.19.0
+- One variable: `log`, `sqrt` and rational powers `f^(p/q)`, as exact power series when the
+  argument tends to 1 (powers: to c > 0 with c^(p/q) rational), via the recurrences
+  L' f = f' and g' f = a f' g. Logarithmic singularities and branch points are reported, never
+  guessed. Covers finance formulas such as log(1+r)/r, ((1+r)^(1/12) - 1)*12/r, annuity factors.
+- Safe code generation: the radius estimate now also sees radius-1 series (log, sqrt), so the
+  series zone stays inside the region of convergence.
+- Several variables: fractional powers are rejected with a clear message.
+
 ## 0.18.0
 - `fmsl.verify.limit_at(expr, point, side=None)`: limits at any rational point (by moving it to
   the origin), and one-sided limits in one variable (side "-" from below, "+" from above). The

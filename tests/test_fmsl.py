@@ -212,3 +212,29 @@ class AbsAndSign(unittest.TestCase):
 
     def test_sign_of_a_transcendental(self):
         self.assertIn("x->0-: -2; x->0+: 2", self._at0("sign(sin(x))*x^2/(1-cos(x))"))
+
+
+class TestLogSqrtPowers(unittest.TestCase):
+    """0.19.0: log, sqrt and rational powers in one variable (exact power series)"""
+    def lim(self, e):
+        from fmsl.verify import limit_at
+        return limit_at(e, 0)["set"]
+
+    def test_classics(self):
+        self.assertEqual(self.lim("log(1+x)/x"), "{1}")
+        self.assertEqual(self.lim("(log(1+x)-x)/x^2"), "{-1/2}")
+        self.assertEqual(self.lim("(sqrt(1+x)-1)/x"), "{1/2}")
+        self.assertEqual(self.lim("(sqrt(4+x)-2)/x"), "{1/4}")
+        self.assertEqual(self.lim("((1+x)^(1/3)-1)/x"), "{1/3}")
+        self.assertEqual(self.lim("((1+x)^(-1/2)-1)/x"), "{-1/2}")
+
+    def test_finance(self):
+        self.assertEqual(self.lim("(1-(1+r)^(-12))/r"), "{12}")                # annuity factor
+        self.assertEqual(self.lim("((1+r)^(1/12)-1)*12/r"), "{1}")             # monthly rate from annual
+        self.assertEqual(self.lim("log(1+r)/r"), "{1}")                         # continuous vs simple rate
+
+    def test_not_power_series(self):
+        from fmsl.verify import limit_at
+        self.assertFalse(limit_at("log(x)", 0)["proven"])
+        with self.assertRaises(ValueError):
+            limit_at("log(2+x)", 0)

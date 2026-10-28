@@ -14,7 +14,7 @@ import ast, math, re
 from fractions import Fraction as Fr
 
 INF = math.inf
-_NAMES = ("sin", "cos", "exp", "abs", "sign", "sqrt", "i", "pi")
+_NAMES = ("sin", "cos", "exp", "log", "abs", "sign", "sqrt", "i", "pi")
 
 
 # ------------------------------------------------------------------ helpers

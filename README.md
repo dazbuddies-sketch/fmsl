@@ -733,10 +733,15 @@ out a hidden curve. The exact profile does both, and it also explains what the s
 | `if NAME == ...` | Rejected by the type checker: equality on these values may be unprovable |
 | `emit python NAME` / `emit c NAME` | Generate safe code with a proven error bound (C is compiled and validated if a C compiler is installed) |
 
-Expressions: `+ - * /`, integer powers `^`, `sin cos exp`, `abs sign` (analysed on each side of 0), exact decimal numbers, the
+Expressions: `+ - * /`, integer powers `^` and rational powers `^(p/q)`, `sin cos exp log sqrt`,
+`abs sign` (analysed on each side of 0), exact decimal numbers, the
 imaginary unit `i`, context parameters, and previously defined names, including
 composition such as `B(t^2)`. Formulas containing `i` compile to complex code
-(`cmath` in Python, C99 `double complex` in C).
+(`cmath` in Python, C99 `double complex` in C). `log f`, `sqrt f` and `f^(p/q)` are exact power
+series when f tends to 1 (for powers, to any c > 0 with c^(p/q) rational), which covers the usual
+finance formulas: `log(1+r)/r -> 1`, `((1+r)^(1/12) - 1)*12/r -> 1`, `(1 - (1+r)^(-12))/r -> 12`.
+`log f` with f -> 0 and fractional powers of a vanishing quantity are reported, not guessed: they
+are not power series.
 
 Python API:
 

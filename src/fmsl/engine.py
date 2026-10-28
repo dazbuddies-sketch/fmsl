@@ -170,6 +170,18 @@ class V:
                                          for i in range(1, k - s.lo + 1))) / lead
         elif K in ("cexp", "csin", "ccos"):
             r = _comp_coeff(s.data, K[1:], k)
+        elif K == "clog":                                # L = log f, f(0) = 1:  L' f = f'
+            f, L = s.data["f"], s.data["L"]
+            for n in range(1, k + 1):
+                if n not in L:
+                    L[n] = (n * f.coeff(n) - sum(j * L[j] * f.coeff(n - j) for j in range(1, n))) / n
+            r = G(0) if k == 0 else L[k]
+        elif K == "cpow":                                # g = f^a, f(0) = c:  g' f = a f' g
+            f, g, a, c = s.data["f"], s.data["g"], s.data["a"], s.data["c"]
+            for n in range(1, k + 1):
+                if n not in g:
+                    g[n] = sum((a * j - (n - j)) * f.coeff(j) * g[n - j] for j in range(1, n + 1)) / (n * c)
+            r = g[k]
         s.memo[k] = r
         return r
 
@@ -408,6 +420,59 @@ x = V.rat([0, 1])
 def Exp(f, keep=False):  return V.exp(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("exp", f, keep))
 def Sin(f, keep=False):  return V.sin(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("sin", f, keep))
 def Cos(f, keep=False):  return V.cos(f) if not isinstance(f, (V, EssFactor)) else (_atom_or_comp("cos", f, keep))
+
+def _rational_power(c, a):
+    """c^a for rational c > 0 and rational a, if it is rational; else None"""
+    c, a = Fr(c), Fr(a)
+    def root(n, q):
+        if n < 0: return None
+        r = round(n ** (1.0 / q)) if n else 0
+        for t in (r - 1, r, r + 1):
+            if t >= 0 and t ** q == n: return t
+        return None
+    p, q = a.numerator, a.denominator
+    num, den = root(c.numerator, q), root(c.denominator, q)
+    if num is None or den is None: return None
+    return Fr(num, den) ** p
+
+
+def _lead_real(f):
+    """f(0) as a real rational, after checking f has no pole and real f(0)"""
+    if isinstance(f, EssFactor): raise Essential(f._undecided("inside a power or log"))
+    neg = [(k, f.coeff(k)) for k in range(f.lo, 0) if f.coeff(k) != 0]
+    if neg: raise Essential(f"the argument has a pole of order {-neg[0][0]}: not a power series")
+    c0 = f.coeff(0)
+    if hasattr(c0, "is_real") and not c0.is_real(): raise ValueError("complex values are not supported here")
+    return Fr(c0.re) if hasattr(c0, "re") else Fr(c0)
+
+
+def Log(f):
+    """log f, for f tending to 1 (exact power series). f -> c != 1 would need the transcendental
+       constant log c; f -> 0 is a logarithmic singularity, not a power series."""
+    f = _lift(f)
+    c = _lead_real(f)
+    if c == 0: raise Essential("logarithmic singularity: log of a quantity tending to 0 (not a power series)")
+    if c != 1:
+        raise ValueError(f"log(f) with f(0) = {c} != 1 has the transcendental constant log({c}); "
+                         "write it as log(f/c) + log(c) with f/c -> 1, or move the point")
+    return V("clog", lo=0, data={"f": f, "L": {}})
+
+
+def PowR(f, a):
+    """f^a for a rational exponent a, for f tending to c > 0 with c^a rational (e.g. c = 1)."""
+    a = Fr(a)
+    if a.denominator == 1:
+        n = int(a); b = _lift(f)
+        return b ** n if n >= 0 else 1 / (b ** -n)
+    f = _lift(f)
+    c = _lead_real(f)
+    if c == 0: raise Essential("branch point: a fractional power of a quantity tending to 0 (not a power series)")
+    if c < 0: raise ValueError("a fractional power of a negative quantity is not real")
+    g0 = _rational_power(c, a)
+    if g0 is None:
+        raise ValueError(f"{c}^{a} is irrational; outside exact rational arithmetic")
+    return V("cpow", lo=0, data={"f": f, "g": {0: G(g0)}, "a": a, "c": c})
+
 
 def _atom_or_comp(fn, f, keep=False):
     if isinstance(f, EssFactor): raise Essential(f._undecided(f"inside {fn}(...)"))

@@ -18,7 +18,7 @@ are not allowed as constants because coefficients must stay rational.
 import cmath, math, re, sys, os, shutil, subprocess, tempfile
 from fractions import Fraction as Fr
 from . import engine as fms4
-from .engine import V, Exp, Sin, Cos, Essential, EssFactor, infinity_flow
+from .engine import V, Exp, Sin, Cos, Log, PowR, Essential, EssFactor, infinity_flow
 from .gauss import G
 from .siletz import proven_series_error
 
@@ -67,6 +67,20 @@ class Parser:
             s.take()
             sign = -1 if s.peek()[1] == "-" else 1
             if s.peek()[1] in ("-", "+"): s.take()
+            if s.peek()[1] == "(":                       # a rational exponent: ^(p/q) or ^(-p/q)
+                s.take()
+                inner = -1 if s.peek()[1] == "-" else 1
+                if s.peek()[1] in ("-", "+"): s.take()
+                k, v = s.take()
+                if k != "num" or "." in v: raise SyntaxError("exponent must be an integer or a fraction (p/q)")
+                q = 1
+                if s.peek()[1] == "/":
+                    s.take(); k2, v2 = s.take()
+                    if k2 != "num" or "." in v2: raise SyntaxError("exponent must be an integer or a fraction (p/q)")
+                    q = int(v2)
+                s.take(")")
+                ex = Fr(sign * inner * int(v), q)
+                return ("pow", b, int(ex) if ex.denominator == 1 else ex)
             k, v = s.take()
             if k != "num" or "." in v: raise SyntaxError("exponent must be an integer")
             return ("pow", b, sign * int(v))
@@ -84,7 +98,7 @@ class Parser:
             e = s.expr(); s.take(")"); return e
         raise SyntaxError(f"unexpected {v!r}")
 
-FUNCS = ("sin", "cos", "exp", "abs", "sign")
+FUNCS = ("sin", "cos", "exp", "log", "sqrt", "abs", "sign")
 SIDED = ("abs", "sign")        # functions analysed separately on each side of 0
 
 def free_vars(e, defs):
@@ -161,7 +175,10 @@ def build(e, var, side=None):
     if t == "neg": return -build(e[1], var, side)
     if t == "pow":
         b = build(e[1], var, side)
+        if isinstance(e[2], Fr) and e[2].denominator != 1: return PowR(b, e[2])
         return b ** e[2] if e[2] >= 0 else 1 / (b ** -e[2])
+    if t == "call" and e[1] == "log": return Log(build(e[2], var, side))
+    if t == "call" and e[1] == "sqrt": return PowR(build(e[2], var, side), Fr(1, 2))
     if t == "call": return {"sin": Sin, "cos": Cos, "exp": Exp}[e[1]](build(e[2], var, side), keep=True)
     a, b = build(e[1], var, side), build(e[2], var, side)
     import operator
@@ -192,7 +209,9 @@ def to_py(e, var, cx=False):
     if t == "num": return _num_py(e[1])
     if t == "var": return var
     if t == "neg": return f"(-{to_py(e[1], var, cx)})"
-    if t == "pow": return f"({to_py(e[1], var, cx)})**{e[2]}"
+    if t == "pow":
+        ex = e[2] if not isinstance(e[2], Fr) or e[2].denominator == 1 else f"({e[2].numerator}/{e[2].denominator})"
+        return f"({to_py(e[1], var, cx)})**{ex}"
     if t == "call": return f"{'cmath' if cx else 'math'}.{e[1]}({to_py(e[2], var, cx)})"
     return f"({to_py(e[1], var, cx)} {t} {to_py(e[2], var, cx)})"
 
@@ -205,6 +224,7 @@ def to_c(e, var, cx=False):
         b, n = to_c(e[1], var, cx), e[2]
         if n == 0: return "1.0"
         pw = "cpow" if cx else "pow"
+        if isinstance(n, Fr) and n.denominator != 1: return f"{pw}({b}, {float(n)!r})"
         prod = "*".join([f"({b})"] * abs(n)) if abs(n) <= 4 else f"{pw}({b}, {abs(n)})"
         return f"({prod})" if n > 0 else f"(1.0/({prod}))"
     if t == "call": return f"{'c' if cx else ''}{e[1]}({to_c(e[2], var, cx)})"
@@ -246,7 +266,7 @@ def series_data(v):
         if c != 0 and k > 0:
             ac = G(c).abs_upper()
             lg = (math.log2(ac.numerator) - math.log2(ac.denominator)) / k   # log2 |c|^(1/k)
-            R = min(R, 2 ** (-lg)) if lg > 0 else R
+            R = min(R, 2 ** (-lg))          # also when |c|^(1/k) <= 1: radius 1 (log, sqrt) must be seen
     return lo, coeffs, R
 
 def _tonum(v):

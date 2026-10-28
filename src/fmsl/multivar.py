@@ -80,6 +80,7 @@ def parse_rational(text):
             n, d = ev(e[1]); return (pneg(n), d)
         if t == "pow":
             n, d = ev(e[1]); k = e[2]
+            if not isinstance(k, int): raise ValueError("several variables: whole-number powers only")
             return (ppow(n, k), ppow(d, k)) if k >= 0 else (ppow(d, -k), ppow(n, -k))
         if t == "call":
             raise ValueError("multivar currently handles rational functions (no sin/cos/exp)")

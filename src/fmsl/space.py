@@ -76,6 +76,7 @@ def parse3(text):
             n, d = ev(e[1]); return ({k: -v for k, v in n.items()}, d)
         if t == "pow":
             n, d = ev(e[1]); k = e[2]
+            if not isinstance(k, int): raise ValueError("several variables: whole-number powers only")
             return (_pow3(n, k), _pow3(d, k)) if k >= 0 else (_pow3(d, -k), _pow3(n, -k))
         if t == "call": raise ValueError("rational functions only")
         (n1, d1), (n2, d2) = ev(e[1]), ev(e[2])
