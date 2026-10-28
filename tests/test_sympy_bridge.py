@@ -1,8 +1,11 @@
 import unittest
 
+import os
+
 try:
     import sympy as sp
 except ImportError:
+    if os.environ.get("FMSL_REQUIRE_SYMPY"): raise          # CI installs SymPy: never skip there
     sp = None
 
 

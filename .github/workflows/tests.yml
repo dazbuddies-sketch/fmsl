@@ -15,3 +15,16 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[matrix,sympy]"
       - run: python -m unittest discover tests -v
+        env:
+          FMSL_REQUIRE_SYMPY: "1"
+      - name: SymPy bridge examples (shown as annotations)
+        if: matrix.python-version == '3.12'
+        run: |
+          python - <<'PY'
+          import sympy as sp
+          from fmsl.sympy_bridge import limit_set
+          x, y = sp.symbols("x y", real=True)
+          f4 = (4*x**2*y**2 - 4*x*y**3 + y**4 - 2*x*y**2 + y**3)/(8*x**2*y**2 - 8*x*y**3 + 3*y**4 + 8*x**2 - 8*x*y + 2*y**2)
+          for f in (x**3*y/(x**6 + y**2), (x**2 + y**2)/(x*y), f4):
+              print(f"::notice title=fmsl.sympy_bridge (SymPy {sp.__version__})::{f}  ->  {limit_set(f, (x, y))}")
+          PY
