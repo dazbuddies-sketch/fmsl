@@ -11,6 +11,7 @@ Tools:
     fmsl_limit(expression, variables?)          the complete set of limit values at the origin, proven
     fmsl_check_limit(expression, claim, ...)    is a claimed limit or set right? what is missing or extra?
     fmsl_rate(expression, variables?)           how fast the limit is approached: |f - L| <= C r^theta
+    fmsl_extremum(expression, kind)             exact global min/max over the plane; attained or not
 """
 import multiprocessing as mp
 from typing import List, Optional
@@ -77,6 +78,28 @@ def fmsl_rate(expression: str, variables: Optional[List[str]] = None) -> dict:
     return _run(rate_at_origin, expression, variables)
 
 
+def _extremum(expression, kind):
+    from .optimize import global_min, global_max
+    from .verify import _variables, _rename
+    vs = _variables(expression)
+    if len(vs) != 2: raise ValueError("global minimum/maximum: functions of exactly two variables")
+    r = (global_max if kind == "max" else global_min)(_rename(expression, vs, ["x", "y"]))
+    r.pop("value_exact", None)
+    back = dict(zip(["x", "y"], vs))
+    r["text"] = r["text"].replace("(x, y)", f"({vs[0]}, {vs[1]})")
+    r["variables"] = vs
+    return r
+
+
+def fmsl_extremum(expression: str, kind: str = "min") -> dict:
+    """The exact global minimum (kind="min") or maximum (kind="max") of a function of two variables
+    over the whole plane, and whether it is ATTAINED (and where) or only approached at infinity.
+    Polynomials, or rational functions whose denominator never vanishes. Example: "x^2+(x*y-1)^2"
+    has infimum 0, which is not attained.
+    """
+    return _run(_extremum, expression, kind)
+
+
 def build_server():
     try:
         from mcp.server.mcpserver import MCPServer as Server      # mcp >= 2
@@ -86,6 +109,7 @@ def build_server():
     server.tool()(fmsl_limit)
     server.tool()(fmsl_check_limit)
     server.tool()(fmsl_rate)
+    server.tool()(fmsl_extremum)
     return server
 
 

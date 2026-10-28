@@ -314,7 +314,7 @@ Examples, each confirmed by hand or by a known closed form:
 | (xy + yz + zx)/(x² + y² + z²) | [−1/2, 1] | eigenvalues of the quadratic form |
 | (xy − 2z² + xz)/(x² + 2y² + 3z²) | [−0.796873…, 0.394973…] | generalized eigenvalues |
 | x²y²z²/(x⁶ + y⁶ + z⁶) | [0, 1/3] | decided at a vertex (c = d = 1) |
-| xyz/(x⁴ + y⁴ + z²) | [−√2/4, √2/4] (to 40 digits) | max of cd/(1 + c⁴ + d²) |
+| xyz/(x⁴ + y⁴ + z²) | [−√2/4, √2/4] (exact) | max of cd/(1 + c⁴ + d²) |
 | x²yz/((yz − x²)² + x⁶) | [−1/4, +∞] | zoom along the curve yz = x²: t/(t − 1)² ≥ −1/4 |
 | 2x³y²z²/((y²z − x)² + x⁴) | {0} (limit 0) | a squared form touches 0 without crossing it |
 
@@ -345,9 +345,12 @@ completely; every answer that this changed agrees with the cube check below.
 
 **Version 1 limits.** The following are reported as UNPROVEN, never guessed: zooming along a
 curve c^p d^q = u₀ with neither |p| nor |q| equal to 1; number fields of degree above 16;
-depth > 4. A
-critical value whose critical point is not cut out linearly is computed to 40 digits and
-marked "approx.".
+depth > 4. Critical values whose critical points are not cut out linearly are exact too (since
+0.15.0): the critical points are real algebraic numbers over the number field of their first
+coordinate, and the value is computed in the compositum. Before, they were computed to 40
+digits and marked "approx."; on the 200 random functions this made 19 answers exact, all with
+the same sets as before. A 40-digit fallback remains only if the number field would exceed
+degree 16, and is then flagged.
 
 ## Moving targets
 
@@ -391,6 +394,31 @@ found no unreported change of type. The closest prior work I found decides limit
 two-variable rational functions with Sturm's theorem (Zeng and Xiao, J. Symbolic Comput. 96, 2020); I did not
 find a tool that computes exact fluid states for families with a parameter, but my search was
 brief, so this is provisional.
+
+## Global minimum and maximum: is it attained?
+
+`fmsl.optimize` finds the exact global minimum or maximum of a function of two variables over the
+whole plane, and decides whether it is actually **attained** or only approached at infinity, a
+question numerical optimizers cannot settle.
+
+```python
+from fmsl.optimize import global_min, global_max
+global_min("x^2 + (x*y - 1)^2")   # infimum 0, NOT attained: approached only as (x, y) -> infinity
+global_min("x^4 + y^4 - 2*x*y")   # minimum -1/2, attained at (x, y) = (-1/sqrt2, -1/sqrt2) and (1/sqrt2, 1/sqrt2)
+global_min("x^2*y^4 + x^4*y^2 - 3*x^2*y^2 + 1")   # Motzkin: minimum 0 at (+-1, +-1)
+global_max("x/(1 + x^2 + y^2)")   # maximum 1/2, attained at (1, 0)
+```
+How: the infimum m is the lower end of the exact range of f (critical values, values approached
+at infinity, one exact test value per gap). If m is attained at a point, that point is critical,
+so m is a critical value; conversely a critical value equal to m is attained there. So *attained
+⇔ m is a critical value*, decided exactly. For polynomials, and rational functions whose
+denominator never vanishes.
+
+Checked by `benchmarks/optimize_crosscheck.py`, which uses neither critical values nor the range
+algorithm: with the exact real-points test, f = a has no real solution for a just below m, f = b
+has one for b just above m, and (for rational m) f = m has a solution exactly when FMSL says the
+minimum is attained. On 67 functions (7 classics with known answers and 60 random
+polynomials of degree 4, of which 23 do not attain their infimum) there are no disagreements.
 
 ## The rate: how fast a limit is approached
 
@@ -494,11 +522,13 @@ What this shows, and what it does not:
 
 ## FMSL for AI assistants (MCP server)
 
-`fmsl-mcp` gives an AI assistant three tools over the Model Context Protocol:
+`fmsl-mcp` gives an AI assistant four tools over the Model Context Protocol:
 
 * `fmsl_limit(expression)`: the complete set of values the expression approaches at the origin,
   proven, with the curves along which the end values are approached (two variables).
 * `fmsl_rate(expression)`: how fast the limit is approached (see *The rate* above).
+* `fmsl_extremum(expression, kind)`: the exact global minimum or maximum over the plane, and
+  whether it is attained.
 * `fmsl_check_limit(expression, claim)`: checks the assistant's own answer, and says exactly what
   is missing and what is never approached, e.g. *Incorrect: the proven set is [-oo, -4/3] u
   [0, +oo]; these claimed values are never approached: (-4/3, 0).*

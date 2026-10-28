@@ -76,3 +76,20 @@ class Plane(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestExactCriticalValues(unittest.TestCase):
+    """roadmap #3: critical points with a nonlinear fibre are now exact (they were 40-digit approximations)"""
+    def test_nonlinear_fibre(self):
+        from fmsl.multivar import parse_rational
+        from fmsl.plane import critical_values
+        from fmsl.algebraic import A
+        N, D = parse_rational("(y^4-2*y^2+x^2+x)/(1+y^2)")
+        vals, exact = critical_values(N, D)
+        self.assertTrue(exact)
+        alg = [v for v in vals if isinstance(v, A)]
+        self.assertTrue(alg)
+        self.assertAlmostEqual(float(alg[0]), -0.6833752096446002, places=12)
+        N, D = parse_rational("x^2*y + (y^3-3*y)^2")
+        vals, exact = critical_values(N, D)
+        self.assertTrue(exact); self.assertEqual(sorted(set(vals)), [0, 4])

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.15.0
+- Exact critical values when the fibre is nonlinear (roadmap #3): critical points over an
+  algebraic first coordinate are now exact real algebraic numbers (roots of a polynomial with
+  coefficients in that number field), and the value is computed in the compositum. Before, they
+  were 40-digit approximations marked "approx."; on the 200 random three-variable functions
+  this made 19 answers exact (same sets as before). The cube cross-check still matches 51/51.
+  A flagged 40-digit fallback remains only beyond number-field degree 16.
+- `fmsl.optimize`: exact global minimum / maximum of a two-variable function over the plane, and
+  whether it is attained (and where) or only approached at infinity. Cross-check
+  `benchmarks/optimize_crosscheck.py`: 67 functions, no disagreements.
+- MCP tool `fmsl_extremum`.
+
 ## 0.14.0
 - The rate (`fmsl.rate`, roadmap #4): for a two-variable rational function with a limit L at the
   origin, the exact best exponent theta with |f - L| <= C r^theta, and a curve along which it is

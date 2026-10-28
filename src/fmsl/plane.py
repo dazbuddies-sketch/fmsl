@@ -287,6 +287,12 @@ def image_1d(n, d, lo=None, hi=None):
     return out
 
 # ----------------------------- critical values of R = P/Q in the plane
+_RECORD = []          # when a list is pushed here, critical points are recorded as (value, c, d)
+
+def _add(vals, v, c0, d0):
+    vals.append(v)
+    if _RECORD: _RECORD[-1].append((v, c0, d0))
+
 def critical_values(P, Q, box=None):
     """values R(c, d) at the real critical points (grad R = 0, Q != 0), exactly when the
        critical points are isolated with a linear fibre gcd; otherwise sampled exactly on the
@@ -309,12 +315,12 @@ def critical_values(P, Q, box=None):
             for c0 in _samples(bps, lo, hi):
                 for d0 in _poly_roots_in(at_c(h, c0), lo, hi):
                     q = beval(Q, c0, d0)
-                    if sign_of(q) != 0: vals.append(beval(P, c0, d0) / q)
+                    if sign_of(q) != 0: _add(vals, beval(P, c0, d0) / q, c0, d0)
         else:
             for c0 in _poly_roots_in(hd[0], lo, hi):          # vertical critical lines
                 for d0 in _samples([], lo, hi):
                     q = beval(Q, c0, d0)
-                    if sign_of(q) != 0: vals.append(beval(P, c0, d0) / q)
+                    if sign_of(q) != 0: _add(vals, beval(P, c0, d0) / q, c0, d0)
         G1 = bdivexact(G1, h) if G1 else G1
         G2 = bdivexact(G2, h) if G2 else G2
     if G1 and G2 and max(k for _, k in G1) > 0 and max(k for _, k in G2) > 0:
@@ -327,10 +333,13 @@ def critical_values(P, Q, box=None):
                     d0 = -g[0] / g[1]
                     if box is not None and not (cmp(d0, lo) > 0 and cmp(d0, hi) < 0): continue
                     q = beval(Q, c0, d0)
-                    if sign_of(q) != 0: vals.append(beval(P, c0, d0) / q)
+                    if sign_of(q) != 0: _add(vals, beval(P, c0, d0) / q, c0, d0)
                 elif len(g) > 2:
-                    exact = False
-                    vals += _approx_fibre_values(P, Q, g, c0, lo, hi)
+                    try:
+                        vals += _exact_fibre_values(P, Q, g, c0, lo, hi)
+                    except (ArithmeticError, NotImplementedError):
+                        exact = False                      # number field too large: 40 digits, flagged
+                        vals += _approx_fibre_values(P, Q, g, c0, lo, hi)
     elif G1 or G2:
         # one gradient component vanishes identically: critical points = zeros of the other
         G = G1 or G2
@@ -338,7 +347,7 @@ def critical_values(P, Q, box=None):
             for c0 in _poly_roots_in(in_d(G)[0], lo, hi):
                 for d0 in _samples([], lo, hi):
                     q = beval(Q, c0, d0)
-                    if sign_of(q) != 0: vals.append(beval(P, c0, d0) / q)
+                    if sign_of(q) != 0: _add(vals, beval(P, c0, d0) / q, c0, d0)
     return vals, exact
 
 def _gcd_any(a, b):
@@ -353,6 +362,17 @@ def _gcd_any(a, b):
             while a and (a[-1] == 0): a.pop()
         a, b = b, a
     return [v / a[-1] for v in a] if a else a
+
+def _exact_fibre_values(P, Q, g, c0, lo, hi):
+    """critical points over c0 with a nonlinear fibre g(d) = 0, exactly: the real roots of g
+       (coefficients in Q(c0)) are real algebraic numbers, and R is evaluated in the compositum
+       of the two number fields (roadmap #3)"""
+    out = []
+    for d0 in _real_roots(g):
+        if lo is not None and not (cmp(d0, lo) > 0 and cmp(d0, hi) < 0): continue
+        q = beval(Q, c0, d0)
+        if sign_of(q) != 0: _add(out, beval(P, c0, d0) / q, c0, d0)
+    return out
 
 def _approx_fibre_values(P, Q, g, c0, lo, hi):
     """critical points over c0 with a nonlinear fibre: approximate d by bisection on a rational
