@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.0
+- The non-properness (Jelonek) set of a polynomial map of the real plane (`fmsl.jelonek`,
+  roadmap #6): Newton-Puiseux zooming along arcs to infinity; exact lines, half-lines and curves.
+  Cross-check `benchmarks/jelonek_crosscheck.py` (elimination plus exact solving near each
+  candidate, no arcs): 153 maps, 612 generic lines, 304 candidate points, no disagreements;
+  446 witness arcs confirmed.
+- MCP tool `fmsl_nonproperness`.
+
 ## 0.16.0
 - `fmsl.sympy_bridge` (roadmap #5): `limit_set(expr, vars, point)` and
   `multivariate_limit(expr, vars, point)` for SymPy expressions in two or three variables, at any

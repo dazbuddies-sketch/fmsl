@@ -396,6 +396,36 @@ two-variable rational functions with Sturm's theorem (Zeng and Xiao, J. Symbolic
 find a tool that computes exact fluid states for families with a parameter, but my search was
 brief, so this is provisional.
 
+## Polynomial maps: where properness fails (Jelonek set)
+
+For a polynomial map F = (f, g) of the real plane, `fmsl.jelonek` computes its non-properness
+set S_F exactly: the points F approaches along sequences that go to infinity. F is proper exactly
+off S_F, and by Jelonek's theorem a real polynomial map of the plane with nowhere-vanishing
+Jacobian determinant is a bijection if and only if S_F is empty. This is the object behind the
+(real) Jacobian conjecture: Pinchuk's counterexample to the real version has a nonempty S_F.
+
+```python
+from fmsl.jelonek import jelonek_set
+jelonek_set("x", "x*y")["text"]               # the line a = 0
+jelonek_set("x*y", "x*y^2 - y")["text"]       # the line b = 0; the line a = 1
+jelonek_set("x^2*y^2 + x*y", "y")["text"]     # the line b = 0, a in [-1/4, +oo)
+jelonek_set("x*y", "x^2*y^2 + x")["text"]     # the curve (a, b) = (t, t^2), t real
+jelonek_set("x + y^2", "y")["empty"]          # True: an automorphism
+```
+How: the same Newton-Puiseux zooming as at 0/0 points, now along arcs to infinity
+x = ±1/s, y = c₁s^e₁ + c₂s^e₂ + … (and with x, y exchanged). f and g become Laurent polynomials in
+s; F stays bounded only where every negative power cancels, which happens only at real roots of
+initial forms, where FMSL zooms. Where both orders are ≥ 0, the limits are polynomials in the
+free coefficient, giving exact pieces (A(t), B(t)) of S_F.
+
+Checked by `benchmarks/jelonek_crosscheck.py`, which uses no arcs. On generic lines a = r and
+b = r it finds every candidate point by elimination (where the number of solutions of F = (a, b)
+can drop: leading coefficients of resultants), then decides each candidate by solving F = (a, b)
+exactly near it and watching whether a real solution runs off to infinity. On 153 maps (6 with
+known answers, 147 random), 612 lines and 304 candidate points (279 in S_F, 25 not), it agrees
+with FMSL every time; and along all 446 witness arcs FMSL reports, |p| grows while F(p) tends
+to the claimed point. The MCP server has the tool `fmsl_nonproperness`.
+
 ## Global minimum and maximum: is it attained?
 
 `fmsl.optimize` finds the exact global minimum or maximum of a function of two variables over the
@@ -542,13 +572,14 @@ set. Tested in CI with SymPy 1.14.
 
 ## FMSL for AI assistants (MCP server)
 
-`fmsl-mcp` gives an AI assistant four tools over the Model Context Protocol:
+`fmsl-mcp` gives an AI assistant five tools over the Model Context Protocol:
 
 * `fmsl_limit(expression)`: the complete set of values the expression approaches at the origin,
   proven, with the curves along which the end values are approached (two variables).
 * `fmsl_rate(expression)`: how fast the limit is approached (see *The rate* above).
 * `fmsl_extremum(expression, kind)`: the exact global minimum or maximum over the plane, and
   whether it is attained.
+* `fmsl_nonproperness(f, g)`: the Jelonek set of a polynomial map of the plane.
 * `fmsl_check_limit(expression, claim)`: checks the assistant's own answer, and says exactly what
   is missing and what is never approached, e.g. *Incorrect: the proven set is [-oo, -4/3] u
   [0, +oo]; these claimed values are never approached: (-4/3, 0).*

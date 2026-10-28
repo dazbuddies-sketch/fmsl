@@ -12,6 +12,7 @@ Tools:
     fmsl_check_limit(expression, claim, ...)    is a claimed limit or set right? what is missing or extra?
     fmsl_rate(expression, variables?)           how fast the limit is approached: |f - L| <= C r^theta
     fmsl_extremum(expression, kind)             exact global min/max over the plane; attained or not
+    fmsl_nonproperness(f, g)                    the Jelonek set of the polynomial map (f, g) of the plane
 """
 import multiprocessing as mp
 from typing import List, Optional
@@ -100,6 +101,20 @@ def fmsl_extremum(expression: str, kind: str = "min") -> dict:
     return _run(_extremum, expression, kind)
 
 
+def _jelonek(f, g):
+    from .jelonek import jelonek_set
+    r = jelonek_set(f, g)
+    return {"text": r["text"], "empty": r["empty"], "complete": r["complete"]}
+
+
+def fmsl_nonproperness(f: str, g: str) -> dict:
+    """The exact non-properness (Jelonek) set of the polynomial map F = (f, g) of the real plane: the
+    points that F approaches along sequences going to infinity. F is proper exactly off this set; a
+    map with nonvanishing Jacobian is a bijection iff the set is empty. Polynomials in x and y.
+    """
+    return _run(_jelonek, f, g)
+
+
 def build_server():
     try:
         from mcp.server.mcpserver import MCPServer as Server      # mcp >= 2
@@ -110,6 +125,7 @@ def build_server():
     server.tool()(fmsl_check_limit)
     server.tool()(fmsl_rate)
     server.tool()(fmsl_extremum)
+    server.tool()(fmsl_nonproperness)
     return server
 
 
