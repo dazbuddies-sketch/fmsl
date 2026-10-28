@@ -427,6 +427,40 @@ What this shows, and what it does not:
   oscillating (the limit is 0, by the squeeze theorem). It is fixed in 0.10.0, together with a
   related problem (sums of essential factors now say "not decided" instead of borrowing a verdict).
 
+## LimitBench: AI models against proven answers
+
+[`benchmarks/limitbench/`](benchmarks/limitbench/) asks for the complete set of values a function
+of two or three variables approaches at the origin, with every answer proven by FMSL and confirmed
+by the independent exact check. Models are run through the Anthropic API in GitHub Actions
+(`.github/workflows/limitbench.yml`); every answer is saved and the IDs of all wrong answers are
+listed in [`results/REGRADED.md`](benchmarks/limitbench/results/REGRADED.md). Exact answers,
+October 2026:
+
+| method | LimitBench (491) | LimitBench-Gaps (225) |
+|---|---|---|
+| FMSL | 491 | 225 |
+| Claude Sonnet 5.5 | 489 | 218 |
+| Claude Haiku 5.5 | 489 | 216 |
+| limits along 8 standard paths | 104 of 450 two-variable items | 0 |
+
+What this shows, and what it does not:
+
+* **Current models are good at this.** On the main set both models were right about whether the
+  limit exists every time, including all 132 problems where every standard path gives the same
+  wrong impression. The claim "AI gets fooled where FMSL does not" is not supported.
+* **Their mistakes have a shape.** Proving which values are *never* approached is the hard half.
+  LimitBench-Gaps is built around it: 185 functions whose set of limit values has a gap, and 40
+  decoys without one. All 7 of Sonnet's mistakes there were the same: it said every value is
+  approached when a whole range is not. For example, −2x²/(x² + 2xy − 2y² + x³y) never comes
+  near any value strictly between −4/3 and 0. Haiku made 2 mistakes of that kind and 7 others
+  (wrong endpoints, a stray point, a gap in the wrong place, one reply with no answer).
+* **The practical point.** A model is right about 96–97% of the time on these problems, and its
+  answer has to be checked to know which time it is. FMSL is right every time, proves it, and
+  is the tool that does the checking.
+* The grader was fixed twice after the runs to read answers written as formulas (such as
+  (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
+  between runs; these are single runs.
+
 ## The scaling map (DUS)
 
 MJ Celedon's FMS proposed *Dimensional Unit Scaling* (DUS): transformations across numerical

@@ -122,7 +122,10 @@ undecidable in general [@richardson1968].
 
 FMSL reproduces all published examples of @dgnp2022 and computes the case they left open; it
 computes fluid states in three variables and for moving targets, with an independent check for
-every result. The Experiment A benchmark is reusable for testing other limit implementations.
+every result. The Experiment A benchmark is reusable for testing other limit implementations, and
+LimitBench, a set of 716 multivariable limit problems with proven answers, tests AI models: in
+October 2026 Claude Sonnet 5.5 answered 707 exactly, and all 7 of its errors on the subset built
+around gaps claimed that every value is approached when a whole range is not.
 The software is archived on Zenodo (doi:10.5281/zenodo.23682015).
 
 # AI usage disclosure
