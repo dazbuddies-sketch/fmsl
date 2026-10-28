@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0
+- `fmsl.verify`: `limit_at_origin(expr)` (the proven set of limit values at the origin, in one,
+  two or three variables, with witness curves in two variables) and `check_claim(expr, claim)`
+  (is a claimed limit or set right; which values are missing, which are never approached).
+- `fmsl-mcp`, an MCP server with the tools `fmsl_limit` and `fmsl_check_limit`, so AI assistants
+  can compute and check limits instead of guessing (`pip install "fmsl[mcp]"`).
+- LimitBench (491 problems) and LimitBench-Gaps (225 problems built around gaps in the set of
+  limit values), with results for Claude Haiku 5.5 and Sonnet 5.5 alone, with FMSL available,
+  and told to check their answers with FMSL (Sonnet 225/225, Haiku 224/225).
+
 ## 0.12.0
 - The scaling map (`fmsl.scaling`), the rigorous form of DUS (Dimensional Unit Scaling) from MJ
   Celedon's FMS: for a two-variable 0/0 point, the regimes of scales y ~ c|x|^a with their

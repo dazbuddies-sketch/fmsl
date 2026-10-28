@@ -43,6 +43,7 @@ the matrix module uses numpy.
 ```
 pip install fmsl            # core language and compiler
 pip install fmsl[matrix]    # plus matrix functions (numpy)
+pip install fmsl[mcp]       # plus the MCP server for AI assistants (fmsl-mcp)
 ```
 
 or from source: `pip install .`
@@ -460,6 +461,41 @@ What this shows, and what it does not:
 * The grader was fixed twice after the runs to read answers written as formulas (such as
   (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
   between runs; these are single runs.
+
+## FMSL for AI assistants (MCP server)
+
+`fmsl-mcp` gives an AI assistant two tools over the Model Context Protocol:
+
+* `fmsl_limit(expression)`: the complete set of values the expression approaches at the origin,
+  proven, with the curves along which the end values are approached (two variables).
+* `fmsl_check_limit(expression, claim)`: checks the assistant's own answer, and says exactly what
+  is missing and what is never approached, e.g. *Incorrect: the proven set is [-oo, -4/3] u
+  [0, +oo]; these claimed values are never approached: (-4/3, 0).*
+
+```
+pip install "fmsl[mcp]"
+```
+Claude Desktop or Claude Code configuration:
+```json
+{"mcpServers": {"fmsl": {"command": "fmsl-mcp"}}}
+```
+The same checks are available from Python as `fmsl.verify.limit_at_origin` and
+`fmsl.verify.check_claim`, for graders and test suites.
+
+**Does it help? Only when the model is told to check.** LimitBench-Gaps (225 problems), exact
+answers:
+
+| model | alone | FMSL available | told to check its answer with FMSL |
+|---|---|---|---|
+| Claude Sonnet 5.5 | 218 | 220 (FMSL called 75 times) | **225** (every problem checked) |
+| Claude Haiku 5.5 | 216 | 217 (FMSL called 4 times) | **224** (224 of 225 problems checked) |
+
+Given the tool, the models mostly answered without it: they are confident about limits. With
+one instruction in the system prompt (*"Before you give your final answer, check it with
+fmsl_check_limit. If FMSL says it is wrong, correct it."*) Sonnet made no mistakes, and Haiku's
+one miss was a reply that ended without an answer and never called the tool. So the recommended
+setup is to instruct the assistant to verify. Single runs; details and per-problem tool calls in
+`benchmarks/limitbench/results/`.
 
 ## The scaling map (DUS)
 

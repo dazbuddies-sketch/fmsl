@@ -56,6 +56,21 @@ Not exact: LBG-0084, LBG-0102, LBG-0119, LBG-0125, LBG-0134, LBG-0148, LBG-0179,
 
 Not exact: LBG-0093, LBG-0096, LBG-0105, LBG-0135, LBG-0141, LBG-0148, LBG-0200, LBG-0220
 
+### gaps_anthropic_claude-haiku-5-5_verify  (225 items)
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 225 | 99.6% | 99.6% | 1 |
+| tier 5 | 75 | 100.0% | 100.0% | 0 |
+| tier 6 | 150 | 99.3% | 99.3% | 1 |
+| decoy: no gap | 40 | 100.0% | 100.0% | 0 |
+| gap: hidden quadratic | 48 | 100.0% | 100.0% | 0 |
+| gap: random | 110 | 99.1% | 99.1% | 1 |
+| gap: shifted squares | 27 | 100.0% | 100.0% | 0 |
+| path-test traps | 22 | 100.0% | 100.0% | 0 |
+
+Not exact: LBG-0173
+
 ### gaps_anthropic_claude-sonnet-5-5  (225 items)
 
 | subset | n | verdict right | exact answer | unparsed |
@@ -85,4 +100,19 @@ Not exact: LBG-0137, LBG-0138, LBG-0147, LBG-0171, LBG-0172, LBG-0187, LBG-0189
 | path-test traps | 22 | 100.0% | 100.0% | 0 |
 
 Not exact: LBG-0016, LBG-0024, LBG-0090, LBG-0103, LBG-0123
+
+### gaps_anthropic_claude-sonnet-5-5_verify  (225 items)
+
+| subset | n | verdict right | exact answer | unparsed |
+|---|---|---|---|---|
+| all | 225 | 100.0% | 100.0% | 0 |
+| tier 5 | 75 | 100.0% | 100.0% | 0 |
+| tier 6 | 150 | 100.0% | 100.0% | 0 |
+| decoy: no gap | 40 | 100.0% | 100.0% | 0 |
+| gap: hidden quadratic | 48 | 100.0% | 100.0% | 0 |
+| gap: random | 110 | 100.0% | 100.0% | 0 |
+| gap: shifted squares | 27 | 100.0% | 100.0% | 0 |
+| path-test traps | 22 | 100.0% | 100.0% | 0 |
+
+Not exact: none
 
