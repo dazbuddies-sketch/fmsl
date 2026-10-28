@@ -374,6 +374,23 @@ from fmsl.verify import limit_at_origin    # also takes sqrt(x^2+y^2) directly (
 limit_at_origin("a*b/sqrt(a^2+b^2)")["set"]   # {0}
 ```
 
+### Three variables: sqrt(x² + y² + z²)
+
+In `fmsl.verify` (and the MCP server) a distance is removed exactly by a squaring map, the real
+form of z → z² and its three-dimensional cousin:
+
+    x = u² − v² − w²,   y = 2uv,   z = 2uw,   and then   sqrt(x² + y² + z²) = u² + v² + w².
+
+The map is onto and |q|² is the distance, so the values f approaches at the point are exactly the
+values the rational function g(u, v, w) approaches at 0, which the three-variable engine proves.
+
+```python
+limit_at_origin("x*y*z/sqrt(x^2+y^2+z^2)^3")["set"]        # [-0.19245, 0.19245] = ±1/(3√3), exact
+limit_at_origin("(x^2+y^2)/sqrt(x^2+y^2+z^2)")["set"]      # {0}
+limit_at_origin("z/sqrt(x^2+y^2)")["set"]                  # [-oo, +oo]   (a cylinder: z left alone)
+limit_at("(x-1)/sqrt((x-1)^2+(y-2)^2+z^2)", [1, 2, 0])     # other points: the distance to that point
+```
+
 Write `r` or `sqrt(x^2+y^2)`; other square roots are refused with a clear message. Checked by
 `benchmarks/radial_crosscheck.py`: 74 functions (14 hand-picked, 60 random) against the exact
 image of the circle of radius 10⁻¹² — all agree, and deliberately damaged answers (an end moved
