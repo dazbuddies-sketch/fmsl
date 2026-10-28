@@ -38,3 +38,12 @@ class TestCheckClaim(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestOtherPoints(unittest.TestCase):
+    def test_point_and_side(self):
+        from fmsl.verify import limit_at
+        self.assertEqual(limit_at("(x^2-4)/(x-2)", 2)["limit"], "4")
+        self.assertEqual(limit_at("1/(x-2)", 2, side="-")["one_sided_limit"], "-oo")
+        self.assertEqual(limit_at("abs(x-2)/(x-2)", 2, side="+")["one_sided_limit"], "1")
+        self.assertEqual(limit_at("(x*y-2*y)/((x-2)^2+y^2)", (2, 0))["set"], "[-1/2, 1/2]")

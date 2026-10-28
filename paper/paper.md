@@ -14,119 +14,93 @@ authors:
 affiliations:
   - name: Independent researcher
     index: 1
-date: 27 October 2026
+date: 28 October 2026
 bibliography: paper.bib
 ---
 
 # Summary
 
-At a point where a function takes the form 0/0, a single number is often the wrong answer.
-For a function of several variables the value can depend on the direction, and even on the
-curvature, of the path of approach. FMSL computes exactly what happens there. For a rational
-function $f = N/D$ of two or three variables it returns the limit with a proof when one exists;
-otherwise it returns the complete set of values $f$ approaches, which we call its *fluid
-state* (the cluster set of $f$ at the point). Viewing $f$ as a map into the circle
-$\mathbb{R}\cup\{\infty\}$ shows that this set is a point, a closed arc, or the whole circle.
-FMSL returns it exactly, with rational or real algebraic endpoints, and a signed variant keeps
-$+\infty$ and $-\infty$ apart.
+At a point where a function takes the form 0/0, a single number is often the wrong answer: in
+several variables the value can depend on the direction, and even the curvature, of the path of
+approach. For a rational function $f = N/D$ of two or three variables, FMSL returns the limit
+with a proof when it exists, and otherwise the complete set of values $f$ approaches, which we
+call its *fluid state* (the cluster set of $f$ at the point). Viewing $f$ as a map into the
+circle $\mathbb{R}\cup\{\infty\}$, this set is a point, a closed arc or the whole circle; FMSL
+returns it exactly, with rational or real algebraic endpoints.
 
-FMSL also handles *moving targets*: for a family $f(x,y,t)$, optionally with the 0/0 point
-moving along a path, it returns the fluid state at each time, exact relations $E(t,v)=0$ for how
-its ends move, and the exact times at which it changes character. We call these the *Celedon
-points* of the family. At each Celedon point, FMSL also gives the fluid state of the moving
-target, a three-variable problem. A *scaling map* shows which scale $y \sim c|x|^a$ decides each
-part of a fluid state. A one-variable engine handles 0/0 traps in formulas such as $\sin t/t$,
-including $|f|$, $\operatorname{sign} f$ and essential singularities, and generates code with a
-proven error bound.
+The same exact machinery answers related questions. For a family $f(x,y,t)$ FMSL gives the
+fluid state at each time and the exact times where it changes character, which we call
+*Celedon points*. It computes how fast a limit is approached (the best $\theta$ with
+$|f-L|\le C r^{\theta}$, a Łojasiewicz-type exponent, with a curve attaining it); the global
+minimum of a polynomial in two variables and whether it is attained or only approached at
+infinity; and the non-properness set of a polynomial map of the plane [@jelonek1993]. A
+one-variable engine handles formulas such as $\sin t/t$ and generates code with proven error
+bounds.
 
 # Statement of need
 
 Multivariate limits are a standard topic in calculus and a recurring source of errors in
 computer algebra. SymPy [@sympy] handles one-variable limits [@gruntz1996] but has no
-multivariable limit routine. @zengxiao2020 decide limits of bivariate rational functions with
-Sturm's theorem. Đinh, Guo, Nguyễn and Phạm [@dgnp2022] compute the range of limit values of
-a bivariate rational function whose denominator has an isolated zero, report a case where
-Maple 2021 returned a wrong range, and leave denominators vanishing along curves to future work.
-Cylindrical algebraic decomposition [@collins1975] decides such questions in principle, but it
-does not return the structure of the answer and its cost limits practical use.
+multivariable limit routine. @zengxiao2020 decide whether limits of bivariate rational functions
+exist; @dgnp2022 compute the range of limit values when the denominator has an isolated zero,
+report a case where Maple 2021 returned a wrong range, and leave other denominators to future
+work. Cylindrical algebraic decomposition [@collins1975] decides such questions in principle
+but does not return the structure of the answer.
 
-FMSL is free, open source, and dependency-free for its exact core. It reproduces all 21
-examples of @dgnp2022, including the one Maple got wrong, and computes the case they left open
-(for example $[-\infty,-3]\cup[3,+\infty]$ for their Example 5). It extends the computation to
-three variables and to parametric families. Intended users are educators showing why a limit
-fails, researchers who need exact experiments with singular points, and authors of numerical
-software who must handle removable singularities safely.
-
-# State of the field
-
-Computer algebra systems compute one-variable limits well [@gruntz1996; @sympy]. For two
-variables, @zengxiao2020 decide whether a limit exists and @dgnp2022 compute the range when the
-denominator has an isolated zero. We did not find an open implementation that computes complete
-fluid states in three variables, or for families with a parameter; our search was not
-exhaustive. FMSL was built as a separate package rather than a contribution to an existing
-system because it needs exact real algebraic numbers throughout, returns proofs and the paths
-that produce each value, and carries an independent cross-check for every result.
-Contributing the two-variable engine to SymPy is planned.
+FMSL is free, open source and dependency-free. It reproduces all 21 examples of @dgnp2022,
+including the one Maple got wrong, computes the case they left open, and extends the
+computation to three variables and to parametric families. Intended users are educators,
+researchers, authors of numerical software, and AI assistants, which can call FMSL through a
+Model Context Protocol server to check their answers. A SymPy bridge returns SymPy objects, and inclusion in SymPy has been proposed.
 
 # Software design
 
-The engines are pure Python with exact rational arithmetic. Real algebraic numbers are a
-square-free polynomial with an isolating interval; zero and sign tests use Sturm sequences,
-which also work over a number field $\mathbb{Q}(\alpha)$, so polynomials with algebraic
-coefficients have exact roots (represented through their norms). Numbers from two fields are
-combined in a common field generated by a primitive element. The two-variable engine follows
-the Newton polygon with Newton–Puiseux zooming; simple roots are settled by the implicit
-function and intermediate value theorems, and completeness rests on the curve selection lemma
-[@milnor1968]. The three-variable engine works on the arrangement of tie lines in the weight
-plane, zooms at points (rational or algebraic) and along curves $c^{p}d^{q}=u_0$, and computes
-the exact range of two-variable forms from critical values, values at infinity and one exact
-test value per gap. The moving-target module finds candidate Celedon points as real roots of
-coefficients, discriminants and resultants computed over $\mathbb{Q}[t]$, and obtains the end
-relations $E(t,v)$ by exact evaluation and interpolation with an a priori degree bound. The
-main trade-off is speed for certainty: anything that cannot be decided is reported as UNPROVEN,
-never guessed.
+The engines are pure Python with exact arithmetic: real algebraic numbers are square-free
+polynomials with isolating intervals, compared by Sturm sequences, also over number fields. The two-variable engine follows the Newton polygon with Newton–Puiseux zooming; simple
+roots are settled by the implicit function and intermediate value theorems, and completeness
+rests on the curve selection lemma [@milnor1968]. The three-variable engine works on the
+arrangement of tie lines in the weight plane, zooms at rational and algebraic points and along
+curves, and computes exact ranges of two-variable forms from critical values, values at infinity
+and one exact test value per gap. The rate and the non-properness set reuse the zooming, the latter along arcs to infinity
+$x=\pm s^{-1}$, $y=\sum c_i s^{e_i}$. Anything that cannot be decided
+is reported as UNPROVEN, never guessed.
 
 # Verification
 
-Every fluid state is checked by an algorithm that shares no logic with the engine:
+Every result type is checked by an algorithm that shares no logic with the engine:
 
-- **Two variables:** the exact image of $f$ on small squares agrees on 113 of 113 functions, and
-  the 21 published examples of @dgnp2022 agree.
-- **Three variables:** the exact image on small cube surfaces (including the fluid states at
-  0/0 points inside a face) agrees on 102 of 105 functions; the other three, too slow for the
-  cube, are confirmed on a plane or by explicit families of paths.
-- **Moving targets:** 75 of 75 snapshots agree with the square images, and 36 of 36 moving states
-  with the cube images.
-- **Experiment A.** Following a benchmark design proposed in the author's earlier Fluid
-  Mathematics System research brief, 1,120 expressions in ten kinds of local behaviour, with
-  ground truth fixed by construction, were run in continuous integration against SymPy 1.13.3:
-  FMSL 1,120 correct, 0 wrong, 0 unresolved; SymPy 963 correct, 147 wrong, 10 unresolved. In one
-  variable both are correct on all 896 cases. The difference is in several variables, where the
-  standard method of limits along paths found the exact set of values in 67 of 224 cases (for
-  example, every standard path gives 0 for $x^3y/(x^6+y^2)$, whose fluid state is
-  $[-\tfrac12,\tfrac12]$).
-
-The cross-checks found real errors during development, all fixed and recorded in the changelog;
-deliberately damaged answers were caught 42 of 42 times in two variables and 11 of 11 in three.
+- **Fluid states.** Exact images on small squares agree on 113 of 113 two-variable functions,
+  and on small cube surfaces on 102 of 105 three-variable functions (the other three are
+  confirmed on a plane or by families of paths). Deliberately damaged answers were caught 53 of
+  53 times.
+- **Moving targets.** 75 of 75 snapshots and 36 of 36 moving states agree with the exact images.
+- **Rate.** On 139 functions, exact rational points near the origin never contradict the bound,
+  and on every reported curve the measured order matches $\theta$.
+- **Global extrema.** On 67 polynomials, an exact real-points test confirms that no value lies
+  below the infimum, that it is approached, and whether it is attained.
+- **Non-properness set.** On 153 maps and 612 generic lines, candidates found by elimination and
+  decided by exact solving agree with FMSL in all 304 cases.
+- **Experiment A.** 1,120 expressions with ground truth fixed by construction, following the
+  author's earlier Fluid Mathematics System research brief, run against SymPy 1.13.3: FMSL 1,120
+  correct; SymPy 963 correct, 147 wrong, 10 unresolved. In several variables, limits along
+  standard paths found the exact set of values in 67 of 224 cases.
 
 # Limitations
 
-In three variables FMSL reports UNPROVEN when it would have to zoom along a curve
-$c^pd^q=u_0$ with $|p|,|q|>1$, use a number field of degree above 16, or zoom deeper than four
-levels. Celedon points that arise only deep inside the zoom are found by sampling and reported
-as approximate change points: this is evidence, not proof. The multivariable engines handle
-rational functions; for expressions mixing exponentials and absolute values, equality can be
-undecidable in general [@richardson1968].
+In three variables FMSL reports UNPROVEN when it would have to zoom along a curve $c^pd^q=u_0$
+with $|p|,|q|>1$, use a number field of degree above 16, or zoom deeper than four levels.
+Celedon points that arise only deep inside the zoom are found by sampling and reported as
+approximate. The multivariable engines handle rational functions; with exponentials and
+absolute values, equality can be undecidable [@richardson1968].
 
 # Research impact statement
 
-FMSL reproduces all published examples of @dgnp2022 and computes the case they left open; it
-computes fluid states in three variables and for moving targets, with an independent check for
-every result. The Experiment A benchmark is reusable for testing other limit implementations, and
-LimitBench, a set of 716 multivariable limit problems with proven answers, tests AI models: in
-October 2026 Claude Sonnet 5.5 answered 707 exactly, and all 7 of its errors on the subset built
-around gaps claimed that every value is approached when a whole range is not.
-The software is archived on Zenodo (doi:10.5281/zenodo.23682015).
+LimitBench, 716 multivariable limit problems with proven answers, tests AI models. In October
+2026 Claude Sonnet 5.5 answered 707 exactly, and all 7 of its errors on the subset built around
+gaps in the set of limit values claimed that every value is approached. Told to check its
+answers with FMSL, it answered all 225 problems of that subset exactly. The non-properness set
+is the central object of the real Jacobian conjecture, whose counterexample by @pinchuk1994 has
+a nonempty one. The software is archived on Zenodo (doi:10.5281/zenodo.23682015).
 
 # AI usage disclosure
 

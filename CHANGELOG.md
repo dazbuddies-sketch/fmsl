@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.18.0
+- `fmsl.verify.limit_at(expr, point, side=None)`: limits at any rational point (by moving it to
+  the origin), and one-sided limits in one variable (side "-" from below, "+" from above). The
+  MCP tool `fmsl_limit` takes `point` and `side`.
+- The non-properness documentation now credits the equivalence "bijection iff proper" to
+  Hadamard's global inverse function theorem, and cites Jelonek (1993) and Pinchuk (1994).
+- JOSS paper revised: the new features in one paragraph, verification of every result type,
+  under 1,000 words.
+
 ## 0.17.0
 - The non-properness (Jelonek) set of a polynomial map of the real plane (`fmsl.jelonek`,
   roadmap #6): Newton-Puiseux zooming along arcs to infinity; exact lines, half-lines and curves.

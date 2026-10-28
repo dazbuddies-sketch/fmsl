@@ -400,9 +400,11 @@ brief, so this is provisional.
 
 For a polynomial map F = (f, g) of the real plane, `fmsl.jelonek` computes its non-properness
 set S_F exactly: the points F approaches along sequences that go to infinity. F is proper exactly
-off S_F, and by Jelonek's theorem a real polynomial map of the plane with nowhere-vanishing
-Jacobian determinant is a bijection if and only if S_F is empty. This is the object behind the
-(real) Jacobian conjecture: Pinchuk's counterexample to the real version has a nonempty S_F.
+off S_F (Jelonek studied this set and showed how to compute it over the complex numbers
+[Ann. Polon. Math. 58 (1993) 259–266]). A polynomial map of the plane whose Jacobian
+determinant never vanishes is a bijection exactly when it is proper (Hadamard's global inverse
+function theorem), that is, exactly when S_F is empty. This is the object behind the real
+Jacobian conjecture: Pinchuk's counterexample [Math. Z. 217 (1994) 1–4] has a nonempty S_F.
 
 ```python
 from fmsl.jelonek import jelonek_set
@@ -592,7 +594,10 @@ Claude Desktop or Claude Code configuration:
 {"mcpServers": {"fmsl": {"command": "fmsl-mcp"}}}
 ```
 The same checks are available from Python as `fmsl.verify.limit_at_origin` and
-`fmsl.verify.check_claim`, for graders and test suites.
+`fmsl.verify.check_claim`, for graders and test suites. Other points work by moving them to the
+origin (x = 2 + h, h -> 0), which `fmsl.verify.limit_at` does for you, with one-sided limits in
+one variable: `limit_at("1/(x-2)", 2, side="-")` gives -oo (from below), `side="+"` gives +oo.
+`fmsl_limit` takes the same `point` and `side`.
 
 **Does it help? Only when the model is told to check.** LimitBench-Gaps (225 problems), exact
 answers:

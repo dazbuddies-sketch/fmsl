@@ -18,7 +18,7 @@ import multiprocessing as mp
 from typing import List, Optional
 
 from . import __version__
-from .verify import check_claim, limit_at_origin, rate_at_origin
+from .verify import check_claim, limit_at, limit_at_origin, rate_at_origin
 
 TIMEOUT = 60          # seconds per call; hard cases are reported, not left hanging
 
@@ -50,15 +50,25 @@ def _run(fn, *args):
     return val if status == "ok" else {"error": val}
 
 
-def fmsl_limit(expression: str, variables: Optional[List[str]] = None) -> dict:
-    """The complete set of values `expression` approaches as all its variables tend to 0, proven.
+def _limit(expression, variables, point, side):
+    if point is None and side is None: return limit_at_origin(expression, variables)
+    from fractions import Fraction
+    pts = [Fraction(str(p)) for p in (point or [0])]
+    return limit_at(expression, pts, variables, side)
+
+
+def fmsl_limit(expression: str, variables: Optional[List[str]] = None,
+               point: Optional[List[str]] = None, side: Optional[str] = None) -> dict:
+    """The complete set of values `expression` approaches as its variables tend to `point`
+    (default: the origin; rational coordinates such as ["2"] or ["1/3", "0"]), proven.
+    One variable: side "-" (from below) or "+" (from above) also gives the one-sided limit.
 
     expression: e.g. "x^3*y/(x^6+y^2)", "sin(x)/x", "(x*y+y*z+z*x)/(x^2+y^2+z^2)" (use ^ for powers).
     variables: optional, e.g. ["x", "y"]; by default every name in the expression except functions.
     Returns limit_exists, limit, set (e.g. "[-1/2, 1/2]" or "[-oo, -2] u [2, +oo]"), proven, an
     explanation, and in two variables witnesses: curves along which the end values are approached.
     """
-    return _run(limit_at_origin, expression, variables)
+    return _run(_limit, expression, variables, point, side)
 
 
 def fmsl_check_limit(expression: str, claim: str, variables: Optional[List[str]] = None) -> dict:
@@ -110,7 +120,7 @@ def _jelonek(f, g):
 def fmsl_nonproperness(f: str, g: str) -> dict:
     """The exact non-properness (Jelonek) set of the polynomial map F = (f, g) of the real plane: the
     points that F approaches along sequences going to infinity. F is proper exactly off this set; a
-    map with nonvanishing Jacobian is a bijection iff the set is empty. Polynomials in x and y.
+    map with nonvanishing Jacobian is a bijection iff the set is empty (it is then proper). Polynomials in x and y.
     """
     return _run(_jelonek, f, g)
 

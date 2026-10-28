@@ -278,3 +278,34 @@ def rate_at_origin(expr, variables=None):
             "limit": None if L is None else (_fmt(float(L)) if not isinstance(L, str) else L),
             "exponent": None if th is None else (str(th) if isinstance(th, Fraction) else str(th)),
             "proven": r.get("proven", False), "explanation": text}
+
+
+# ------------------------------------------------------------------ any point, and one side
+def limit_at(expr, point, variables=None, side=None):
+    """limit_at_origin at another point: substitute v -> v + p for each variable, so that
+    approaching x = 2 is approaching h = 0 in x = 2 + h. One variable: side = "-" (from below,
+    x < 2) or "+" (from above) gives the one-sided limit."""
+    vs = _variables(expr, variables)
+    pts = list(point) if isinstance(point, (list, tuple)) else [point]
+    if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
+    shifted = expr
+    tmp = {v: f"__s{k}__" for k, v in enumerate(vs)}
+    for v, t in tmp.items(): shifted = re.sub(rf"\b{re.escape(v)}\b", t, shifted)
+    for (v, t), p in zip(tmp.items(), pts):
+        shifted = shifted.replace(t, f"({v}+({Fr(p)}))")
+    r = limit_at_origin(shifted, vs)
+    r.update(expression=expr, point=[str(Fr(p)) for p in pts])
+    if side is None: return r
+    if len(vs) != 1: raise ValueError("one-sided limits are for one variable")
+    expl = r["explanation"]
+    m = re.search(r"x->0-: (\S+?);\s*x->0\+: (\S+?)(;|\s|$)", expl) or re.search(r"left (\S+), right (\S+?)(\s|$)", expl)
+    if m:
+        val = m.group(1) if side == "-" else m.group(2)
+        val = {"+inf": "+oo", "-inf": "-oo", "inf": "+oo"}.get(val, val)
+    elif r["components"] is not None and len(r["components"]) == 1 and r["components"][0][0] == r["components"][0][1]:
+        val = r["set"].strip("{}")
+    else:
+        val = None
+    r["side"] = side
+    r["one_sided_limit"] = val
+    return r

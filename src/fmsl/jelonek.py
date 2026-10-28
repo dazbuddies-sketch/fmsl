@@ -5,10 +5,10 @@ along some sequence of points going to infinity:
 
         S_F = { lim F(p_k) : |p_k| -> infinity, F(p_k) converges }.
 
-F is proper exactly over the complement of S_F. It matters for the Jacobian conjecture: by
-Jelonek's theorem, a real polynomial map of the plane whose Jacobian determinant never vanishes is
-a bijection if and only if its non-properness set is empty (Pinchuk's map, which shows that the
-real version of the conjecture fails, has a nonempty one). S_F is empty or a closed curve made of
+F is proper exactly over the complement of S_F. A polynomial map of the plane whose Jacobian
+determinant never vanishes is a bijection exactly when it is proper (Hadamard's global inverse
+function theorem), that is, when S_F is empty; Pinchuk's counterexample to the real Jacobian
+conjecture has a nonempty S_F. S_F is empty or a closed curve made of
 images of polynomial curves t -> (A(t), B(t)).
 
 FMSL computes the real S_F with the same exact Newton-Puiseux zooming it uses at 0/0 points,
