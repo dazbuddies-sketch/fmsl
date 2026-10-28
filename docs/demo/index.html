@@ -117,6 +117,7 @@ footer a { color: var(--exact); }
       <button type="button" class="chip" data-f="x^4/((x-y)^2+x^4)">x⁴/((x−y)²+x⁴)</button>
       <button type="button" class="chip" data-f="x^2*y^2/(x^2+y^2)">x²y²/(x²+y²)</button>
       <button type="button" class="chip" data-f="(x*y+y*z+z*x)/(x^2+y^2+z^2)">3 variables</button>
+      <button type="button" class="chip" title="r = sqrt(x^2+y^2), the distance to the origin" data-f="(r-x)/r">distance (r−x)/r</button>
       <button type="button" class="chip" data-f="(x^2-t*y^2)/(x^2+y^2)">moving target (t)</button>
       <button type="button" class="chip" title="Curvature of a spinning black hole near its ring singularity: x = r, y = cos(theta), mass 1, spin 1" data-f="48*(x^6-15*x^4*y^2+15*x^2*y^4-y^6)/(x^2+y^2)^6">black hole ring</button>
     </div>
@@ -169,7 +170,7 @@ fluid state: [-1/2, 1/2]
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
-const FMSL_VERSION = "0.19.0";
+const FMSL_VERSION = "0.20.0";
 let py = null, analyze = null;
 
 // ---------- the circle R u {oo}: v -> angle, 0 at the bottom, oo at the top ----------
@@ -230,6 +231,12 @@ function show(r, formula) {
     $("reportTitle").textContent = "Scaling map";
     $("reportNote").textContent = "Which scale y ~ c·|x|^a decides the answer: at each scale the smallest-power terms win.";
     $("report").textContent = r.scaling.split("\n").slice(1).join("\n");
+  } else if (r.mode === "dist") {
+    $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
+    drawCircle(r.state); pp.hidden = true;
+    $("reportTitle").textContent = "Distance r = sqrt(x² + y²)";
+    $("reportNote").textContent = "Exact fluid state with the distance r, by the polar blow-up: generic directions plus finitely many special ones.";
+    $("report").textContent = `${formula}\nfluid state: ${r.state}\n${r.verdict}`;
   } else if (r.mode === "3d") {
     $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
     drawCircle(r.state); pp.hidden = true;

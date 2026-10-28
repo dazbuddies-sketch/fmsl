@@ -65,6 +65,12 @@ def path_test(text):
 def analyze(text):
     text = text.strip()
     names = set(re.findall(r"\b[a-z]\b", text))
+    if "sqrt" in text or "r" in names:
+        from fmsl.radial import radial_limit
+        r = radial_limit(text)
+        return {"mode": "dist", "state": r["set"] or "not decided", "complete": bool(r["proven"]),
+                "verdict": ("the limit exists: " + r["set"].strip("{}")) if r["limit_exists"] else
+                           "no single limit: these are all the values approached"}
     if "t" in names:
         return {"mode": "moving", "report": describe_moving(text)}
     if "z" in names:
