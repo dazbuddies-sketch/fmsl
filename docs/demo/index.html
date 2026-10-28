@@ -118,7 +118,6 @@ footer a { color: var(--exact); }
       <button type="button" class="chip" data-f="x^2*y^2/(x^2+y^2)">x²y²/(x²+y²)</button>
       <button type="button" class="chip" data-f="(x*y+y*z+z*x)/(x^2+y^2+z^2)">3 variables</button>
       <button type="button" class="chip" title="r = sqrt(x^2+y^2), the distance to the origin" data-f="(r-x)/r">distance (r−x)/r</button>
-      <button type="button" class="chip" title="Distance in space: rho = sqrt(x^2+y^2+z^2)" data-f="x*y/(z^2+sqrt(x^2+y^2+z^2)^3)">distance in 3D</button>
       <button type="button" class="chip" data-f="(x^2-t*y^2)/(x^2+y^2)">moving target (t)</button>
       <button type="button" class="chip" title="Curvature of a spinning black hole near its ring singularity: x = r, y = cos(theta), mass 1, spin 1" data-f="48*(x^6-15*x^4*y^2+15*x^2*y^4-y^6)/(x^2+y^2)^6">black hole ring</button>
     </div>
@@ -235,8 +234,8 @@ function show(r, formula) {
   } else if (r.mode === "dist") {
     $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
     drawCircle(r.state); pp.hidden = true;
-    $("reportTitle").textContent = "Distance";
-    $("reportNote").textContent = "Exact fluid state of a formula with a distance r = sqrt(x² + y²) or sqrt(x² + y² + z²): the square root is removed exactly, then the rational engines prove the answer.";
+    $("reportTitle").textContent = "Distance r = sqrt(x² + y²)";
+    $("reportNote").textContent = "Exact fluid state with the distance r, by the polar blow-up: generic directions plus finitely many special ones.";
     $("report").textContent = `${formula}\nfluid state: ${r.state}\n${r.verdict}`;
   } else if (r.mode === "3d") {
     $("state").textContent = r.state; $("verdict").textContent = r.verdict + (r.complete ? "" : " (partial)");
