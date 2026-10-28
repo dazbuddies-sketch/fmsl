@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.20.0
+- Distances: `fmsl.radial.radial_limit` gives the exact fluid state of functions of x, y and
+  r = sqrt(x^2+y^2) at a point, by the rational polar blow-up (generic directions as an exact
+  one-variable image, special directions by the two-variable engine, t = oo in a second chart).
+- `fmsl.verify.limit_at_origin`, `check_claim` and the MCP tools accept sqrt(x^2+y^2) in two
+  variables.
+- Cross-check `benchmarks/radial_crosscheck.py`: 74 functions agree with exact circle images at
+  radius 1e-12; the check compares isolated values as well as coverage, so moved points are caught.
+
 ## 0.19.0
 - One variable: `log`, `sqrt` and rational powers `f^(p/q)`, as exact power series when the
   argument tends to 1 (powers: to c > 0 with c^(p/q) rational), via the recurrences

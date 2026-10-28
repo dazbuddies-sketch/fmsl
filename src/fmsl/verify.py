@@ -111,6 +111,15 @@ def _two_variables(expr):
     return comps, proven, verdict + ("; " + "; ".join(reasons) if reasons else ""), witnesses
 
 
+def _distance(expr):
+    """two variables with the distance sqrt(x^2+y^2): the polar blow-up of fmsl.radial"""
+    from fmsl.radial import radial_limit
+    r = radial_limit(expr)
+    if r["components"] is None: return None, False, " ".join(r["notes"]), []
+    comps = [(_f(a), _f(b)) for a, b in r["components"]]
+    return comps, bool(r["proven"]), "distance r = sqrt(x^2+y^2) by the polar blow-up; " + "; ".join(r["notes"]), []
+
+
 def _three_variables(expr):
     from fmsl.space import profile3
     r = profile3(expr)
@@ -128,6 +137,8 @@ def limit_at_origin(expr, variables=None):
     vs = _variables(expr, variables)
     if len(vs) == 1:
         comps, proven, expl, wit = _one_variable(_rename(expr, vs, ["x"]), "x")
+    elif len(vs) == 2 and "sqrt" in expr:
+        comps, proven, expl, wit = _distance(_rename(expr, vs, ["x", "y"]))
     elif len(vs) == 2:
         comps, proven, expl, wit = _two_variables(_rename(expr, vs, ["x", "y"]))
     elif len(vs) == 3:

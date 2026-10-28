@@ -353,6 +353,32 @@ digits and marked "approx."; on the 200 random functions this made 19 answers ex
 the same sets as before. A 40-digit fallback remains only if the number field would exceed
 degree 16, and is then flagged.
 
+## Distances: limits with r = sqrt(x² + y²)
+
+Distances are everywhere (potentials 1/r, norms, the Euclidean length of an error), and
+r = sqrt(x² + y²) is not a rational function of x and y. FMSL handles it exactly with the polar
+blow-up written in rational functions only, x = r(1 − t²)/(1 + t²), y = 2rt/(1 + t²), which
+covers the punctured disc one-to-one. The fluid state is the union of a one-variable image
+(generic directions) and the local fluid states at finitely many special directions, each proven
+by the two-variable engine.
+
+```python
+from fmsl.radial import radial_limit
+radial_limit("x*y/r")["set"]               # {0}
+radial_limit("(r - x)/y")["set"]           # [-oo, +oo]   (tan of half the angle)
+radial_limit("(r - x)/r")["set"]           # [0, 2]
+radial_limit("x^2/(r^2 + r^3)")["set"]     # [0, 1]
+radial_limit("x^2*y/r^3")["set"]           # [-2/(3 sqrt 3), 2/(3 sqrt 3)], exact algebraic ends
+
+from fmsl.verify import limit_at_origin    # also takes sqrt(x^2+y^2) directly (and so does the MCP server)
+limit_at_origin("a*b/sqrt(a^2+b^2)")["set"]   # {0}
+```
+
+Write `r` or `sqrt(x^2+y^2)`; other square roots are refused with a clear message. Checked by
+`benchmarks/radial_crosscheck.py`: 74 functions (14 hand-picked, 60 random) against the exact
+image of the circle of radius 10⁻¹² — all agree, and deliberately damaged answers (an end moved
+or a single value shifted) are all caught.
+
 ## Worked example: horizon or true singularity?
 
 At the horizon of a black hole the usual formulas blow up. Is space itself singular there?
