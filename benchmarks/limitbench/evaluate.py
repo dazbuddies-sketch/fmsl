@@ -66,6 +66,53 @@ def answer_anthropic(item, model, max_tokens):
             time.sleep(10 * (attempt + 1))
 
 
+TOOLS = [
+    {"name": "fmsl_limit",
+     "description": "FMSL: the complete set of values an expression approaches as all its variables tend to 0, proven. "
+                    "Rational functions in two or three variables; use ^ for powers.",
+     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}}, "required": ["expression"]}},
+    {"name": "fmsl_check_limit",
+     "description": "FMSL: check a claimed limit or set of limit values at the origin against the proven answer; "
+                    "reports what is missing and what is never approached.",
+     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}, "claim": {"type": "string"}},
+                      "required": ["expression", "claim"]}},
+]
+TOOL_CALLS = {"n": 0}
+
+
+def _call_tool(name, args):
+    from fmsl.mcp_server import fmsl_limit, fmsl_check_limit
+    with _LOCK: TOOL_CALLS["n"] += 1
+    if name == "fmsl_limit": return fmsl_limit(args.get("expression", ""))
+    if name == "fmsl_check_limit": return fmsl_check_limit(args.get("expression", ""), args.get("claim", ""))
+    return {"error": f"unknown tool {name}"}
+
+
+def answer_anthropic_tools(item, model, max_tokens):
+    """The same prompt, but the model may call FMSL (as it would through the MCP server)."""
+    import anthropic
+    client = anthropic.Anthropic()
+    messages = [{"role": "user", "content": prompt_for(item)}]
+    for _turn in range(8):
+        for attempt in range(5):
+            try:
+                msg = client.messages.create(model=model, max_tokens=max_tokens, tools=TOOLS, messages=messages)
+                break
+            except Exception as exc:
+                if attempt == 4: return f"ERROR: {type(exc).__name__}: {exc}"
+                time.sleep(10 * (attempt + 1))
+        with _LOCK:
+            USAGE["input_tokens"] += getattr(msg.usage, "input_tokens", 0) or 0
+            USAGE["output_tokens"] += getattr(msg.usage, "output_tokens", 0) or 0
+        if msg.stop_reason != "tool_use":
+            return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+        messages.append({"role": "assistant", "content": msg.content})
+        results = [{"type": "tool_result", "tool_use_id": b.id, "content": json.dumps(_call_tool(b.name, b.input))}
+                   for b in msg.content if getattr(b, "type", "") == "tool_use"]
+        messages.append({"role": "user", "content": results})
+    return "no final answer after 8 turns"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--method", required=True, choices=["paths", "fmsl", "anthropic"])
@@ -74,10 +121,12 @@ def main():
     ap.add_argument("--set", default="main", choices=sorted(SETS), help="main LimitBench, or the harder gaps set")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=8000)
+    ap.add_argument("--tools", action="store_true", help="give the model FMSL's two tools (as through the MCP server)")
     a = ap.parse_args()
     items = load(a.limit, a.set)
     if a.method == "paths": f = answer_paths
     elif a.method == "fmsl": f = answer_fmsl
+    elif a.tools: f = lambda it: answer_anthropic_tools(it, a.model, a.max_tokens)
     else: f = lambda it: answer_anthropic(it, a.model, a.max_tokens)
     with ThreadPoolExecutor(max_workers=a.workers if a.method == "anthropic" else 1) as ex:
         answers = list(ex.map(f, items))
@@ -93,7 +142,7 @@ def main():
         g = grade(it, ans)
         rows.append({"id": it["id"], "tier": it["tier"], "category": it["category"], "trap": bool(it["path_test"] and it["path_test"]["trap"]),
                      **g, "answer_tail": ans[-400:]})
-    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "")
+    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "") + ("_tools" if a.tools else "")
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     with open(os.path.join(HERE, "results", name + ".jsonl"), "w") as fh:
         for r in rows: fh.write(json.dumps(r) + "\n")
@@ -108,7 +157,8 @@ def main():
             lines.append(f"| {nm} | {len(sub)} | {pct(sub, 'verdict')} | {pct(sub, 'exact')} | "
                          f"{sum(1 for r in sub if not r['parsed'])} |")
     if a.method == "anthropic":
-        lines += ["", f"Tokens used: {USAGE['input_tokens']:,} input, {USAGE['output_tokens']:,} output."]
+        lines += ["", f"Tokens used: {USAGE['input_tokens']:,} input, {USAGE['output_tokens']:,} output."
+                  + (f" FMSL tool calls: {TOOL_CALLS['n']}." if a.tools else "")]
     text = "\n".join(lines) + "\n"
     print(text)
     with open(os.path.join(HERE, "results", "SUMMARY_GAPS.md" if a.set == "gaps" else "SUMMARY.md"), "a") as fh: fh.write(text + "\n")

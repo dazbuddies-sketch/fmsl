@@ -27,9 +27,11 @@ Issues = "https://github.com/dazbuddies-sketch/fmsl/issues"
 
 [project.optional-dependencies]
 matrix = ["numpy>=1.20"]
+mcp = ["mcp>=1.2"]
 
 [project.scripts]
 fmsl = "fmsl.__main__:main"
+fmsl-mcp = "fmsl.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
