@@ -353,6 +353,26 @@ digits and marked "approx."; on the 200 random functions this made 19 answers ex
 the same sets as before. A 40-digit fallback remains only if the number field would exceed
 degree 16, and is then flagged.
 
+## Worked example: horizon or true singularity?
+
+At the horizon of a black hole the usual formulas blow up. Is space itself singular there?
+`examples/black_holes.py` asks FMSL (units G = c = 1, mass M = 1, so a non-spinning black hole
+has its horizon at r = 2):
+
+| formula | at | FMSL |
+|---|---|---|
+| metric component g_rr = 1/(1 − 2/r) | horizon r = 2 | +∞ from outside, −∞ from inside |
+| metric component g_tt = −(1 − 2/r) | horizon r = 2 | 0 |
+| curvature (Kretschmann scalar) 48/r⁶ | horizon r = 2 | **3/4: finite** |
+| curvature 48/r⁶ | centre r = 0 | +∞ |
+| spinning black hole (Kerr, spin a = 1): curvature in r and c = cos θ | the ring r = 0, θ = π/2 | **[−∞, +∞]** |
+
+The metric blows up and flips sign at the horizon while the curvature, which does not depend
+on coordinates, stays finite: the horizon is a coordinate singularity, the centre a true one.
+At the ring of a spinning black hole the curvature has no limit at all: depending on the
+direction of approach it tends to any value, which is a fluid state in the sense of this
+package. FMSL decides the limits; what they mean physically is for the physics.
+
 ## Moving targets
 
 What if the 0/0 point is not fixed? `fmsl.moving` takes a family f(x, y, t), optionally with
