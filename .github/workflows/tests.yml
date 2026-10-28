@@ -13,5 +13,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -e ".[matrix]"
+      - run: pip install -e ".[matrix,sympy]"
       - run: python -m unittest discover tests -v
