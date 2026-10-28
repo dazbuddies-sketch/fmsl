@@ -36,6 +36,7 @@ def _num(s):
     if s in ("+oo", "oo", "+inf", "inf", "+infinity", "infinity", "∞", "+∞"): return math.inf
     if s in ("-oo", "-inf", "-infinity", "-∞"): return -math.inf
     s = s.replace("√", "sqrt").replace("^", "**")
+    s = re.sub(r"(\d)\s*(sqrt|\()", r"\1*\2", s)              # implicit product: 2sqrt(3), 2(1+x)
     return _arith(ast.parse(s, mode="eval").body)
 
 
@@ -62,7 +63,8 @@ def parse_answer(text):
     line = lines[-1]
     m = re.search(r"ANSWER:\s*(LIMIT|SET)\s*(.+)$", line, re.IGNORECASE)
     if not m: return None
-    kind, body = m.group(1).upper(), m.group(2).strip().rstrip(".").replace("`", "").replace("$", "")
+    kind, body = m.group(1).upper(), m.group(2).strip().replace("`", "").replace("$", "")
+    body = re.split(r"\s*(?:≈|~|\\approx)", body)[0].strip().rstrip(".")      # drop a trailing "≈ decimals"
     try:
         if kind == "LIMIT":
             return ("LIMIT", _num(body))
