@@ -44,6 +44,7 @@ the matrix module uses numpy.
 pip install fmsl            # core language and compiler
 pip install fmsl[matrix]    # plus matrix functions (numpy)
 pip install fmsl[mcp]       # plus the MCP server for AI assistants (fmsl-mcp)
+pip install fmsl[sympy]     # plus the SymPy bridge (multivariable limits for SymPy expressions)
 ```
 
 or from source: `pip install .`
@@ -519,6 +520,25 @@ What this shows, and what it does not:
 * The grader was fixed twice after the runs to read answers written as formulas (such as
   (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
   between runs; these are single runs.
+
+## For SymPy users
+
+SymPy's `limit` handles one variable. `fmsl.sympy_bridge` adds two and three variables, with
+SymPy expressions in and SymPy objects out, and the complete set of limit values when the limit
+does not exist:
+
+```python
+import sympy as sp
+from fmsl.sympy_bridge import limit_set, multivariate_limit   # pip install "fmsl[sympy]"
+x, y = sp.symbols("x y", real=True)
+limit_set(x**3*y/(x**6 + y**2), (x, y))           # Interval(-1/2, 1/2)
+limit_set((x**2 + y**2)/(x*y), (x, y))           # Union({-oo, oo}, Interval(-oo, -2), Interval(2, oo))
+multivariate_limit((x - 1)*(y - 2)**2/((x - 1)**2 + (y - 2)**2), (x, y), (1, 2))   # 0
+```
+Endpoints are exact, as radicals when possible: example 4 of Dinh, Guo, Nguyen and Pham (2022)
+comes back as `Interval(-sqrt(2)/4, sqrt(2)/4)`. Any point with rational coordinates works.
+When the limit does not exist, `multivariate_limit` raises `NoLimit`, whose `.values` is the
+set. Tested in CI with SymPy 1.14.
 
 ## FMSL for AI assistants (MCP server)
 

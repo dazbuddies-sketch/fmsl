@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.0
+- `fmsl.sympy_bridge` (roadmap #5): `limit_set(expr, vars, point)` and
+  `multivariate_limit(expr, vars, point)` for SymPy expressions in two or three variables, at any
+  point with rational coordinates; exact endpoints returned as SymPy numbers (radicals when
+  possible, otherwise CRootOf); `NoLimit` carries the set of limit values. `pip install
+  "fmsl[sympy]"`. CI installs SymPy and the bridge tests may not be skipped there.
+
 ## 0.15.0
 - Exact critical values when the fibre is nonlinear (roadmap #3): critical points over an
   algebraic first coordinate are now exact real algebraic numbers (roots of a polynomial with
