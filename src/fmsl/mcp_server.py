@@ -82,14 +82,28 @@ def fmsl_limit(expression: str, variables: Optional[List[str]] = None,
     return _run(_limit, expression, variables, point, side)
 
 
-def fmsl_check_limit(expression: str, claim: str, variables: Optional[List[str]] = None) -> dict:
-    """Check a claimed answer for the limit of `expression` at the origin against FMSL's proven answer.
+def _check(expression, claim, variables, point, side):
+    from fractions import Fraction
+    if point is not None and point and all(str(p).strip() in ("oo", "+oo", "inf") for p in point):
+        point = "oo"
+    elif point is not None:
+        point = [Fraction(str(p)) for p in point]
+    if side is not None and ":" in side:
+        side = {k.strip(): v.strip() for k, v in (part.split(":") for part in side.split(","))}
+    return check_claim(expression, claim, variables, point=point, side=side)
+
+
+def fmsl_check_limit(expression: str, claim: str, variables: Optional[List[str]] = None,
+                     point: Optional[List[str]] = None, side: Optional[str] = None) -> dict:
+    """Check a claimed answer for the limit of `expression` against FMSL's proven answer: at the
+    origin by default, at `point` (e.g. ["1", "0"], or ["oo"] for |(x, y)| -> oo), and from one side
+    with side "x:+,y:-" (x > a, y < b).
 
     claim: a value ("0", "1/2", "+oo", "LIMIT 3") or a set ("[-1/2, 1/2]", "[-oo, -2] u [2, +oo]",
     "{0} u [1, 2]"). Returns correct, the proven set, missing (values approached but left out of the
     claim), extra (claimed values that are never approached) and a one-line verdict.
     """
-    return _run(check_claim, expression, claim, variables)
+    return _run(_check, expression, claim, variables, point, side)
 
 
 def fmsl_rate(expression: str, variables: Optional[List[str]] = None) -> dict:

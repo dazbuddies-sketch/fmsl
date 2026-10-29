@@ -280,13 +280,19 @@ def _pieces_text(P):
                       for a, b, lo, ho in P)
 
 
-def check_claim(expr, claim, variables=None, tol=1e-3):
+def check_claim(expr, claim, variables=None, tol=1e-3, point=None, side=None):
     """Check a claimed answer (the limit, or the set of all limit values) against FMSL's proven one.
+    By default at the origin; point (coordinates, or "oo") and side (several variables:
+    {"x": "+", ...}) are passed to limit_at.
 
     Returns: correct (bool or None if FMSL could not prove the answer), truth, claimed, missing
     (values that are approached but the claim leaves out), extra (values the claim includes that
     are never approached), witnesses, and a one-line verdict."""
-    truth = limit_at_origin(expr, variables)
+    if point is None and side is None:
+        truth = limit_at_origin(expr, variables)
+    else:
+        if point is None: point = [0] * len(_variables(expr, variables))
+        truth = limit_at(expr, point, variables, side)
     C = parse_claim(claim)
     res = {"expression": expr, "claim": claim, "claimed_set": set_text(C), "truth": truth["set"],
            "limit_exists": truth["limit_exists"], "proven": truth["proven"], "witnesses": truth["witnesses"]}

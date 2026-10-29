@@ -15,7 +15,9 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "..", "..", "src
 from grade import prompt_for, grade
 
 
-SETS = {"main": "limitbench.jsonl", "gaps": "limitbench_gaps.jsonl"}
+SETS = {"main": "limitbench.jsonl", "gaps": "limitbench_gaps.jsonl", "beyond": "limitbench_beyond.jsonl"}
+PREFIX = {"main": "", "gaps": "gaps_", "beyond": "beyond_"}
+SUMMARIES = {"main": "SUMMARY.md", "gaps": "SUMMARY_GAPS.md", "beyond": "SUMMARY_BEYOND.md"}
 
 
 def load(limit=None, which="main"):
@@ -33,6 +35,16 @@ def answer_paths(item):
 
 
 def answer_fmsl(item):
+    if item.get("point", "origin") != "origin" or item.get("side") or \
+            any(fn + "(" in item["f"] for fn in ("sin", "cos", "tan", "exp", "log", "sqrt", "atan", "sinh", "asin")) or "^(" in item["f"]:
+        from fmsl.verify import limit_at, limit_at_origin
+        p = item.get("point", "origin")
+        if p == "oo": r = limit_at(item["f"], "oo", item["variables"])
+        elif item.get("side"): r = limit_at(item["f"], [0] * len(item["variables"]), item["variables"], side=item["side"])
+        else: r = limit_at_origin(item["f"], item["variables"])
+        st = r["set"]
+        if r["limit_exists"]: return "ANSWER: LIMIT " + r["limit"]
+        return "ANSWER: SET " + st
     if len(item["variables"]) == 2:
         from fmsl.multivar import profile
         st = profile(item["f"])["cluster"]["signed_text"]
@@ -66,15 +78,19 @@ def answer_anthropic(item, model, max_tokens):
             time.sleep(10 * (attempt + 1))
 
 
+_WHERE = {"point": {"type": "array", "items": {"type": "string"},
+                    "description": "optional: [\"oo\"] for |(x, y)| -> oo; default the origin"},
+          "side": {"type": "string", "description": "optional: one-sided, e.g. \"x:+,y:-\" for x > 0, y < 0"}}
 TOOLS = [
     {"name": "fmsl_limit",
-     "description": "FMSL: the complete set of values an expression approaches as all its variables tend to 0, proven. "
-                    "Rational functions in two or three variables; use ^ for powers.",
-     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}}, "required": ["expression"]}},
+     "description": "FMSL: the complete set of values an expression approaches as all its variables tend to 0 (or to "
+                    "infinity, or from one side), proven. Two or three variables: rational functions, distances such as "
+                    "sqrt(x^2+2*y^2), and sin, cos, exp, log, ...; use ^ for powers.",
+     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}, **_WHERE}, "required": ["expression"]}},
     {"name": "fmsl_check_limit",
-     "description": "FMSL: check a claimed limit or set of limit values at the origin against the proven answer; "
-                    "reports what is missing and what is never approached.",
-     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}, "claim": {"type": "string"}},
+     "description": "FMSL: check a claimed limit or set of limit values against the proven answer (at the origin by "
+                    "default, or at infinity, or from one side); reports what is missing and what is never approached.",
+     "input_schema": {"type": "object", "properties": {"expression": {"type": "string"}, "claim": {"type": "string"}, **_WHERE},
                       "required": ["expression", "claim"]}},
 ]
 TOOL_CALLS = {"n": 0}
@@ -83,8 +99,9 @@ TOOL_CALLS = {"n": 0}
 def _call_tool(name, args):
     from fmsl.mcp_server import fmsl_limit, fmsl_check_limit
     with _LOCK: TOOL_CALLS["n"] += 1
-    if name == "fmsl_limit": return fmsl_limit(args.get("expression", ""))
-    if name == "fmsl_check_limit": return fmsl_check_limit(args.get("expression", ""), args.get("claim", ""))
+    if name == "fmsl_limit": return fmsl_limit(args.get("expression", ""), None, args.get("point"), args.get("side"))
+    if name == "fmsl_check_limit":
+        return fmsl_check_limit(args.get("expression", ""), args.get("claim", ""), None, args.get("point"), args.get("side"))
     return {"error": f"unknown tool {name}"}
 
 
@@ -127,7 +144,7 @@ def main():
     ap.add_argument("--method", required=True, choices=["paths", "fmsl", "anthropic"])
     ap.add_argument("--model", default="claude-sonnet-5-5")
     ap.add_argument("--limit", type=int, default=None)
-    ap.add_argument("--set", default="main", choices=sorted(SETS), help="main LimitBench, or the harder gaps set")
+    ap.add_argument("--set", default="main", choices=sorted(SETS), help="main LimitBench, the harder gaps set, or beyond (functions, distances, infinity, one side)")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=8000)
     ap.add_argument("--tools", action="store_true", help="give the model FMSL's two tools (as through the MCP server)")
@@ -152,7 +169,7 @@ def main():
         g = grade(it, ans)
         rows.append({"id": it["id"], "tier": it["tier"], "category": it["category"], "trap": bool(it["path_test"] and it["path_test"]["trap"]),
                      **g, "answer_tail": ans[-400:], **({"tool_calls": CALLS_PER_ITEM.get(it["id"], 0)} if a.tools else {})})
-    name = ("gaps_" if a.set == "gaps" else "") + a.method + (f"_{a.model}" if a.method == "anthropic" else "") + ("_verify" if a.tools and a.verify else "_tools" if a.tools else "")
+    name = PREFIX[a.set] + a.method + (f"_{a.model}" if a.method == "anthropic" else "") + ("_verify" if a.tools and a.verify else "_tools" if a.tools else "")
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     with open(os.path.join(HERE, "results", name + ".jsonl"), "w") as fh:
         for r in rows: fh.write(json.dumps(r) + "\n")
@@ -160,7 +177,7 @@ def main():
     lines = [f"### {name}  ({len(rows)} items)", "",
              "| subset | n | verdict right | exact answer | unparsed |", "|---|---|---|---|---|"]
     subsets = [("all", rows)] + [(f"tier {t}", [r for r in rows if r["tier"] == t]) for t in (1, 2, 3, 4, 5, 6)] + \
-              [(c, [r for r in rows if r["category"] == c]) for c in sorted({r["category"] for r in rows}) if c.startswith(("gap", "decoy"))] + \
+              [(c, [r for r in rows if r["category"] == c]) for c in sorted({r["category"] for r in rows}) if c.startswith(("gap", "decoy", "beyond"))] + \
               [("path-test traps", [r for r in rows if r["trap"]])]
     for nm, sub in subsets:
         if sub:
@@ -171,7 +188,7 @@ def main():
                   + (f" FMSL tool calls: {TOOL_CALLS['n']}." if a.tools else "")]
     text = "\n".join(lines) + "\n"
     print(text)
-    with open(os.path.join(HERE, "results", "SUMMARY_GAPS.md" if a.set == "gaps" else "SUMMARY.md"), "a") as fh: fh.write(text + "\n")
+    with open(os.path.join(HERE, "results", SUMMARIES[a.set]), "a") as fh: fh.write(text + "\n")
 
 
 if __name__ == "__main__":

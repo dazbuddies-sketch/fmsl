@@ -26,9 +26,22 @@ or {{0}} u [1, 2], using +oo and -oo for infinity, and numbers as integers, frac
 decimals with at least 4 significant digits."""
 
 
+PROMPT_INF = PROMPT.replace("as ({vars}) -> ({zeros})", "as |({vars})| -> oo (the point moves arbitrarily far from the origin, in any manner)") \
+                   .replace("p_n -> ({zeros})", "p_n with |p_n| -> oo")
+
+
 def prompt_for(item):
     v = item["variables"]
-    return PROMPT.format(vars=", ".join(v), zeros=", ".join("0" for _ in v), f=item["f"])
+    if item.get("point") == "oo":
+        return PROMPT_INF.format(vars=", ".join(v), zeros="", f=item["f"])
+    text = PROMPT.format(vars=", ".join(v), zeros=", ".join("0" for _ in v), f=item["f"])
+    side = item.get("side")
+    if side:
+        cond = " and ".join(f"{k} {'>' if s == '+' else '<'} 0" for k, s in side.items())
+        text = text.replace("at which f is defined.", f"at which f is defined, restricted to {cond}.") \
+                   .replace(f"as ({', '.join(v)}) -> ({', '.join('0' for _ in v)}):",
+                            f"as ({', '.join(v)}) -> ({', '.join('0' for _ in v)}) with {cond}:")
+    return text
 
 
 def _num(s):

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.26.0
+- `fmsl.reward`: FMSL as a reward function and problem source for training AI models.
+  `problems(n, families, seed)` gives prompts with proven answers (families: rational, analytic,
+  distance, infinity, one_side); `score(problem, reply)` gives 1 for an exact answer and otherwise
+  0.8 x the overlap of claimed and true sets (on the circle [-oo, +oo]), with what is missing and
+  what is extra.
+- `check_claim` and the MCP tool `fmsl_check_limit` check answers at infinity and from one side
+  (`point: ["oo"]`, `side: "x:+,y:-"`).
+- LimitBench-Beyond (`benchmarks/limitbench/limitbench_beyond.jsonl`): 200 problems in five
+  families (sin/exp/log, common factors along lines, distances, at infinity, one side), each
+  proven by FMSL and confirmed by direct 320-digit evaluation; `evaluate.py --set beyond`, and the
+  model tools now take point and side.
+
 ## 0.25.0
 - Limits at infinity in two and three variables (`fmsl.regions`, `limit_at(expr, "oo")`): the
   inversion q -> q/|q|^2 turns |q| -> oo into a limit at the origin; rational functions stay

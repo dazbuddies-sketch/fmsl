@@ -1,5 +1,5 @@
 # LimitBench: evaluates AI models on limits with proven answers.
-# Trigger: commit benchmarks/limitbench/RUN.json ({"models": [...], "limit": null, "set": "main" or "gaps", "tools": false}).
+# Trigger: commit benchmarks/limitbench/RUN.json ({"models": [...], "limit": null, "set": "main", "gaps" or "beyond", "tools": false}).
 # Needs the repository secret ANTHROPIC_API_KEY (Settings -> Secrets and variables -> Actions).
 # Results are committed back to the branch under benchmarks/limitbench/results/.
 name: limitbench
@@ -22,7 +22,7 @@ jobs:
       - name: Reference methods
         run: |
           SET=$(python -c "import json;print(json.load(open('benchmarks/limitbench/RUN.json')).get('set','main'))")
-          if [ "$SET" = gaps ]; then rm -f benchmarks/limitbench/results/SUMMARY_GAPS.md; else rm -f benchmarks/limitbench/results/SUMMARY.md; fi
+          case "$SET" in gaps) rm -f benchmarks/limitbench/results/SUMMARY_GAPS.md;; beyond) rm -f benchmarks/limitbench/results/SUMMARY_BEYOND.md;; *) rm -f benchmarks/limitbench/results/SUMMARY.md;; esac
           python benchmarks/limitbench/evaluate.py --set "$SET" --method fmsl
           python benchmarks/limitbench/evaluate.py --set "$SET" --method paths
       - name: Models

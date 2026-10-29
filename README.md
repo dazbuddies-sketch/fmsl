@@ -727,6 +727,24 @@ What this shows, and what it does not:
   (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
   between runs; these are single runs.
 
+## Training AI: proven problems and rewards
+
+Teaching a model to reason with verifiable rewards needs an endless supply of problems and a grader
+that cannot be fooled. Limit problems in several variables fit: the answer is a set, so it is hard
+to guess, and FMSL proves it. `fmsl.reward` provides both halves.
+
+```python
+from fmsl.reward import problems, score
+ps = problems(1000, seed=7)        # families: rational, analytic, distance, infinity, one_side
+ps[0]["prompt"], ps[0]["answer"]   # the question, and its proven answer, e.g. "[-3, 1]"
+score(ps[0], model_reply)          # {"reward": ..., "exact": ..., "missing": ..., "extra": ...}
+```
+
+The reward is 1 for an exact answer and otherwise 0.8 × the overlap of the claimed and true sets
+(intersection over union on the circle [−∞, +∞]), so partly right answers earn partial credit and
+an exact answer is always strictly best. `missing` and `extra` say what the reply left out or got
+wrong, which can be fed back to the model. Only problems FMSL proves are produced.
+
 ## For SymPy users
 
 SymPy's `limit` handles one variable. `fmsl.sympy_bridge` adds two and three variables, with
