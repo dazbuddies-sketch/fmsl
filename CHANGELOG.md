@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.25.0
+- Limits at infinity in two and three variables (`fmsl.regions`, `limit_at(expr, "oo")`): the
+  inversion q -> q/|q|^2 turns |q| -> oo into a limit at the origin; rational functions stay
+  rational and a distance sqrt(Q) becomes sqrt(Q(u))/|u|^2.
+- Limits from one side in several variables (`limit_at(expr, point, side={"x": "+", "y": "-"})`):
+  half-planes, quadrants and octants, by x = a +- u^2.
+- The MCP tool `fmsl_limit` takes `point: ["oo"]` and `side: "x:+,y:-"`.
+- Cross-check `benchmarks/region_crosscheck.py`: direct 320-digit evaluation at points beyond
+  1e36 (at infinity) or with the required signs; 65 limits, no sampled value outside a proven set,
+  39 of 39 damaged answers rejected (43 sets filled by the samples; the rest are mostly
+  whole-line answers, where sampling leaves gaps; 1 not proven).
+
 ## 0.24.0
 - Common factors along lines, for sin, exp, log, ... in two variables: every rational line through
   the point on which the denominator vanishes is tested; the orders of numerator and denominator

@@ -336,8 +336,28 @@ def rate_at_origin(expr, variables=None):
 def limit_at(expr, point, variables=None, side=None):
     """limit_at_origin at another point: substitute v -> v + p for each variable, so that
     approaching x = 2 is approaching h = 0 in x = 2 + h. One variable: side = "-" (from below,
-    x < 2) or "+" (from above) gives the one-sided limit."""
+    x < 2) or "+" (from above) gives the one-sided limit.
+
+    Several variables: point = "oo" gives the set of values approached as |(x, y[, z])| -> oo
+    (fmsl.regions, by inversion); side = {"x": "+", "y": "-"} restricts those variables to one side
+    of the point (a half-plane, a quadrant, an octant)."""
     vs = _variables(expr, variables)
+    if isinstance(point, str) and point.strip() in ("oo", "+oo", "inf", "infinity"):
+        if len(vs) == 1: raise ValueError("for one variable use the one-variable engine at a finite point")
+        from fmsl.regions import at_infinity
+        r = limit_at_origin(at_infinity(expr, vs), vs)
+        r.update(expression=expr, point="oo", witnesses=[],
+                 explanation="at infinity, by the inversion q -> q/|q|^2 (fmsl.regions); " + r["explanation"])
+        return r
+    if isinstance(side, dict):
+        pts = list(point) if isinstance(point, (list, tuple)) else [point]
+        if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
+        from fmsl.regions import one_sided
+        r = limit_at_origin(one_sided(expr, vs, pts, side), vs)
+        where = ", ".join(f"{v} {'>' if sd == '+' else '<'} {p}" for (v, p) in zip(vs, pts) for k, sd in side.items() if k == v)
+        r.update(expression=expr, point=[str(Fr(p)) for p in pts], side=side, witnesses=[],
+                 explanation=f"restricted to {where}, by v = a +- u^2 (fmsl.regions); " + r["explanation"])
+        return r
     pts = list(point) if isinstance(point, (list, tuple)) else [point]
     if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
     if len(vs) > 1 and ("sqrt" in expr or _half(expr) or not _rational_text(expr)):

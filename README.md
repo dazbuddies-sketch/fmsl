@@ -476,6 +476,37 @@ limit_at_origin("(x+y)*sin(x*y)/((x+y)*(x^2+y^2))")["set"]  # [-1/2, 1/2]
 When the numerator does not vanish on the line (sin(x)/(x − y)), the values really do blow up
 along it, and FMSL still answers "not proven" rather than guess.
 
+## At infinity, and from one side
+
+Two more questions reduce exactly to a limit at the origin, so every engine above answers them.
+
+**At infinity.** The inversion q → q/|q|² maps the punctured plane (or space) onto itself with
+|q/|q|²| = 1/|q|, so (x, y) → ∞ in any manner exactly when the new point tends to 0. Rational
+functions stay rational, and a distance sqrt(Q) becomes sqrt(Q(u, v))/(u² + v²).
+
+```python
+from fmsl.verify import limit_at
+limit_at("x*y/(x^2+y^2)", "oo")["set"]                # [-1/2, 1/2]
+limit_at("(x^2+y)/(x^2+y^2)", "oo")["set"]            # [0, 1]
+limit_at("sqrt(x^2+2*y^2)/(x+2*y^2)", "oo")["set"]    # [-oo, -1] u [0, +oo]
+```
+
+**From one side.** x → a from above is x = a + u² with u → 0 (from below, x = a − u²): onto the
+half-line and preserving approach. Restricting several variables gives quadrants and octants.
+
+```python
+limit_at("x*y/(x^2+y^2)", [0, 0], side={"x": "+", "y": "+"})["set"]   # [0, 1/2]
+limit_at("y/x", [0, 0], side={"x": "+", "y": "+"})["set"]             # [0, +oo]
+```
+
+The MCP tool takes `point: ["oo"]` and `side: "x:+,y:-"`. Functions such as sin at infinity, and
+one-sided limits together with a distance, are refused for now. Checked by
+`benchmarks/region_crosscheck.py`: direct 320-digit evaluation at points beyond 10³⁶ (at
+infinity) or with the required signs (one side); of 65 limits, no sampled value lies outside the
+proven set, and all 39 deliberately damaged answers are rejected. (A first run with points only
+beyond 10⁶ flagged (x³y + xy³)/(x⁴ + y⁶): its limit at infinity is 0, but approached as slowly as
+|q|^(−1/3), so the checker had to look much farther out.)
+
 ## Worked example: horizon or true singularity?
 
 At the horizon of a black hole the usual formulas blow up. Is space itself singular there?

@@ -53,6 +53,13 @@ def _run(fn, *args):
 def _limit(expression, variables, point, side):
     if point is None and side is None: return limit_at_origin(expression, variables)
     from fractions import Fraction
+    if point is not None and [str(p).strip() for p in point] and all(str(p).strip() in ("oo", "+oo", "inf") for p in point):
+        return limit_at(expression, "oo", variables)
+    if side is not None and ":" in side:                 # several variables: "x:+,y:-"
+        side = {k.strip(): v.strip() for k, v in (part.split(":") for part in side.split(","))}
+    if isinstance(side, dict) and point is None:
+        from fmsl.verify import _variables
+        point = [0] * len(_variables(expression, variables))
     pts = [Fraction(str(p)) for p in (point or [0])]
     return limit_at(expression, pts, variables, side)
 
@@ -62,6 +69,8 @@ def fmsl_limit(expression: str, variables: Optional[List[str]] = None,
     """The complete set of values `expression` approaches as its variables tend to `point`
     (default: the origin; rational coordinates such as ["2"] or ["1/3", "0"]), proven.
     One variable: side "-" (from below) or "+" (from above) also gives the one-sided limit.
+    Several variables: point ["oo"] gives the values approached as |(x, y)| -> oo; side "x:+,y:-"
+    restricts x to x > a and y to y < b (a half-plane or quadrant at the point (a, b)).
 
     expression: e.g. "x^3*y/(x^6+y^2)", "sin(x)/x", "(x*y+y*z+z*x)/(x^2+y^2+z^2)", "x*y/sqrt(x^2+y^2)" (use ^ for powers; a Euclidean
     distance to the point, such as sqrt(x^2+y^2+z^2), and sin, cos, exp, log, ... are supported
