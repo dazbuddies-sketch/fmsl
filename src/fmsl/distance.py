@@ -223,7 +223,7 @@ def lead_info(expr, variables, point=None):
         nz = [i for i, x in enumerate(cands[k]) if x != 0]
         if len(nz) == 1: units[k] = S[nz[0]]
     if len(units) >= 2:                                 # the coordinate directions only
-        leads = sorted(units, key=lambda k: weight(variables[units[k]]), reverse=True)
+        leads = sorted(units, key=lambda k: weight(variables[units[k]]))   # lowest degree first
     else:
         leads = list(range(min(n, 3)))
     profile = sorted((weight(v)[0] for v in variables), reverse=True)

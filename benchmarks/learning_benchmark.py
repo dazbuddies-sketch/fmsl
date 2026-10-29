@@ -64,11 +64,13 @@ def line(name, res):
     return f"| {name} | {sum(ok for ok, _ in res)} of {len(res)} | {sum(ts):.0f} s | {statistics.median(ts):.1f} s |"
 
 
-def main(n_train=30, n_test=30, cap=60):
+def main(n_train=30, n_test=30, cap=60, only_b=0):
     gen = random.Random(41)
     fs = [formula(gen) for _ in range(n_train + n_test)]
     train, test = fs[:n_train], fs[n_train:]
     memory.disable()
+    if only_b:
+        print(line("B multi-start", run(test, "B", cap))); return
     A = run(test, "A", cap)
     B = run(test, "B", cap)
     path = os.path.join(tempfile.mkdtemp(), "memory.json")
@@ -88,5 +90,5 @@ def main(n_train=30, n_test=30, cap=60):
 
 
 if __name__ == "__main__":
-    a = [int(x) for x in sys.argv[1:4]]
+    a = [int(x) for x in sys.argv[1:5]]
     main(*a)
