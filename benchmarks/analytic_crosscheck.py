@@ -2,7 +2,7 @@
 
 fmsl.analytic replaces sin, cos, exp, log, ... by exact Taylor polynomials and proves, with a
 Lojasiewicz bound, that the remainders change no limit value. This check uses none of that: it
-evaluates the original formula directly, in 80-digit decimal arithmetic (its own sin, cos, exp,
+evaluates the original formula directly, in 320-digit decimal arithmetic (its own sin, cos, exp,
 atan, ... from series; exp, ln and sqrt from the decimal module), at about 12,000 points within 1e-6 of the origin: random points at
 mixed scales, and points on curves y = c x^k (k from 1/4 to 4, c from 1e-6 to 1e7) and
 z = c x^k in three variables, where limit values are typically attained.
@@ -23,11 +23,11 @@ sys.path.insert(0, os.path.join(HERE, "..", "src"))
 from fmsl.verify import limit_at_origin
 from fmsl.compiler import Parser
 
-getcontext().prec = 80
+getcontext().prec = 320
 ONE = Dec(1)
 
 
-# ---------------------------------------------------------------- 80-digit elementary functions
+# ---------------------------------------------------------------- 320-digit elementary functions
 def d_exp(x): return x.exp()            # the decimal module's own exp and ln, correctly rounded
 
 
@@ -39,7 +39,7 @@ def d_log(x):
 def d_sin_cos(x):
     s, c, t, n = Dec(0), Dec(0), ONE, 0
     while True:
-        if abs(t) < Dec(10) ** -85 and n > 2: break
+        if abs(t) < Dec(10) ** -330 and n > 2: break
         if n % 4 == 0: c += t
         elif n % 4 == 1: s += t
         elif n % 4 == 2: c -= t
@@ -52,7 +52,7 @@ def d_atan(x):
     if abs(x) > Dec("0.5"):
         return 2 * d_atan(x / (1 + (1 + x * x).sqrt()))
     s, t, n, sg = Dec(0), x, 1, 1
-    while abs(t) > Dec(10) ** -85:
+    while abs(t) > Dec(10) ** -330:
         s += sg * t / n; t *= x * x; n += 2; sg = -sg
     return s
 
@@ -145,6 +145,11 @@ KNOWN2 = ["sin(x*y)/(x^2+y^2)", "(1-cos(x*y))/(x^2+y^2)^2", "(exp(x*y)-1)/(x^2+y
           "atan(x*y)/(x^2+y^4)", "(cos(x)-cos(y))/(x^2+y^2)", "sin(x)*y/(x^2+y^2)",
           "(sin(x)-x)*y/(x^6+y^2)", "sinh(x)*y^2/(x^2+y^4)", "log(1+x*y)/(sin(x)^2+sin(y)^2)",
           "(exp(x*y)-cos(x*y))/(x^2+x*y+y^2)", "asin(x^2*y)/(x^4+y^2)"]
+KNOWN_CANCEL = ["sin(x+y)/(x+y)", "(1-cos(x+y))/(x+y)^2", "(exp(x-y)-1)/(x-y)", "log(1+x*y)/(x*y)",
+                "tan(2*x-y)/(2*x-y)", "(x+y)*sin(x*y)/((x+y)*(x^2+y^2))", "sin(x+y)*x/((x+y)*(x^2+y^2))",
+                "sin(x*(x-y))/(x-y)", "exp(x)*sin(x+y)/(x+y)", "log(1+sin(x*y))/(x*y)",
+                "atan(x*y)/(x*y*(x^2+y^2))", "sinh(x-2*y)*y/((x-2*y)*(x^2+y^4))"]
+KNOWN2 += KNOWN_CANCEL
 KNOWN3 = ["sin(x*y*z)/(x^2+y^2+z^2)^(3/2)", "(exp(x*y*z)-1)/(x^2+y^2+z^2)", "sin(x)*y*z/(x^2+y^2+z^2)",
           "(1-cos(x))*y/(x^2+y^2+z^2)^(3/2)"]
 
@@ -179,12 +184,25 @@ def shrink(comps):
     return out
 
 
+def rand_cancel(gen):
+    """a common factor along a rational line l: F(l * m) * g / (l^k * h)"""
+    a, b = gen.choice([(1, 1), (1, -1), (1, -2), (2, 1), (1, 0), (0, 1), (3, -1)])
+    l = f"({a}*x+({b})*y)"
+    fn, order = gen.choice(FUN)
+    m = gen.choice(["1", "x", "y", "x*y"])
+    num = fn.format(f"{l}*{m}")
+    k = order * (1 + (m != "1") * 0)
+    g = gen.choice(["1", "x", "y", "x^2", "x*y", "exp(x)", "cos(y)"])
+    h = gen.choice(["1", "x^2+y^2", "x^4+y^2", "x^2+x*y+y^2"])
+    return f"{num}*{g}/({l}^{k}*({h}))"
+
+
 def main(n=40):
     gen = random.Random(11)
     t0 = time.time()
     tally = {}
     cases = [(f, ["x", "y"]) for f in KNOWN2] + [(f, ["x", "y", "z"]) for f in KNOWN3] + \
-            [(rand2(gen), ["x", "y"]) for _ in range(n)]
+            [(rand2(gen), ["x", "y"]) for _ in range(n)] + [(rand_cancel(gen), ["x", "y"]) for _ in range(n // 2)]
     for f, names in cases:
         try:
             status, info = check(f, names, gen)
@@ -195,7 +213,7 @@ def main(n=40):
     print(f"{len(cases)} functions: " + ", ".join(f"{k} {v}" for k, v in sorted(tally.items())) +
           f"  ({time.time() - t0:.0f} s)")
     caught = tot = 0                                   # the check must reject damaged answers
-    for f, names in cases[:len(KNOWN2) + len(KNOWN3)]:
+    for f, names in cases[:len(KNOWN2) + len(KNOWN3)]:              # hand-picked ones
         st, _ = check(f, names, gen, damage=shrink)
         if st in ("skip", "unproven"): continue
         tot += 1; caught += st != "ok"

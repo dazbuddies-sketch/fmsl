@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.24.0
+- Common factors along lines, for sin, exp, log, ... in two variables: every rational line through
+  the point on which the denominator vanishes is tested; the orders of numerator and denominator
+  across it are bounded exactly by restricting the formula to the line in Q[t][w]/(w^J) (parts
+  that cannot be restricted exactly keep a proven lower bound), and the common power is divided
+  out of both Taylor series. sin(x+y)/(x+y) -> {1}, (1-cos(x+y))/(x+y)^2 -> {1/2}.
+- The evaluator behind `fmsl.analytic` works over any ring (series, or restrictions to a line).
+- Cross-check: 126 functions, now including 30 random ones with a common factor along a line;
+  no sampled value outside a proven set, 117 sets filled, 32 of 32 damaged answers rejected. The
+  checker's direct evaluation now uses 320 digits (80 digits lost tiny values such as
+  log(1 + 1e-90) and briefly flagged two correct answers).
+
 ## 0.23.0
 - Weighted distances: sqrt(Q) for any positive-definite quadratic form Q in the distances to the
   point (sqrt(x^2 + 2y^2), sqrt(x^2 + xy + y^2), sqrt(x^2 + 2y^2 + 3z^2), ...) that takes a rational
@@ -11,7 +23,7 @@
 - Fix: exact root finding when a polynomial's algebraic coefficients become rational after
   simplification (an AttributeError in `norm_poly`).
 - Cross-check `benchmarks/form_crosscheck.py`: 48 formulas; for all 38 decided ones, three
-  different starting vectors give identical answers and direct 80-digit evaluation never leaves
+  different starting vectors give identical answers and direct high-precision evaluation never leaves
   the proven set (37 sets filled by the samples, 1 whole-line answer with sampling gaps); 9 forms
   refused (no rational square value), 1 not proven within 90 s.
 

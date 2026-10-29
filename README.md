@@ -416,7 +416,7 @@ When Q takes no rational square value (3x² + 3y², or 2x² + 3y², by Legendre'
 the root would need an irrational constant, and FMSL refuses with that reason. Checked by
 `benchmarks/form_crosscheck.py`: of 48 formulas (random forms in two and three variables), 38 were
 decided; for each, three different starting vectors v0 give identical proven answers, and direct
-80-digit evaluation of the original formula at about 12,000 points near the origin never leaves
+320-digit evaluation of the original formula at about 12,000 points near the origin never leaves
 the proven set. 9 forms were refused (no rational square value) and 1 was not proven within 90 s.
 
 Square roots of quadratic forms are handled as above; `sqrt(1 + x)` and similar roots that are
@@ -453,11 +453,28 @@ values. When the denominator vanishes along curves through the point (sin(x)/(x 
 exists and FMSL answers "not proven" instead of guessing.
 
 Checked by `benchmarks/analytic_crosscheck.py`, which uses none of this: it evaluates each original
-formula directly in 80-digit arithmetic at about 12,000 points within 10⁻⁶ of the point, on random
-mixed scales and on curves y = c·x^k. Of 84 functions (24 hand-picked, 60 random), no sampled value
-lies outside the proven set; for 76 the samples fill the set, and the other 8 are answers equal
-to the whole line [−∞, +∞], where random samples leave gaps. All 23 deliberately damaged answers
-were rejected.
+formula directly in 320-digit arithmetic at about 12,000 points within 10⁻⁶ of the point, on random
+mixed scales and on curves y = c·x^k. Of 126 functions (36 hand-picked, 60 random, 30 random with a
+common factor along a line), no sampled value lies outside the proven set; for 117 the samples fill
+the set, and the other 9 are answers equal to the whole line [−∞, +∞], where random samples leave
+gaps. All 32 deliberately damaged answers were rejected.
+
+**Common factors along lines.** In sin(x + y)/(x + y) the denominator vanishes along a whole line,
+but so does the numerator. In two variables FMSL looks for every rational line through the point
+on which the denominator vanishes, and computes how often the numerator and the denominator
+vanish across it: it restricts the formula to the line, exactly, in a ring of polynomials (t along
+the line, w across it, truncated in w). Parts it cannot restrict exactly, such as sin(t) along the
+line, keep only a proven lower bound on their order (F(s) = s·G(s) when F(0) = 0). The common power
+is then divided out of both Taylor series exactly, and the method above applies:
+
+```python
+limit_at_origin("sin(x+y)/(x+y)")["set"]                    # {1}
+limit_at_origin("(1-cos(x+y))/(x+y)^2")["set"]              # {1/2}
+limit_at_origin("(x+y)*sin(x*y)/((x+y)*(x^2+y^2))")["set"]  # [-1/2, 1/2]
+```
+
+When the numerator does not vanish on the line (sin(x)/(x − y)), the values really do blow up
+along it, and FMSL still answers "not proven" rather than guess.
 
 ## Worked example: horizon or true singularity?
 
@@ -895,8 +912,9 @@ All bound arithmetic is exact rational arithmetic with outward rounding.
   boundary is fundamental: zero-testing general expressions is undecidable
   (Richardson's theorem).
 * **Several variables with sin, exp, log, ...:** proven only when the denominator's zero at the
-  point is isolated. When it vanishes along curves (sin(x)/(x − y), or sin(x + y)/(x + y)),
-  FMSL says "not proven". Arguments of sin, cos, exp, ... must be 0 at the point, of log
+  point is isolated, or becomes isolated after cancelling common factors along rational lines
+  (two variables). Otherwise, as for sin(x)/(x − y), (sin x − sin y)/(x − y) or a curve such as
+  y = x², FMSL says "not proven". Arguments of sin, cos, exp, ... must be 0 at the point, of log
   equal to 1, and of sqrt a positive rational square; anything else is refused, since it
   would need constants such as sin 1 or e.
 * **Essential singularities** such as `exp(-1/t²)`, `sin(1/t)` and `exp(i/t)` are detected

@@ -24,6 +24,19 @@ class TestAnalytic(unittest.TestCase):
         self.assertEqual(limit_at("sin((x-1)*y)/((x-1)^2+y^2)", [1, 0])["set"], "[-1/2, 1/2]")
         self.assertEqual(limit_at_origin("x/sqrt((x-1)^2+y^2)")["set"], "{0}")
 
+    def test_common_factor_along_a_line(self):
+        for e, st in [("sin(x+y)/(x+y)", "{1}"), ("(1-cos(x+y))/(x+y)^2", "{1/2}"), ("log(1+x*y)/(x*y)", "{1}"),
+                      ("tan(2*x-y)/(2*x-y)", "{1}"), ("(x+y)*sin(x*y)/((x+y)*(x^2+y^2))", "[-1/2, 1/2]"),
+                      ("sin(x*(x-y))/(x-y)", "{0}"), ("exp(x)*sin(x+y)/(x+y)", "{1}")]:
+            with self.subTest(e=e):
+                r = limit_at_origin(e); self.assertTrue(r["proven"]); self.assertEqual(r["set"], st)
+
+    def test_no_false_cancellation(self):
+        # the numerator does not vanish on the line: nothing may be cancelled, and nothing is claimed
+        for e in ["sin(x)/(x-y)", "sin(x-y)/(x-y)^2"]:
+            with self.subTest(e=e):
+                self.assertFalse(limit_at_origin(e)["proven"])
+
     def test_curve_zero_not_claimed(self):
         r = limit_at_origin("sin(x)/(x-y)")
         self.assertFalse(r["proven"]); self.assertIsNone(r["set"])

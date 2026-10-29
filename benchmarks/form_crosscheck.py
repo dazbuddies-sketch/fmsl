@@ -3,7 +3,7 @@
 
 1. Different square vectors: the reduction starts from a vector v0 with Q(v0) a rational square;
    different choices give different rational functions, and their proven answers must agree.
-2. Direct evaluation: the original formula, sqrt included, evaluated in 80-digit arithmetic at
+2. Direct evaluation: the original formula, sqrt included, evaluated in 320-digit arithmetic at
    about 12,000 points within 1e-6 of the origin (the sampler of analytic_crosscheck.py); every
    value must lie in the proven set, and the values should fill it.
 Forms that take no rational square value are refused by FMSL; they are counted, not checked.
