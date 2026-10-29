@@ -403,6 +403,40 @@ Write `r` or `sqrt(x^2+y^2)`; other square roots are refused with a clear messag
 image of the circle of radius 10⁻¹² — all agree, and deliberately damaged answers (an end moved
 or a single value shifted) are all caught.
 
+## sin, cos, exp, log in two and three variables
+
+Most formulas in physics, engineering and finance are not fractions of polynomials. FMSL now takes
+sin, cos, tan, exp, log, sqrt, sinh, cosh, tanh, atan and asin in two and three variables (with
+arguments that vanish at the point, log(1 + u), and sqrt(c² + u)), and still proves its answer.
+
+```python
+from fmsl.verify import limit_at_origin
+limit_at_origin("sin(x*y)/(x^2+y^2)")["set"]            # [-1/2, 1/2]
+limit_at_origin("(1-cos(x*y))/(x^2+y^2)^2")["set"]      # [0, 1/8]
+limit_at_origin("(x-sin(x))/sqrt(x^2+y^2)^3")["set"]    # [-1/6, 1/6]   (with a distance)
+limit_at_origin("sin(x*y*z)/(x^2+y^2+z^2)^(3/2)")["set"]  # [-1/(3√3), 1/(3√3)]
+```
+
+How it is proven (`fmsl.analytic`). Write f = A/B with A, B analytic, of orders a and b at the
+point, and take their exact Taylor polynomials A_Ka, B_Kb (all coefficients rational). If the
+rational engine proves that r^(2L)/B_Kb² is bounded, that is |B_Kb| ≥ c·r^L, with Ka ≥ 2L − b and
+Kb ≥ max(L, 2L − a), then
+
+    |A/B − A_Ka/B_Kb| ≤ C·(r^(Ka+1+b) + r^(Kb+1+a)) / r^(2L) → 0,
+
+so along every sequence the two quotients differ by something tending to 0, and they have exactly
+the same limit values. The rational engine then proves the answer for A_Ka/B_Kb. This is the
+Łojasiewicz route of Strzeboński (arXiv:2102.01242), here combined with FMSL's full sets of limit
+values. When the denominator vanishes along curves through the point (sin(x)/(x − y)), no such L
+exists and FMSL answers "not proven" instead of guessing.
+
+Checked by `benchmarks/analytic_crosscheck.py`, which uses none of this: it evaluates each original
+formula directly in 80-digit arithmetic at about 12,000 points within 10⁻⁶ of the point, on random
+mixed scales and on curves y = c·x^k. Of 84 functions (24 hand-picked, 60 random), no sampled value
+lies outside the proven set; for 76 the samples fill the set, and the other 8 are answers equal
+to the whole line [−∞, +∞], where random samples leave gaps. All 23 deliberately damaged answers
+were rejected.
+
 ## Worked example: horizon or true singularity?
 
 At the horizon of a black hole the usual formulas blow up. Is space itself singular there?
@@ -838,6 +872,11 @@ All bound arithmetic is exact rational arithmetic with outward rounding.
   exact, but "is it identically zero?" is reported as `unproven`, never guessed. This
   boundary is fundamental: zero-testing general expressions is undecidable
   (Richardson's theorem).
+* **Several variables with sin, exp, log, ...:** proven only when the denominator's zero at the
+  point is isolated. When it vanishes along curves (sin(x)/(x − y), or sin(x + y)/(x + y)),
+  FMSL says "not proven". Arguments of sin, cos, exp, ... must be 0 at the point, of log
+  equal to 1, and of sqrt a positive rational square; anything else is refused, since it
+  would need constants such as sin 1 or e.
 * **Essential singularities** such as `exp(-1/t²)`, `sin(1/t)` and `exp(i/t)` are detected
   and explained, but no series code is emitted, because none exists.
 * **Constants** must be exact (rational or Gaussian rational): `exp(1 + t)` would need e

@@ -34,7 +34,7 @@ class TestDistance(unittest.TestCase):
         self.assertEqual(g, "(x^2+y^2+z^2)")
 
     def test_refusals(self):
-        for e in ["x/sqrt(x^2+2*y^2)", "x/sqrt((x-1)^2+y^2)", "sqrt(x^2+y^2)/sqrt(y^2+z^2)"]:
+        for e in ["x/sqrt(x^2+2*y^2)", "sqrt(x^2+y^2)/sqrt(y^2+z^2)"]:
             with self.subTest(e=e), self.assertRaises(DistanceError):
                 limit_at_origin(e)
 

@@ -81,19 +81,51 @@ def _as_distance(arg, vs, point):
     return S
 
 
+def _prod(it):
+    out = Fr(1)
+    for v in it: out *= v
+    return out
+
+
+def _half_powers(s):
+    """(P)^(k/2) -> sqrt(P)^k, so that a distance written as a power is recognized"""
+    while True:
+        m = re.search(r"\)\^\((-?\d+)/2\)", s)
+        if not m: return s
+        depth, j = 0, m.start()
+        while j >= 0:
+            if s[j] == ")": depth += 1
+            elif s[j] == "(":
+                depth -= 1
+                if depth == 0: break
+            j -= 1
+        if j < 0: return s
+        k = int(m.group(1))
+        s = s[:j] + "sqrt" + s[j:m.start() + 1] + f"^({k})" + s[m.end():]
+
+
 def reduce_distance(expr, variables, point=None, lead=0):
     """the rational expression g in the same variable names, to be studied at the origin, whose fluid
-       state there equals the fluid state of expr at `point`; None if expr has no sqrt.
+       state there equals the fluid state of expr at `point`; None if expr has no distance under a
+       square root (other square roots, such as sqrt(1 + x), are left for fmsl.analytic).
        lead picks which variable of the distance plays u (any choice gives the same answer)."""
-    if "sqrt" not in expr: return None
+    if "sqrt" not in expr and "/2)" not in expr.replace(" ", ""): return None
     vs = list(variables)
     if len(vs) not in (2, 3): raise DistanceError("distances are supported in two or three variables")
     point = [Fr(p) for p in (point or [0] * len(vs))]
-    s = expr.replace(" ", "")
-    spans = _sqrt_spans(s)
+    s = _half_powers(expr.replace(" ", ""))
+    spans = []
+    for a, b, arg in _sqrt_spans(s):
+        if "sqrt" in arg: continue                       # nested roots: left to fmsl.analytic
+        try:
+            P = _poly(arg, vs)
+        except Exception:
+            continue                                    # not a polynomial: left to fmsl.analytic
+        at = sum((v * _prod(p ** k for p, k in zip(point, e)) for e, v in P.items()), Fr(0))
+        if at != 0: continue                            # sqrt(c + ...), c != 0: analytic at the point
+        spans.append((a, b, arg))
+    if not spans: return None
     sets = [tuple(_as_distance(a, vs, point)) for _, _, a in spans]
-    if any(len(re.findall(r"sqrt\(", a)) for _, _, a in spans):
-        raise DistanceError("nested square roots are not supported")
     if len(set(sets)) != 1: raise DistanceError("only one distance (one square root) per formula")
     S = list(sets[0])
     S = S[lead % len(S):] + S[:lead % len(S)]

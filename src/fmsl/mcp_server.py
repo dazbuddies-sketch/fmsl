@@ -64,7 +64,8 @@ def fmsl_limit(expression: str, variables: Optional[List[str]] = None,
     One variable: side "-" (from below) or "+" (from above) also gives the one-sided limit.
 
     expression: e.g. "x^3*y/(x^6+y^2)", "sin(x)/x", "(x*y+y*z+z*x)/(x^2+y^2+z^2)", "x*y/sqrt(x^2+y^2)" (use ^ for powers; a Euclidean
-    distance to the point, such as sqrt(x^2+y^2+z^2), is supported in two and three variables).
+    distance to the point, such as sqrt(x^2+y^2+z^2), and sin, cos, exp, log, ... are supported
+    in two and three variables, e.g. "sin(x*y)/(x^2+y^2)").
     variables: optional, e.g. ["x", "y"]; by default every name in the expression except functions.
     Returns limit_exists, limit, set (e.g. "[-1/2, 1/2]" or "[-oo, -2] u [2, +oo]"), proven, an
     explanation, and in two variables witnesses: curves along which the end values are approached.

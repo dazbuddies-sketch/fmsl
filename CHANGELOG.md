@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.22.0
+- sin, cos, tan, exp, log, sqrt, sinh, cosh, tanh, atan and asin in two and three variables
+  (`fmsl.analytic`): exact Taylor polynomials A_Ka, B_Kb of numerator and denominator, and a
+  proven Lojasiewicz bound |B_Kb| >= c r^L (r^(2L)/B_Kb^2 bounded, by the rational engine) with
+  Ka >= 2L - b and Kb >= max(L, 2L - a), so that the remainders change no limit value; then the
+  rational engine proves the answer. When the denominator vanishes along curves, the answer is
+  "not proven", never a guess.
+- `limit_at_origin`, `limit_at`, `check_claim` and the MCP tools accept these functions, also
+  together with a distance; distances may be written as powers, e.g. (x^2+y^2+z^2)^(3/2).
+- Square roots that are not distances, such as sqrt(1 + x), are left to `fmsl.analytic`.
+- Cross-check `benchmarks/analytic_crosscheck.py`: direct 80-digit evaluation of the original
+  formulas (no Taylor polynomials) at about 12,000 points within 1e-6 of the point; 84 functions,
+  no sampled value outside a proven set, 76 sets filled by the samples (the other 8 are the whole
+  line [-oo, +oo], where sampling leaves gaps), and 23 of 23 deliberately damaged answers rejected.
+
 ## 0.21.0
 - Distances in three variables: `fmsl.distance` removes sqrt(x^2+y^2+z^2) (or a distance in two
   of three variables, or in two variables) exactly by the squaring map x = u^2 - v^2 - w^2,

@@ -7,14 +7,16 @@ or a test suite) calls instead of guessing.
         -> {"correct": False, "missing": "[-1/2, 0) u (0, 1/2]", ...}
 
 Expressions use the FMSL syntax (^ for powers; sin, cos, exp, abs, sign in one variable).
-One variable: any expression FMSL's language handles. Two or three variables: rational functions.
+One variable: any expression FMSL's language handles. Two or three variables: rational functions,
+a Euclidean distance sqrt(x^2+y^2[+z^2]) (fmsl.distance), and sin, cos, tan, exp, log, sqrt, sinh,
+cosh, tanh, atan, asin when the denominator's zero at the point is isolated (fmsl.analytic).
 Variables other than x, y, z are renamed internally; the point is always the origin.
 """
 import ast, math, re
 from fractions import Fraction as Fr
 
 INF = math.inf
-_NAMES = ("sin", "cos", "exp", "log", "abs", "sign", "sqrt", "i", "pi")
+_NAMES = ("sin", "cos", "tan", "exp", "log", "abs", "sign", "sqrt", "sinh", "cosh", "tanh", "atan", "asin", "i", "pi")
 
 
 # ------------------------------------------------------------------ helpers
@@ -111,14 +113,45 @@ def _two_variables(expr):
     return comps, proven, verdict + ("; " + "; ".join(reasons) if reasons else ""), witnesses
 
 
+def _rational_text(expr):
+    return not re.search(r"[A-Za-z_]\w*\s*\(", expr)
+
+
 def _with_distance(expr, vs, point):
-    """a Euclidean distance under the square root: square it away (fmsl.distance) and use the
-       rational engines on the result; witnesses are dropped (they live in the new variables)"""
+    """several variables beyond rational functions. A Euclidean distance under a square root is
+       squared away (fmsl.distance); then sin, cos, exp, log, sqrt, ... are handled by Taylor
+       polynomials with a proven Lojasiewicz bound (fmsl.analytic). Witnesses are dropped."""
     from fmsl.distance import reduce_distance
+    if len(vs) not in (2, 3): raise ValueError("FMSL handles one, two or three variables")
     g = reduce_distance(expr, vs, point)
-    r = limit_at_origin(g, vs)
-    r.update(expression=expr, witnesses=[],
-             explanation="distance removed by the squaring map (fmsl.distance); " + r["explanation"])
+    notes = []
+    if g is not None:
+        notes.append("distance removed by the squaring map (fmsl.distance)")
+    else:
+        g = expr
+        if point is not None:                           # move the point to the origin
+            tmp = {v: f"__s{k}__" for k, v in enumerate(vs)}
+            for v, t in tmp.items(): g = re.sub(rf"\b{re.escape(v)}\b", t, g)
+            for (v, t), p in zip(tmp.items(), point): g = g.replace(t, f"({v}+({Fr(p)}))")
+    names = ["x", "y", "z"][:len(vs)]
+    h = _rename(g, vs, names)
+    if _rational_text(h):
+        r = limit_at_origin(g, vs)
+        r.update(expression=expr, witnesses=[], explanation="; ".join(notes + [r["explanation"]]))
+    else:
+        from fmsl.analytic import analytic_limit
+        engine = _two_variables if len(vs) == 2 else _three_variables
+        comps, proven, expl = analytic_limit(h, names, engine)
+        if comps is not None: comps = [(_f(a), _f(b)) for a, b in comps]
+        exists = comps is not None and len(comps) == 1 and comps[0][0] == comps[0][1] and not math.isinf(comps[0][0])
+        r = {"expression": expr, "variables": vs, "point": "origin",
+             "limit_exists": exists if comps is not None else None,
+             "limit": _fmt(comps[0][0]) if exists else None,
+             "set": set_text(comps) if comps is not None else None,
+             "components": [[a, b] for a, b in comps] if comps is not None else None,
+             "proven": bool(proven and comps is not None),
+             "explanation": "; ".join(notes + ["analytic functions by Taylor polynomials (fmsl.analytic): " + expl]),
+             "witnesses": []}
     if point is not None: r["point"] = [str(Fr(p)) for p in point]
     return r
 
@@ -140,7 +173,7 @@ def limit_at_origin(expr, variables=None):
     vs = _variables(expr, variables)
     if len(vs) == 1:
         comps, proven, expl, wit = _one_variable(_rename(expr, vs, ["x"]), "x")
-    elif "sqrt" in expr:
+    elif "sqrt" in expr or "/2)" in expr.replace(" ", "") or not _rational_text(expr):
         return _with_distance(expr, vs, None)
     elif len(vs) == 2:
         comps, proven, expl, wit = _two_variables(_rename(expr, vs, ["x", "y"]))
@@ -302,7 +335,7 @@ def limit_at(expr, point, variables=None, side=None):
     vs = _variables(expr, variables)
     pts = list(point) if isinstance(point, (list, tuple)) else [point]
     if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
-    if "sqrt" in expr and len(vs) > 1:
+    if len(vs) > 1 and ("sqrt" in expr or "/2)" in expr.replace(" ", "") or not _rational_text(expr)):
         if side is not None: raise ValueError("one-sided limits are for one variable")
         return _with_distance(expr, vs, pts)
     shifted = expr
