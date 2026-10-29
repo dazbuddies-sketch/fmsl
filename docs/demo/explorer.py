@@ -65,6 +65,12 @@ def path_test(text):
 def analyze(text):
     text = text.strip()
     names = set(re.findall(r"\b[a-z]\b", text))
+    if re.search(r"(sin|cos|tan|exp|log|atan|asin|sinh|cosh|tanh)\s*\(", text) and len(names - {"t"}) >= 2:
+        from fmsl.verify import limit_at_origin
+        r = limit_at_origin(text, sorted(names))
+        return {"mode": "dist", "state": r["set"] or "not proven", "complete": bool(r["proven"]),
+                "verdict": ("the limit exists: " + r["limit"]) if r["limit_exists"] else
+                           ("no single limit: these are all the values approached" if r["set"] else r["explanation"])}
     if "sqrt" in text and "z" in names:
         from fmsl.verify import limit_at_origin
         r = limit_at_origin(text, ["x", "y", "z"])
