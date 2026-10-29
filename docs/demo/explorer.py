@@ -71,7 +71,7 @@ def analyze(text):
         return {"mode": "dist", "state": r["set"] or "not proven", "complete": bool(r["proven"]),
                 "verdict": ("the limit exists: " + r["limit"]) if r["limit_exists"] else
                            ("no single limit: these are all the values approached" if r["set"] else r["explanation"])}
-    if "sqrt" in text and "z" in names:
+    if "sqrt" in text and len(names - {"t"}) >= 2:
         from fmsl.verify import limit_at_origin
         r = limit_at_origin(text, ["x", "y", "z"])
         return {"mode": "dist", "state": r["set"] or "not decided", "complete": bool(r["proven"]),
