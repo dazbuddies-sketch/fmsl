@@ -435,6 +435,8 @@ def norm_poly(p):
     """N(t) = Res_y(m(y), p(y, t)): rational, and every root of p is a root of N"""
     from .plane import resultant_d
     F = _coeff_field(p)
+    if F is None:                                         # the coefficients are rational after all
+        return ptrim([Fr(c.c[0]) if isinstance(c, A) else Fr(c) for c in p])
     p = _lift_poly(p, F)
     P = {}
     for i, v in enumerate(p):

@@ -398,7 +398,29 @@ give the same proven answer for all three choices of leading variable, with ever
 inside it (27 more were skipped because the engine could not finish a proof for some choice within
 60 s; none disagreed).
 
-Write `r` or `sqrt(x^2+y^2)`; other square roots are refused with a clear message. Checked by
+### Weighted distances: sqrt(x² + 2y²) and other quadratic forms
+
+The same idea removes the square root of any positive-definite quadratic form Q in the distances
+to the point, as long as Q takes a rational square value s² at some rational vector v0. A rational
+change of basis that starts with v0 and is orthogonal for Q gives Q = s²(X₁² + D₂X₂² + D₃X₃²), and
+
+    X₁ = u² − D₂v² − D₃w²,   X₂ = 2uv,   X₃ = 2uw   give   sqrt(Q) = s·(u² + D₂v² + D₃w²).
+
+```python
+limit_at_origin("y/sqrt(x^2+2*y^2)")["set"]              # [-1/√2, 1/√2]
+limit_at_origin("x/sqrt(x^2+x*y+y^2)")["set"]            # [-2/√3, 2/√3]
+limit_at_origin("x*y*z/sqrt(x^2+2*y^2+3*z^2)^3")["set"]  # [-1/(9√2), 1/(9√2)]
+```
+
+When Q takes no rational square value (3x² + 3y², or 2x² + 3y², by Legendre's theorem), removing
+the root would need an irrational constant, and FMSL refuses with that reason. Checked by
+`benchmarks/form_crosscheck.py`: of 48 formulas (random forms in two and three variables), 38 were
+decided; for each, three different starting vectors v0 give identical proven answers, and direct
+80-digit evaluation of the original formula at about 12,000 points near the origin never leaves
+the proven set. 9 forms were refused (no rational square value) and 1 was not proven within 90 s.
+
+Square roots of quadratic forms are handled as above; `sqrt(1 + x)` and similar roots that are
+not 0 at the point go to `fmsl.analytic` (below); anything else is refused with a clear message. Checked by
 `benchmarks/radial_crosscheck.py`: 74 functions (14 hand-picked, 60 random) against the exact
 image of the circle of radius 10⁻¹² — all agree, and deliberately damaged answers (an end moved
 or a single value shifted) are all caught.

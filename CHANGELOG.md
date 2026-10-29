@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.23.0
+- Weighted distances: sqrt(Q) for any positive-definite quadratic form Q in the distances to the
+  point (sqrt(x^2 + 2y^2), sqrt(x^2 + xy + y^2), sqrt(x^2 + 2y^2 + 3z^2), ...) that takes a rational
+  square value. A Q-orthogonal rational basis starting at such a vector, and the map
+  X1 = u^2 - D2 v^2 - D3 w^2, X2 = 2uv, X3 = 2uw, give sqrt(Q) = s (u^2 + D2 v^2 + D3 w^2). Forms
+  with no rational square value (3x^2 + 3y^2) are refused with the reason.
+- Distances written as powers are recognized precisely ((P)^(k/2)); a coefficient such as 1/2 no
+  longer triggers that path.
+- Fix: exact root finding when a polynomial's algebraic coefficients become rational after
+  simplification (an AttributeError in `norm_poly`).
+- Cross-check `benchmarks/form_crosscheck.py`: 48 formulas; for all 38 decided ones, three
+  different starting vectors give identical answers and direct 80-digit evaluation never leaves
+  the proven set (37 sets filled by the samples, 1 whole-line answer with sampling gaps); 9 forms
+  refused (no rational square value), 1 not proven within 90 s.
+
 ## 0.22.0
 - sin, cos, tan, exp, log, sqrt, sinh, cosh, tanh, atan and asin in two and three variables
   (`fmsl.analytic`): exact Taylor polynomials A_Ka, B_Kb of numerator and denominator, and a

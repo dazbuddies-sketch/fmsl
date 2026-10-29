@@ -30,11 +30,25 @@ class TestDistance(unittest.TestCase):
 
     def test_distance_becomes_a_polynomial(self):
         # under the map the distance itself is the polynomial u^2 + v^2 + w^2
+        from fmsl.distance import _poly
         g = reduce_distance(f"{R3}", ["x", "y", "z"])
-        self.assertEqual(g, "(x^2+y^2+z^2)")
+        self.assertEqual(_poly(g, ["x", "y", "z"]), {(2, 0, 0): 1, (0, 2, 0): 1, (0, 0, 2): 1})
+
+    def test_weighted_distances(self):
+        for e, st in [("x/sqrt(x^2+2*y^2)", "[-1, 1]"), ("y/sqrt(x^2+2*y^2)", "[-0.707107, 0.707107]"),
+                      ("x/sqrt(x^2+x*y+y^2)", "[-1.1547, 1.1547]"), ("z/sqrt(x^2+y^2+2*z^2)", "[-0.707107, 0.707107]"),
+                      ("x*y/(x^2+y^2+z^2)^(1/2)", "{0}")]:
+            with self.subTest(e=e):
+                r = limit_at_origin(e); self.assertTrue(r["proven"]); self.assertEqual(r["set"], st)
+
+    def test_weighted_exact_ends(self):
+        (lo, hi), = limit_at_origin("y/sqrt(x^2+2*y^2)")["components"]          # 1/sqrt(2)
+        self.assertAlmostEqual(hi, 0.5 ** 0.5, places=12)
+        (lo, hi), = limit_at_origin("x/sqrt(x^2+x*y+y^2)")["components"]        # 2/sqrt(3)
+        self.assertAlmostEqual(hi, 2 / 3 ** 0.5, places=12)
 
     def test_refusals(self):
-        for e in ["x/sqrt(x^2+2*y^2)", "sqrt(x^2+y^2)/sqrt(y^2+z^2)"]:
+        for e in ["x/sqrt(3*x^2+3*y^2)", "x/sqrt(x^2-y^2)", "x/sqrt(x^2+y^3)", "sqrt(x^2+y^2)/sqrt(y^2+z^2)"]:
             with self.subTest(e=e), self.assertRaises(DistanceError):
                 limit_at_origin(e)
 

@@ -113,6 +113,11 @@ def _two_variables(expr):
     return comps, proven, verdict + ("; " + "; ".join(reasons) if reasons else ""), witnesses
 
 
+def _half(expr):
+    from fmsl.distance import has_half_power
+    return has_half_power(expr)
+
+
 def _rational_text(expr):
     return not re.search(r"[A-Za-z_]\w*\s*\(", expr)
 
@@ -173,7 +178,7 @@ def limit_at_origin(expr, variables=None):
     vs = _variables(expr, variables)
     if len(vs) == 1:
         comps, proven, expl, wit = _one_variable(_rename(expr, vs, ["x"]), "x")
-    elif "sqrt" in expr or "/2)" in expr.replace(" ", "") or not _rational_text(expr):
+    elif "sqrt" in expr or _half(expr) or not _rational_text(expr):
         return _with_distance(expr, vs, None)
     elif len(vs) == 2:
         comps, proven, expl, wit = _two_variables(_rename(expr, vs, ["x", "y"]))
@@ -335,7 +340,7 @@ def limit_at(expr, point, variables=None, side=None):
     vs = _variables(expr, variables)
     pts = list(point) if isinstance(point, (list, tuple)) else [point]
     if len(pts) != len(vs): raise ValueError(f"the point needs {len(vs)} coordinate(s)")
-    if len(vs) > 1 and ("sqrt" in expr or "/2)" in expr.replace(" ", "") or not _rational_text(expr)):
+    if len(vs) > 1 and ("sqrt" in expr or _half(expr) or not _rational_text(expr)):
         if side is not None: raise ValueError("one-sided limits are for one variable")
         return _with_distance(expr, vs, pts)
     shifted = expr
