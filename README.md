@@ -702,12 +702,13 @@ by the independent exact check. Models are run through the Anthropic API in GitH
 listed in [`results/REGRADED.md`](benchmarks/limitbench/results/REGRADED.md). Exact answers,
 October 2026:
 
-| method | LimitBench (491) | LimitBench-Gaps (225) |
-|---|---|---|
-| FMSL | 491 | 225 |
-| Claude Sonnet 5.5 | 489 | 218 |
-| Claude Haiku 5.5 | 489 | 216 |
-| limits along 8 standard paths | 104 of 450 two-variable items | 0 |
+| method | LimitBench (491) | LimitBench-Gaps (225) | LimitBench-Beyond (200) |
+|---|---|---|---|
+| FMSL | 491 | 225 | 200 |
+| Claude Sonnet 5.5 | 489 | 218 | 199 |
+| Claude Haiku 5.5 | 489 | 216 | 199 |
+| Sonnet / Haiku, told to check with FMSL | | 225 / 224 | 200 / 200 |
+| limits along 8 standard paths | 104 of 450 two-variable items | 0 | - |
 
 What this shows, and what it does not:
 
@@ -723,6 +724,13 @@ What this shows, and what it does not:
 * **The practical point.** A model is right about 96–97% of the time on these problems, and its
   answer has to be checked to know which time it is. FMSL is right every time, proves it, and
   is the tool that does the checking.
+* **LimitBench-Beyond** (October 29, 2026) covers sin/exp/log, common factors along lines,
+  distances, limits at infinity and one-sided limits: 200 problems, each proven by FMSL and
+  confirmed by direct 320-digit evaluation. Both models answered 199 exactly. Their two mistakes
+  were wrong endpoints of a range they had to optimize: Sonnet gave ±0.21867 for
+  x²y/(x² + xy + y²)^(3/2), whose range is ±1.04307; Haiku gave ±0.1864 for
+  xy/(√(4x² + y²)(√(4x² + y²) + x)), whose range is ±0.400294. Told to check with FMSL, both
+  answered all 200 exactly (231 and 208 tool calls).
 * The grader was fixed twice after the runs to read answers written as formulas (such as
   (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
   between runs; these are single runs.
