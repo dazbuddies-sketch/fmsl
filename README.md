@@ -735,6 +735,38 @@ What this shows, and what it does not:
   (1−√10)/2 and 2√3); all saved answers were regraded with `regrade.py`. Model outputs vary
   between runs; these are single runs.
 
+## Memory and learning: starting each session ahead
+
+`fmsl.memory` (off by default) gives FMSL two kinds of memory. Proven answers are saved with the
+FMSL version that proved them and returned at once when asked again, also in a new session. And a
+strategy learner (a bandit, the simplest form of reinforcement learning) records, for each kind of
+problem, which proof strategy worked and how fast, and tries the best ones first next time.
+Learning only orders the attempts: every answer is still proven by the engine, so a poor choice
+costs time, never correctness.
+
+```python
+import fmsl.memory as memory
+memory.enable()            # ~/.cache/fmsl/memory.json (or set FMSL_MEMORY=path)
+memory.stats()             # saved answers, and what has been learned
+```
+
+Where it matters today: a distance in three variables can be squared away starting from any
+coordinate direction. The answers agree, but one start may finish in 0.1 s where another is never
+proven. FMSL now gives each start a 5-second probe and then runs the best one without limit. The
+learner discovered that starting along the variable of lowest degree wins most often, and that
+order is now the default. `benchmarks/learning_benchmark.py`, 30 new formulas, at most 60 s each:
+
+| method | proven | total time | median |
+|---|---|---|---|
+| one start (FMSL 0.26) | 8 of 30 | 511 s | 3.3 s |
+| several starts, learned default order | 15 of 30 | 520 s | 10.6 s |
+| several starts + learning per kind of problem | 15 of 30 | 596 s | 10.1 s |
+| asked again in a new session (memory) | 15 of 30 | 558 s | 4.8 s |
+
+Nearly twice as many proofs for about the same total time. With the learned order built in, the
+per-kind learning added no further proofs on this set; the memory answers repeated proven questions
+at once, while unproven ones still spend their full time.
+
 ## Training AI: proven problems and rewards
 
 Teaching a model to reason with verifiable rewards needs an endless supply of problems and a grader

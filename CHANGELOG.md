@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.27.0
+- `fmsl.memory` (off by default): proven answers saved per FMSL version and returned at once in
+  later sessions; a strategy learner (UCB1 bandit) that orders proof strategies by past reward
+  (1/(1 + seconds) on success). Learning never decides an answer.
+- Three variables with a distance: several starting directions for the squaring map, each with a
+  5-second probe, then the best one without limit; lowest-degree direction first (found by the
+  learner). On 30 new formulas (60 s cap): 15 proven instead of 8, in about the same total time
+  (520 s against 511 s). Time slices respect a caller's own alarm, and use an exception engines
+  cannot swallow.
+- `benchmarks/learning_benchmark.py`.
+
 ## 0.26.0
 - `fmsl.reward`: FMSL as a reward function and problem source for training AI models.
   `problems(n, families, seed)` gives prompts with proven answers (families: rational, analytic,
