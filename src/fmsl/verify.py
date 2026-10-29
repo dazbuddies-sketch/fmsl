@@ -122,14 +122,80 @@ def _rational_text(expr):
     return not re.search(r"[A-Za-z_]\w*\s*\(", expr)
 
 
+SLICE_S = 5         # a short probe for each start; then the best start runs without limit
+
+
+class _Slice(BaseException):
+    """the end of a time slice; a BaseException so that no `except Exception` inside an engine
+       can swallow it"""
+
+
+def _distance_portfolio(expr, vs, point):
+    """three variables with a distance: the squaring map can start from several directions, which
+       give the same answer but can differ enormously in proof time (one may finish in 0.1 s where
+       another is not proven at all). Try them in the order the strategy learner (fmsl.memory)
+       ranks best, each but the last with a time slice; the first proven answer is returned."""
+    import signal, threading, time
+    from fmsl import memory
+    from fmsl.distance import reduce_distance, lead_info
+    leads, kind = lead_info(expr, vs, point)
+    n = len(leads)
+    if n <= 1: return None
+    order = memory.order(kind, n)                       # positions in `leads`, best first
+    can_slice = threading.current_thread() is threading.main_thread()
+    last = None
+    # round 1: every start gets a short slice, best first; round 2: the best start, without limit
+    rounds = [(pos, SLICE_S) for pos in order] if can_slice else []
+    rounds.append((order[0], None))
+    for k, (pos, limit) in enumerate(rounds):
+        lead = leads[pos]
+        g = reduce_distance(expr, vs, point, lead)
+        t0 = time.time()
+        def alarm(*_): raise _Slice()
+        old, outer = None, 0
+        if limit is not None:
+            outer = signal.alarm(0)                     # a caller's own alarm: keep it running
+            if outer and outer <= limit:
+                signal.alarm(outer); outer = 0          # the caller's deadline comes first
+            else:
+                old = signal.signal(signal.SIGALRM, alarm); signal.alarm(limit)
+        try:
+            r = limit_at_origin(g, vs)
+        except _Slice:
+            r = None
+        except (ArithmeticError, ValueError):
+            r = None
+        finally:
+            if old is not None:
+                signal.alarm(0); signal.signal(signal.SIGALRM, old)
+                if outer: signal.alarm(max(1, int(outer - (time.time() - t0))))
+        took = time.time() - t0
+        ok = r is not None and r["proven"]
+        if limit is not None or ok:
+            memory.reward(kind, pos, 1.0 / (1.0 + took) if ok else 0.0)
+        if ok:
+            r.update(expression=expr, witnesses=[],
+                     explanation=f"distance removed by the squaring map (fmsl.distance, attempt {k + 1}, start vector {lead + 1}); " + r["explanation"])
+            if point is not None: r["point"] = [str(Fr(p)) for p in point]
+            return r
+        if r is not None: last = r
+    if last is not None:
+        last.update(expression=expr, witnesses=[])
+        return last
+    return None
+
+
 def _with_distance(expr, vs, point):
     """several variables beyond rational functions. A Euclidean distance under a square root is
        squared away (fmsl.distance); then sin, cos, exp, log, sqrt, ... are handled by Taylor
        polynomials with a proven Lojasiewicz bound (fmsl.analytic). Witnesses are dropped."""
-    from fmsl.distance import reduce_distance
+    from fmsl.distance import reduce_distance, lead_info
     if len(vs) not in (2, 3): raise ValueError("FMSL handles one, two or three variables")
     g = reduce_distance(expr, vs, point)
     notes = []
+    if g is not None and len(vs) == 3:
+        r = _distance_portfolio(expr, vs, point)
+        if r is not None: return r
     if g is not None:
         notes.append("distance removed by the squaring map (fmsl.distance)")
     else:
@@ -170,6 +236,21 @@ def _three_variables(expr):
 
 
 def limit_at_origin(expr, variables=None):
+    """The complete set of values expr approaches as the variables tend to 0, proven (see
+    _limit_at_origin). With fmsl.memory enabled, a proven answer from an earlier session is
+    returned at once, and new proven answers are saved."""
+    from fmsl import memory
+    if memory.enabled():
+        hit = memory.lookup("origin", expr, variables)
+        if hit is not None:
+            hit["explanation"] = "from memory (proven earlier by this FMSL version); " + hit["explanation"]
+            return hit
+    r = _limit_at_origin(expr, variables)
+    memory.store("origin", expr, variables, r)
+    return r
+
+
+def _limit_at_origin(expr, variables=None):
     """The complete set of values expr approaches as the variables tend to 0, proven.
 
     Returns a dict: variables, limit_exists, limit (text or None), set (text), components (list of

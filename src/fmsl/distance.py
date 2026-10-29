@@ -198,6 +198,39 @@ def _half_powers(s):
         s = s[:j] + "sqrt" + s[j:m.start() + 1] + f"^({k})" + s[m.end():]
 
 
+_INFO = {}
+
+
+def lead_info(expr, variables, point=None):
+    """for the strategy learner: (leads, kind). leads lists the starting vectors worth trying (as
+       lead numbers for reduce_distance), arranged by a feature of the formula: the coordinate
+       directions are ranked by how strongly their variable appears outside the root (its largest
+       exponent, then how often it occurs), so that a choice such as "start along the variable of
+       highest degree" can be learned. kind is a coarse description of the problem.
+       ([], None) if expr has no distance."""
+    if reduce_distance(expr, variables, point) is None: return [], None
+    S, M, cands = _INFO["last"]
+    n = min(len(cands), max(len(S), 2) + 1)
+    diag = all(M[i][j] == 0 for i in range(len(M)) for j in range(len(M)) if i != j)
+    outside = re.sub(r"sqrt\([^()]*\)", "", expr.replace(" ", ""))
+    def weight(v):
+        exps = [int(e) for e in re.findall(rf"\b{re.escape(v)}\^(\d+)", outside)]
+        plain = len(re.findall(rf"\b{re.escape(v)}\b(?!\^)", outside))
+        return (max(exps + ([1] if plain else [0])), len(exps) + plain)
+    leads = list(range(n))
+    units = {}
+    for k in range(n):
+        nz = [i for i, x in enumerate(cands[k]) if x != 0]
+        if len(nz) == 1: units[k] = S[nz[0]]
+    if len(units) >= 2:                                 # the coordinate directions only
+        leads = sorted(units, key=lambda k: weight(variables[units[k]]), reverse=True)
+    else:
+        leads = list(range(min(n, 3)))
+    profile = sorted((weight(v)[0] for v in variables), reverse=True)
+    kind = f"distance:{len(variables)}vars:{len(S)}form:{'diagonal' if diag else 'mixed'}:degrees{profile}"
+    return leads, kind
+
+
 def reduce_distance(expr, variables, point=None, lead=0):
     """the rational expression g in the same variable names, to be studied at the origin, whose fluid
        state there equals the fluid state of expr at `point`; None if expr has no distance under a
@@ -226,6 +259,7 @@ def reduce_distance(expr, variables, point=None, lead=0):
     if not cands:
         raise DistanceError("this quadratic form takes no rational square value at small integer points, "
                             "so the square root cannot be removed with rational coefficients")
+    _INFO["last"] = (S, M, cands)
     v0 = cands[lead % len(cands)]
     B = _basis(M, v0)
     d = [_bil(M, b, b) for b in B]
