@@ -12,7 +12,7 @@ from fractions import Fraction as Fr
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "src")); sys.path.insert(0, HERE)
 from fmsl.verify import limit_at_origin
-from fmsl.witness import inner_bound, parse_n, _ev
+from fmsl.witness import inner_bound, parse_n, _ev, curve_point
 from part4_test import rand, arcs
 
 
@@ -49,7 +49,7 @@ def rand4(gen):
 
 def main(nA=40, nB=40):
     gen = random.Random(5)
-    t = {"inside": 0, "OUTSIDE": 0, "equal": 0, "engine unfinished": 0}
+    t = {"inside": 0, "OUTSIDE": 0, "equal": 0, "equal up to tiny gaps": 0, "engine unfinished": 0}
     for i in range(nA):
         f = rand(gen, i % 2 == 1)
         r = exact3(f)
@@ -57,7 +57,9 @@ def main(nA=40, nB=40):
         ib = inner_bound(f, ["x", "y", "z"])
         ok = inside(ib["components"], [tuple(c) for c in r["components"]])
         eq = ok and inside([tuple(c) for c in r["components"]], ib["components"], tol=1e-3)
-        t["inside" if ok else "OUTSIDE"] += 1; t["equal"] += eq
+        t["inside" if ok else "OUTSIDE"] += 1
+        tiny = len(ib["gaps"]) >= 2 and all(b - a < 1e-6 for a, b in ib["gaps"][:-1] + ib["gaps"][-1:] if b - a < 1)
+        t["equal up to tiny gaps" if eq and len(ib["gaps"]) >= 2 else "equal"] += eq
         print("A", "ok " if ok else "XX ", "=" if eq else " ", f, "| exact", r["set"], "| inner", ib["set"], flush=True)
     print("A:", t, flush=True)
     names = ["x", "y", "z", "w"]
@@ -67,13 +69,14 @@ def main(nA=40, nB=40):
         ib = inner_bound(f, names)
         P, Q = parse_n(f, names)
         u["whole circle"] += ib["whole_circle"]; u["limit does not exist"] += ib["limit_exists"] is False
-        for val, w, c in ib["witnesses"]:
+        for wt in ib["witnesses"]:
+            val = wt[0]
             if val == "segment" or val in ("inf", "-inf"): continue
             v = Fr(val) if "/" in val or val.lstrip("-").isdigit() else Fr(val)
             errs = []
             for k in (20, 40, 80):
                 tt = Fr(1, 10 ** k)
-                x = tuple(ci * tt ** wi for ci, wi in zip(c, w))
+                x = curve_point(wt, tt)
                 q = _ev(Q, x)
                 errs.append(abs(_ev(P, x) / q - v) if q else Fr(10 ** 9))
             good = errs[-1] < errs[0] or errs[-1] == 0

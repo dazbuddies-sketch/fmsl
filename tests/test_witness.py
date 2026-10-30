@@ -33,3 +33,16 @@ def test_witness_curves():
         t = Fr(1, 10 ** 12)
         x = tuple(ci * t ** wi for ci, wi in zip(c, w))
         assert abs(_ev(P, x) / _ev(Q, x) - Fr(val)) < Fr(1, 10 ** 6)
+
+
+def test_zoom_reaches_two_term_curves():
+    from fmsl.witness import curve_point
+    f = "x*y*z/(x^2+z*y^2)"                         # exact answer: the whole circle
+    r = inner_bound(f, ["x", "y", "z"])
+    assert r["components"][0][0] == -inf and r["components"][-1][1] == inf
+    P, Q = parse_n(f, ["x", "y", "z"])
+    zoomed = [w for w in r["witnesses"] if len(w) == 4 and w[0] not in ("segment", "inf", "-inf")]
+    assert zoomed
+    for wt in zoomed[:50]:
+        x = curve_point(wt, Fr(1, 10 ** 60))
+        assert abs(_ev(P, x) / _ev(Q, x) - Fr(wt[0])) < Fr(1, 10 ** 6) * (1 + abs(Fr(wt[0])))

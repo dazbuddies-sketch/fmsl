@@ -37,7 +37,7 @@ from math import gcd, inf, isinf
 from .compiler import Parser
 from .gauss import G
 
-__all__ = ["inner_bound", "parse_n"]
+__all__ = ["inner_bound", "parse_n", "curve_point"]
 
 
 # ------------------------------------------------------------------ polynomials in n variables
@@ -281,20 +281,72 @@ def _weights(n, k):
         if g == 1: yield w
 
 
-def inner_bound(expr, names, max_weight=4, samples=6, seed=0):
-    """proven limit values of the rational function expr at the origin, any number of variables.
-       Returns {"set", "components", "whole_circle", "limit_exists" (False when two values are
-       proven, else None: not decided), "proven": "inner bound", "witnesses": [(value or
-       interval, weight, point(s))]}"""
-    P, Q = parse_n(expr, names)
-    n = len(names)
-    gen = random.Random(seed)
+def _sub(P, w, c0, j, n):
+    """P after x_j = c0_j t^w_j and x_i = t^w_i (c0_i + y_i) (i != j); new variables (t, y_i...)"""
+    def var(k): return {tuple(int(i == k) for i in range(n)): Fr(1)}
+    others = [i for i in range(n) if i != j]
+    X = []
+    for i in range(n):
+        tw = {tuple([w[i]] + [0] * (n - 1)): Fr(1)}
+        if i == j: X.append({k: v * c0[i] for k, v in tw.items()})
+        else: X.append(_mul(tw, _add({(0,) * n: c0[i]} if c0[i] else {}, var(1 + others.index(i)))))
+    cache = {}
+    def pw(i, e):
+        if (i, e) not in cache: cache[(i, e)] = {(0,) * n: Fr(1)} if e == 0 else _mul(pw(i, e - 1), X[i])
+        return cache[(i, e)]
+    out = {}
+    for k, v in P.items():
+        m = {(0,) * n: v}
+        for i, e in enumerate(k):
+            if e: m = _mul(m, pw(i, e))
+        out = _add(out, m)
+    return out
+
+
+def curve_point(witness, s):
+    """the point at parameter s > 0 on the curve that proves a witnessed value (exact)"""
+    _, w, c, chain = witness if len(witness) == 4 else (*witness, [])
+    x = [ci * s ** wi for ci, wi in zip(c, w)]
+    for w0, c0, j in reversed(chain):               # undo the zooms, innermost first
+        n = len(c0); others = [i for i in range(n) if i != j]
+        t, ys = x[0], x[1:]
+        x = [c0[i] * t ** w0[i] if i == j else t ** w0[i] * (c0[i] + ys[others.index(i)]) for i in range(n)]
+    return tuple(x)
+
+
+def _zeros(iQ, n, positive, gen, tries=40):
+    """rational points c with in_w Q(c) = 0 (and c_p > 0 for p in positive): grid search and
+       solving for a variable of degree 1"""
+    grid = [Fr(k) for k in (-3, -2, -1, 1, 2, 3)] + [Fr(1, 2), Fr(-1, 2)]
+    pick = lambda i: abs(gen.choice(grid)) if i in positive else gen.choice(grid)
+    found = []
+    for _ in range(tries):
+        c = tuple(pick(i) for i in range(n))
+        if _ev(iQ, c) == 0: found.append(c)
+    for k in range(n):
+        if max(m[k] for m in iQ) != 1: continue
+        A = {m: v for m, v in iQ.items() if m[k] == 1}; B = {m: v for m, v in iQ.items() if m[k] == 0}
+        for _ in range(4):
+            c = [pick(i) for i in range(n)]; c[k] = Fr(1)
+            a = _ev(A, c)
+            if a == 0: continue
+            c[k] = -_ev(B, c) / a
+            if c[k] == 0 or (k in positive and c[k] < 0): continue
+            found.append(tuple(c))
+    return list(dict.fromkeys(found))
+
+
+def _scan(P, Q, n, positive, gen, max_weight, samples):
     grid = [Fr(k) for k in (-3, -2, -1, 1, 2, 3)] + [Fr(1, 2), Fr(-1, 2), Fr(1, 3), Fr(-1, 3)]
-    ivs, wit = [], []
-    for w in _weights(n, max_weight):
+    pick = lambda i: abs(gen.choice(grid)) if i in positive else gen.choice(grid)
+    ivs, wit, zooms = [], [], []
+    for w in _weights(n, 2 * max_weight):
         dP, iP = _initial(P, w)
         dQ, iQ = _initial(Q, w)
-        pts = [tuple(gen.choice(grid) for _ in range(n)) for _ in range(samples)]
+        if max(w) > max_weight and dP != dQ: continue      # beyond the box: only ties, where values vary
+        for c0 in _zeros(iQ, n, positive, gen) if len(iQ) > 1 else []:
+            if _ev(iP, c0) != 0 or dP != dQ: zooms.append((w, c0))
+        pts = [tuple(pick(i) for i in range(n)) for _ in range(samples)]
         pts = [c for c in pts if _ev(iQ, c) != 0]
         if not pts: continue
         if dP > dQ:
@@ -306,21 +358,70 @@ def inner_bound(expr, names, max_weight=4, samples=6, seed=0):
                     v = inf if (p > 0) == (_ev(iQ, c) > 0) else -inf
                     ivs.append((v, v)); wit.append((str(v), w, c))
             continue
+        zp = [c for c in (_zeros(iP, n, positive, gen, tries=10) if len(iP) > 1 else []) if _ev(iQ, c) != 0][:3]
+        pts += zp                                   # points with value exactly 0: segments from them reach 0
         for c in pts:
             v = _ev(iP, c) / _ev(iQ, c); ivs.append((v, v)); wit.append((str(v), w, c))
-        pts += [_climb(iP, iQ, c, sgn, gen) for c in pts[:2] for sgn in (1, -1)]
-        pts = [c for c in pts if _ev(iQ, c) != 0]
-        for c in pts[-4:]:
+        cl = [_climb(iP, iQ, c, sgn, gen) for c in pts[:2] for sgn in (1, -1)]
+        cl = [c for c in cl if _ev(iQ, c) != 0 and all(c[i] > 0 for i in positive)]
+        pts += cl
+        for c in cl:
             v = _ev(iP, c) / _ev(iQ, c); ivs.append((v, v)); wit.append((str(v), w, c))
-        for a, b in list(zip(pts, pts[1:])) + [(pts[0], c) for c in pts[-4:]]:
+        for a, b in list(zip(pts, pts[1:])) + [(pts[0], c) for c in cl] + [(z, c) for z in zp for c in cl]:
             seg = _segment(_along(iP, a, b), _along(iQ, a, b))
             if seg:
                 ivs += seg; wit.append(("segment", w, (a, b)))
+    return ivs, wit, zooms
+
+
+def inner_bound(expr, names, max_weight=4, samples=6, seed=0, depth=1, max_zooms=8):
+    """proven limit values of the rational function expr at the origin, any number of variables.
+       Returns {"set", "components", "whole_circle", "limit_exists" (False when two values are
+       proven, else None: not decided), "proven", "witnesses": [(value or "segment", weight,
+       point(s)[, zoom chain])]}; curve_point(witness, s) gives the proving curve.
+
+       Zooming (depth >= 1): at a rational point c0 where in_w Q vanishes, the curves
+       x_j = c0_j t^w_j, x_i = t^w_i (c0_i + y_i), with t -> 0+ and y -> 0, still go to the
+       origin, so the limit values of the new function of (t, y) at 0 with t > 0 are limit values
+       of f. This reaches curves with two or more terms, such as x = y sqrt(-z) (through the
+       rational point (1, 1, -1) of x^2 + z y^2)."""
+    P, Q = parse_n(expr, names)
+    n = len(names)
+    gen = random.Random(seed)
+    ivs, wit = [], []
+    todo = [(P, Q, (), [])]
+    for level in range(depth + 1):
+        nxt = []
+        for P1, Q1, pos, chain in todo:
+            a, b, zooms = _scan(P1, Q1, n, pos, gen, max_weight, samples)
+            ivs += a
+            wit += [x + (chain,) if chain else x for x in b]
+            if level == depth: continue
+            seen = set()
+            for w, c0 in zooms:
+                if len(nxt) >= max_zooms: break
+                j = next(i for i in range(n) if c0[i] != 0)
+                key = (w, tuple(c0[i] / c0[j] ** Fr(w[i], w[j]) if w[i] % w[j] == 0 else c0[i] for i in range(n)))
+                if key in seen: continue
+                seen.add(key)
+                nxt.append((_sub(P1, w, c0, j, n), _sub(Q1, w, c0, j, n), (0,), chain + [(w, c0, j)]))
+        todo = nxt
+        if _covers_circle(_union([(float(a) if not isinf(a) else a, float(b) if not isinf(b) else b)
+                                  for a, b in ivs])): break
     U = _union([(float(a) if not isinf(a) else a, float(b) if not isinf(b) else b) for a, b in ivs])
     whole = _covers_circle(U)
     if whole: U = [(-inf, inf)]
     distinct = len(U) > 1 or (U and U[0][0] != U[0][1])
     fmt = lambda v: "+oo" if v == inf else "-oo" if v == -inf else f"{v:.6g}"
     text = " u ".join("{" + fmt(a) + "}" if a == b else f"[{fmt(a)}, {fmt(b)}]" for a, b in U)
+    # Part 1 of docs/theory/n-variables.md: the answer is connected on the circle, so of the gaps
+    # between the proven pieces, at most one is outside it; every other gap is filled
+    gaps = [] if whole else [(U[i][1], U[i + 1][0]) for i in range(len(U) - 1)]
+    if not whole and not (U[0][0] == -inf and U[-1][1] == inf): gaps.append((U[-1][1], U[0][0]))
+    note = None
+    if len(gaps) >= 2:
+        note = ("the answer is connected, so it contains every gap between these pieces except at most "
+                "one of: " + ", ".join(f"({fmt(a)}, {fmt(b)})" for a, b in gaps))
     return {"set": text, "components": U, "whole_circle": whole, "limit_exists": False if distinct else None,
-            "proven": "inner bound" if not whole else "exact (the whole circle)", "witnesses": wit}
+            "proven": "inner bound" if not whole else "exact (the whole circle)", "witnesses": wit,
+            "gaps": gaps, "connected_note": note}
