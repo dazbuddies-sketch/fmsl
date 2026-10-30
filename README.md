@@ -374,6 +374,22 @@ never outside the exact answer. It equalled the answer in 39 and equalled it up 
 than 1e-11 in 8 more. In four variables, 504,867 witnessed values were re-checked by exact
 evaluation along their curves, and none was wrong.
 
+Complete answers for the common case are given by `fmsl.nvar.limit_n`. If the denominator's
+leading part, for some weighting of the variables, is positive away from the origin (as in
+x² + y² + z² + w² or x⁴ + y² + z² + w⁴), FMSL proves the complete answer in any number of
+variables. The ends are enclosed rigorously to within 1e-6. When the condition can't be
+proven, it returns the proven values with their curves instead.
+
+```python
+from fmsl.nvar import limit_n
+limit_n("(x*y+z*w)/(x^2+2*y^2+z^2+3*w^2+x*y)", ["x", "y", "z", "w"])["set"]
+# '[-0.5469181388, 0.2886751323] (+- 1e-06)'
+```
+
+Checks are in `benchmarks/nvar_check.py`. In three variables, 37 of 37 answers agreed with the
+independent exact engine. In four variables, 40 of 40 were complete, and exact evaluation at
+160,000 points near the origin never fell outside them.
+
 ## Distances: limits with r = sqrt(x² + y²)
 
 Distances are everywhere (potentials 1/r, norms, the Euclidean length of an error), and

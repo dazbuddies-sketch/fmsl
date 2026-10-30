@@ -104,13 +104,20 @@ def _centre(box):
 
 def _positive(Qw, n, budget=20000):
     """True if Qw > 0 on every face is proven, False if a point with Qw <= 0 is found, else None"""
+    import random
+    from collections import deque
+    gen = random.Random(0)
     T = _fterms(Qw)
+    for i, sg in _faces(n):                          # a quick look for a point where Qw <= 0
+        for _ in range(50):
+            x = [Fr(gen.randint(-8, 8), 8) for _ in range(n)]; x[i] = Fr(sg)
+            if _pev(Qw, x) <= 0: return False
     for face in _faces(n):
-        stack = [_box(face, n)]
+        stack = deque([_box(face, n)])
         while stack:
             budget -= 1
             if budget < 0: return None
-            b = stack.pop()
+            b = stack.popleft()
             lo, hi = _ieval(T, b)
             if lo > 0: continue
             if _pev(Qw, _centre(b)) <= 0: return False

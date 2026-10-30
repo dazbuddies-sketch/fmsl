@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.33.0
+- Complete answers in any number of variables: `fmsl.nvar.limit_n`. When the denominator has,
+  for some weight w, a positive definite initial form, weighted scaling gives the whole answer:
+  - 0 when the numerator has higher weighted order;
+  - +oo or -oo when it has lower order and one sign;
+  - every value when it has lower order and both signs;
+  - otherwise exactly the range of P_w/Q_w on the compact "weighted cube".
+  Positivity and the range are proven by outward-rounded interval arithmetic with branch and
+  bound (mean-value form). The ends are enclosed to within 1e-6, falling back to 1e-4 or 1e-3
+  when a maximum is spread over a whole set of points, and the inner end is attained at an
+  explicit point. Otherwise it falls back to `fmsl.witness`.
+  This is the classical weighted polar-coordinates argument, made automatic and rigorous.
+- Check `benchmarks/nvar_check.py` (`docs/theory/nvar_check_output.txt`):
+  - three variables, 40 functions: 37 agree with the independent exact engine (ends within the
+    enclosure); 0 disagree; 3 the engine did not finish;
+  - four variables, 40 functions: all 40 answered completely. 160,000 points between 1e-40 and
+    1e-20 of the origin were evaluated exactly, and none fell outside a proven set.
+
 ## 0.32.0
 - `fmsl.witness` zooms. At a rational point c0 where the initial denominator vanishes, it
   substitutes x_j = c0_j t^w_j and x_i = t^w_i (c0_i + y_i), then searches the new function with
