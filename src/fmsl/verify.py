@@ -275,7 +275,10 @@ def limit_at_origin(expr, variables=None, time_limit=None):
         return _not_proven(expr, variables, f"not proven within {time_limit:g} s")
     finally:
         signal.alarm(0); signal.signal(signal.SIGALRM, old)
-    memory.store("origin", expr, variables, r)
+    if r.get("proven"):
+        memory.store("origin", expr, variables, r)
+    else:                                               # the engine could not decide it: remember that too
+        memory.note_failure("origin", expr, variables, time_limit)
     return r
 
 

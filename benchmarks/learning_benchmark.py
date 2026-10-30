@@ -77,10 +77,13 @@ def main(n_train=30, n_test=30, cap=60, only_b=0):
     fs = [formula(gen) for _ in range(n_train + n_test)]
     train, test = fs[:n_train], fs[n_train:]
     memory.disable()
-    if only_b:
+    if only_b == 1:
         print(line("B multi-start", run(test, "B", cap))); return
-    A = run(test, "A", cap)
-    B = run(test, "B", cap)
+    if only_b == 2:                                     # learning and memory only
+        A = B = None
+    if only_b != 2:
+        A = run(test, "A", cap)
+        B = run(test, "B", cap)
     path = os.path.join(tempfile.mkdtemp(), "memory.json")
     memory.enable(path)
     memory._STATE["data"]["results"] = {}
@@ -93,7 +96,7 @@ def main(n_train=30, n_test=30, cap=60, only_b=0):
     print("|---|---|---|---|")
     for name, res in [("A single start (0.25)", A), ("B multi-start", B), ("C multi-start + learning", C),
                       ("D asked again, new session (memory)", D)]:
-        print(line(name, res))
+        if res is not None: print(line(name, res))
     print("\nlearned:", {b: v for b, v in memory.stats()["strategy"].items()})
 
 
