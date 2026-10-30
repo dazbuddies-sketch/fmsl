@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.32.0
+- `fmsl.witness` zooms. At a rational point c0 where the initial denominator vanishes, it
+  substitutes x_j = c0_j t^w_j and x_i = t^w_i (c0_i + y_i), then searches the new function with
+  t > 0. This reaches curves with two or more terms, such as x = y sqrt(-z). It also searches
+  weights up to 8 where the orders of P and Q tie. Every witness still has an explicit curve
+  (`curve_point`).
+- Part 1 (the answer is connected) is now used. Of the gaps between proven pieces, at most one
+  lies outside the answer, and the result says so (`connected_note`).
+- Check `benchmarks/witness_check.py` (`docs/theory/witness_check_output.txt`):
+  - three variables, 50 functions: never outside the exact answer. Equal to it in 39, and
+    equal up to gaps narrower than 1e-11 in 8 more (connectedness says at most one of those
+    gaps is missing). 3 misses, down from 9;
+  - four variables, 40 functions: 504,867 witnessed values re-checked along their curves by
+    exact rational arithmetic, none wrong. 19 proven to be the whole circle, 33 proven to
+    have no limit.
+
 ## 0.31.0
 - Any number of variables: `fmsl.witness.inner_bound`. Every value it reports is a limit value
   of f at the origin, proven by an explicit curve x = (c1 t^w1, ..., cn t^wn) (weighted initial

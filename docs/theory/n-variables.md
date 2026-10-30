@@ -155,8 +155,14 @@ In three variables it was checked against the exact engine on 50 functions: neve
 equal in 41. In four variables, 23,654 witnessed values were re-checked along their curves and
 none was wrong (`benchmarks/witness_check.py`, `docs/theory/witness_check_output.txt`). The 9
 three-variable misses all need curves with more than one term, such as x = y·sqrt(−z) on the zero
-surface of x² + zy². Making this exact in four variables means adding the zooming step, and that
-step is Part 4.
+surface of x² + zy².
+
+Version 0.32 adds one level of zooming, at rational zeros of the initial denominator. Of the 9,
+6 are now found up to gaps narrower than 1e-11. The 3 left have a denominator vanishing on whole
+coordinate planes (such as x²z). The repeated check: 47 of 50 equal to the exact answer, 8 of
+those up to tiny gaps, and none outside. In four variables, 504,867 witnesses were re-checked and
+none was wrong. What remains for an exact four-variable answer is an outer bound: a proof that no
+other values occur. That is Part 3's reduction, made effective.
 
 ## Evidence so far
 

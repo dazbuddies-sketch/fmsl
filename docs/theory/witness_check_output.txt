@@ -1,19 +1,19 @@
 A ok  = ((2)*x*y*z+(-2)*y^2*z+(-2)*x^2*(1+z))/((-2)*x^2*z^2+(-1)*x*y*1) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok    ((1)*x*y*z)/(x^2+z*y^2) | exact [-oo, +oo] | inner {0}
-A ok  = ((1)*x^2*(1+z))/((-1)*y^2*z) | exact [-oo, +oo] | inner [-oo, -2.23458e-11] u {0} u [8.27402e-14, +oo]
+A ok  = ((1)*x*y*z)/(x^2+z*y^2) | exact [-oo, +oo] | inner [-oo, -1.21017e-13] u {0} u [2.29258e-13, +oo]
+A ok  = ((1)*x^2*(1+z))/((-1)*y^2*z) | exact [-oo, +oo] | inner [-oo, 0] u [8.27402e-14, +oo]
 A ok  = ((1)*x*y*1)/(y^2+z^2*x^2+(1)*x*y*z) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok  = ((1)*x*y*(1+z))/((-1)*y^2*(2-z)+(2)*x*y*z) | exact [-oo, +oo] | inner {-oo} u [-224953, 463186] u {+oo}
+A ok  = ((1)*x*y*(1+z))/((-1)*y^2*(2-z)+(2)*x*y*z) | exact [-oo, +oo] | inner {-oo} u [-1.75219e+06, 402146] u {+oo}
 A ok  = ((2)*x^2*1+(2)*x*y*(1+z)+(2)*z^3*x)/(y^2+z^2*x^2+(-1)*x*y*z) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok    ((-2)*x^2*z+(1)*x*y*z^2)/((1)*x*y*z^2+(-2)*x^2*(1+z)+(1)*y^2*(1+z)) | exact [-oo, +oo] | inner {0}
-A ok  = ((-1)*y^2*(1+z)+(-1)*x*y*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, 0] u [1.51487e-12, +oo]
+A ok  = ((-1)*y^2*(1+z)+(-1)*x*y*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, 0] u [1e-18, +oo]
 A ok  = ((-1)*x^2*z+(-1)*x*y*(2-z)+(-2)*y^2*z)/((-2)*x*y*(2-z)+(1)*x^2*z) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((1)*x^2*(2-z)+(1)*x*y*(1+z)+(2)*y^2*(2-z)+(-1)*z*x^2*x)/(x^2+y^2-(z*x^2)*y) | exact [1.88197, 4.11803] | inner [1.88197, 4.11803]
 A ok  = ((2)*x*y*(1+z)+(1)*y^2*(1+z))/((1)*x^2*(1+z)+(1)*y^2*(2-z)+(1)*x*y*z^2) | exact [-1/2, 1] | inner [-0.5, 1]
 A ok  = ((1)*x*y*(2-z)+(1)*y^2*z+(2)*x^2*(1+z)+(-1)*x*y*z)/(y^2+z^2*x^2+(-1)*x*y*z) | exact [-1/2, +oo] | inner [-0.5, +oo]
 A ok  = ((-1)*y^2*z+(2)*x*y*z^2+(-1)*x^2*z)/((-1)*x^2*z+(-2)*y^2*z+(-2)*x*y*(1+z)) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok    ((2)*x^2*(2-z)+(1)*y^2*(2-z))/(x^2+y^2-(z^4)*y) | exact [-oo, +oo] | inner [-oo, -0.0235294] u [0.173913, +oo]
+A ok  = ((2)*x^2*(2-z)+(1)*y^2*(2-z))/(x^2+y^2-(z^4)*y) | exact [-oo, +oo] | inner [-oo, -1.70019e-11] u [5.97584e-13, +oo]
 A ok  = ((1)*y^2*1+(1)*x*y*z^2+(1)*x^2*z^2)/((2)*x*y*(2-z)+(1)*x^2*(2-z)) | exact [-oo, -1/2] u [0, +oo] | inner [-oo, -0.5] u [0, +oo]
-A ok    ((2)*y^2*z^2)/(y^2+z^2*x^2+(-2)*x*y*z) | exact [0, +oo] | inner {0}
+A ok  = ((2)*y^2*z^2)/(y^2+z^2*x^2+(-2)*x*y*z) | exact [0, +oo] | inner {0} u [6.79729e-36, +oo]
 A ok  = ((2)*y^2*z+(2)*x*y*(1+z)+(2)*x^2*(2-z))/((1)*x^2*(2-z)+(1)*x*y*(2-z)) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((1)*x*y*z+(2)*y^2*1)/(x^2+z*y^2) | exact {-oo} u [0, +oo] | inner {-oo} u [0, +oo]
 A ok  = ((2)*x^2*(1+z)+(-1)*y^2*(1+z))/((-2)*x*y*1+(-1)*y^2*(1+z)) | exact [-oo, +oo] | inner [-oo, +oo]
@@ -21,73 +21,72 @@ A ok  = ((-2)*y^2*(2-z)+(1)*x*y*(1+z)+(-1)*x^2*1+(1)*x*y*z)/(y^2+z^2*x^2+(-2)*x*
 A ok  = ((-2)*x^2*(2-z)+(1)*x*y*(2-z))/((2)*x^2*z^2+(2)*y^2*(1+z)) | exact [-oo, 1/8] | inner [-oo, 0.125]
 A ok  = ((-2)*x*y*1)/(x^2+y^2-(z^3*x)*1) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((-2)*y^2*z)/((-1)*y^2*z+(-1)*x*y*(2-z)) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok  = ((-1)*y^2*1+(2)*x*y*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, 0] u [1.51487e-12, +oo]
+A ok  = ((-1)*y^2*1+(2)*x*y*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, 0] u [1e-18, +oo]
 A ok    ((2)*x^2*(2-z)+(1)*x*y*(1+z))/((1)*x^2*z) | exact [-oo, +oo] | inner {-oo} u {+oo}
 A ok  = ((1)*y^2*1+(-1)*x*y*(1+z)+(1)*x^2*z^2+(-1)*z^3*x*x)/(x^2+y^2-(z^3*x)*x) | exact [-0.207107, 1.20711] | inner [-0.207107, 1.20711]
 A ok  = ((2)*x^2*z)/((1)*x*y*1+(-2)*y^2*z^2) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((2)*x^2*z+(-2)*y^2*1)/(x^2+z*y^2) | exact [-oo, 0] u {+oo} | inner [-oo, 0] u {+oo}
-A ok    ((1)*x*y*z^2+(-2)*y^2*z^2+(-1)*x^2*z)/((-2)*x^2*1+(-1)*y^2*z) | exact [-oo, +oo] | inner {0}
+A ok  = ((1)*x*y*z^2+(-2)*y^2*z^2+(-1)*x^2*z)/((-2)*x^2*1+(-1)*y^2*z) | exact [-oo, +oo] | inner [-oo, -1.82827e-25] u {0} u [4.00902e-23, +oo]
 A ok  = ((2)*x*y*(1+z)+(-2)*z^4*x)/(y^2+z^2*x^2+(2)*x*y*z) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((1)*x*y*1+(1)*x^2*z)/((-2)*y^2*(2-z)+(-2)*x^2*(1+z)) | exact [-0.176777, 0.176777] | inner [-0.176777, 0.176777]
 A ok  = ((2)*x^2*(2-z)+(-1)*y^2*1+(1)*z^2*x*x)/(x^2+z*y^2) | exact [-oo, 4] u {+oo} | inner [-oo, 4] u {+oo}
-A ok  = ((-2)*x*y*(2-z)+(-1)*y^2*z)/((-1)*y^2*1) | exact [-oo, +oo] | inner {-oo} u [-2.30138e+06, 6.75888e+06] u {+oo}
+A ok  = ((-2)*x*y*(2-z)+(-1)*y^2*z)/((-1)*y^2*1) | exact [-oo, +oo] | inner {-oo} u [-5.81774e+06, 6.75888e+06] u {+oo}
 A ok  = ((2)*x*y*1+(2)*y^2*(2-z)+(-1)*x^2*1)/(x^2+z*y^2) | exact {-oo} u [-5/4, +oo] | inner {-oo} u [-1.25, +oo]
 A ok  = ((-2)*x^2*1+(1)*x*y*(2-z)+(2)*y^2*(1+z))/((-1)*x^2*z^2+(2)*y^2*z+(-1)*x*y*1) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok    ((-1)*x^2*z^2+(-1)*x*y*z)/(x^2+y^2-(z^2*x)*1) | exact [-oo, +oo] | inner {0}
-A ok  = ((2)*x*y*1)/((-1)*x*y*z+(-2)*y^2*(2-z)) | exact [-oo, +oo] | inner {-oo} u [-224953, 463186] u {+oo}
-A ok  = ((1)*x^2*1+(2)*x*y*z+(-2)*y^2*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, -2.67674e-10] u [0, +oo]
+A ok  = ((-1)*x^2*z^2+(-1)*x*y*z)/(x^2+y^2-(z^2*x)*1) | exact [-oo, +oo] | inner [-oo, -2.87822e-13] u {0} u [1.22565e-12, +oo]
+A ok  = ((2)*x*y*1)/((-1)*x*y*z+(-2)*y^2*(2-z)) | exact [-oo, +oo] | inner {-oo} u [-1.75219e+06, 402146] u {+oo}
+A ok  = ((1)*x^2*1+(2)*x*y*z+(-2)*y^2*z)/(x^2+y^2-(z^4)*1) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((-2)*x^2*(2-z)+(-1)*x*y*(1+z)+(-2)*y^2*(1+z))/((1)*x^2*(2-z)) | exact [-oo, -31/16] | inner [-oo, -1.9375]
-A ok  = ((-2)*x*y*z^2+(-2)*x^2*1)/(x^2+z*y^2) | exact [-oo, +oo] | inner [-oo, 0] u [4.23657e-10, +oo]
+A ok  = ((-2)*x*y*z^2+(-2)*x^2*1)/(x^2+z*y^2) | exact [-oo, +oo] | inner [-oo, 0] u [8.08876e-11, +oo]
 A ok  = ((-1)*x*y*z^2+(-1)*x^2*1)/((-1)*y^2*(2-z)+(2)*x^2*(2-z)) | exact [-oo, -1/4] u [0, +oo] | inner [-oo, -0.25] u [0, +oo]
 A ok  = ((-1)*x*y*(2-z)+(2)*y^2*z+(-2)*x*y*z)/(x^2+y^2-(z^3)*1) | exact [-oo, +oo] | inner [-oo, +oo]
-A ok  = ((-1)*y^2*(2-z))/((-1)*x*y*z+(1)*y^2*z+(1)*x^2*z^2) | exact [-oo, 0] u [8, +oo] | inner [-oo, -1.02715e-11] u {0} u [8, +oo]
-A ok    ((1)*x^2*z+(-2)*x*y*z^2+(2)*z^3*x*x)/(x^2+z*y^2) | exact [-oo, +oo] | inner {0}
+A ok  = ((-1)*y^2*(2-z))/((-1)*x*y*z+(1)*y^2*z+(1)*x^2*z^2) | exact [-oo, 0] u [8, +oo] | inner [-oo, 0] u [8, +oo]
+A ok  = ((1)*x^2*z+(-2)*x*y*z^2+(2)*z^3*x*x)/(x^2+z*y^2) | exact [-oo, +oo] | inner [-oo, -1.91944e-26] u {0} u [4.08087e-24, +oo]
 A ok  = ((-1)*x^2*(1+z)+(2)*x*y*(2-z))/((2)*y^2*1+(-2)*x^2*z^2+(-1)*x*y*(2-z)) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((1)*y^2*z^2+(2)*x^2*z^2+(2)*z^3*x)/(x^2+y^2-(z^3)*y) | exact [-oo, +oo] | inner [-oo, +oo]
 A ok  = ((1)*y^2*1+(1)*x*y*z)/((-2)*x^2*(1+z)) | exact [-oo, 0] | inner [-oo, 0]
 A ok  = ((-2)*y^2*1+(-1)*x^2*(1+z)+(2)*x*y*(2-z)+(-2)*z^2*x*x)/(y^2+z^2*x^2+(-1)*x*y*z) | exact [-oo, 2] | inner [-oo, 2]
 A ok    ((-1)*y^2*1+(2)*x^2*z)/((-2)*y^2*z^2) | exact [-oo, +oo] | inner {-oo} u {+oo}
 A ok  = ((-1)*y^2*(2-z)+(2)*x*y*z^2+(-1)*x^2*(1+z))/(y^2+z^2*x^2+(1)*x*y*z) | exact [-oo, -2] | inner [-oo, -2]
-A: {'inside': 50, 'OUTSIDE': 0, 'equal': 41, 'engine unfinished': 0}
-A: {'inside': 0, 'OUTSIDE': 0, 'equal': 0, 'engine unfinished': 0}
+A: {'inside': 50, 'OUTSIDE': 0, 'equal': 39, 'equal up to tiny gaps': 8, 'engine unfinished': 0}
 B ((3)*y^2*z^1*w^1+(3)*x^1*z^1+(-2)*x^1*y^1*z^1)/(x^2+y^4+z^2+w^6) -> [-1.5, 1.5] inner bound
-B ((3)*y^1*z^1)/(x^2+y^2-z*w) -> [-oo, +oo] exact (the whole circle)
-B ((1)*y^1*z^1*w^1+(2)*x^1*z^2*w^1)/(x^2+y^2-z*w+(2)*y^1*z^2) -> {0} inner bound
-B ((-1)*w^2+(-2)*x^2*z^1)/(x^2+2*y^2+z^4+w^4+x*y+(1)*x^2*y^1) -> [-oo, 0] inner bound
-B ((1)*x^1*z^1*w^1+(3)*y^1*w^1)/(x^2+y^2+z^2+w^2) -> [-1.5, 1.5] inner bound
-B ((1)*y^1*z^1*w^1+(-1)*y^2*w^1)/(x^2+y^2+z^2+w^2) -> {0} inner bound
-B ((1)*y^1*z^1)/(x^2+y^2+z^2+w^2+(-2)*x^2*y^1) -> [-0.5, 0.5] inner bound
-B ((3)*x^1*z^1*w^1+(3)*z^1*w^1)/(x^2+y^4+z^2+w^6+(-1)*y^1*z^1*w^1) -> [-oo, +oo] exact (the whole circle)
-B ((1)*z^1*w^1+(3)*x^1*y^1*z^2)/(x^2+y^4+z^2+w^6) -> [-oo, +oo] exact (the whole circle)
-B ((-2)*y^2+(2)*x^1*w^1+(-2)*x^2*z^1*w^1)/(x^4+y^2+z^2+w^2+(2)*x^1*y^1*z^1) -> [-oo, +oo] exact (the whole circle)
-B ((1)*x^1*w^1+(-2)*z^2*w^1)/(x^2+y^2-z*w) -> [-oo, +oo] exact (the whole circle)
-B ((-1)*x^1*y^2*w^1+(3)*x^1*y^1*z^1*w^1)/(x^2+y^2-z*w) -> {0} inner bound
-B ((3)*y^2*w^2+(1)*x^1*z^1*w^1+(-2)*z^2)/(x^2+2*y^2+z^4+w^4+x*y) -> [-oo, 0] inner bound
-B ((1)*x^1*w^2+(3)*x^2*w^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
-B ((-2)*x^2*y^2+(-2)*x^2*z^1*w^1)/(x^2+y^2-z*w) -> {0} inner bound
-B ((-2)*x^1*y^2*w^1+(3)*x^3*y^1+(-1)*y^1*z^1*w^1)/(x^2+y^2+z^2+w^2) -> {0} inner bound
-B ((-1)*x^2*w^2+(-2)*y^1*z^1)/(x^2+y^2-z*w+(-1)*x^1*y^1*w^1) -> [-oo, +oo] exact (the whole circle)
-B ((-2)*x^2*y^1+(3)*y^1*z^2+(1)*y^1*z^2*w^1)/(x*y+z*w+(-2)*x^1*y^1*w^1) -> [-oo, +oo] exact (the whole circle)
-B ((1)*x^1*y^1*z^2+(2)*x^1*y^1*w^1+(1)*x^2*y^1)/(x^2+2*y^2+z^4+w^4+x*y) -> {0} inner bound
-B ((2)*y^2)/(x^2+y^4+z^2+w^6+(2)*w^3) -> [-oo, -7.37251e-12] u [0, +oo] inner bound
-B ((-1)*x^1*y^1+(-2)*z^2+(2)*x^1*y^1*w^1)/(x^2+y^2+z^2+w^2) -> [-2, 0.5] inner bound
-B ((3)*x^2*y^1)/(x^2+y^2-z*w+(2)*x^2*y^1) -> {0} inner bound
-B ((2)*y^2*z^1*w^1+(-1)*y^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
-B ((3)*x^2*y^2+(-2)*y^2*w^1+(-2)*x^1*y^1*z^1)/(x^4+y^2+z^2+w^2) -> {0} inner bound
-B ((-1)*y^1*z^1+(-1)*x^1*w^1+(-2)*y^1*z^1*w^1)/(x^2+y^2+z^2+w^2+(1)*x^1*z^1*w^1) -> [-0.5, 0.5] inner bound
-B ((-1)*y^1*z^1+(3)*y^1*w^1+(1)*x^1*y^1*z^2)/(x^2+y^2-z*w+(2)*x^1*y^1*z^1) -> [-oo, +oo] exact (the whole circle)
-B ((-2)*y^1*w^1+(3)*y^1*w^2+(3)*w^2)/(x*y+z*w+(-1)*z^1*w^2) -> [-oo, +oo] exact (the whole circle)
-B ((2)*y^3+(-2)*x^2*y^1*z^1+(1)*y^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(-1)*y^1*w^2) -> [-oo, +oo] exact (the whole circle)
-B ((2)*x^2*y^1*z^1+(1)*z^2+(1)*x^2)/(x^2+2*y^2+z^4+w^4+x*y) -> [0, +oo] inner bound
-B ((3)*z^1*w^1)/(x^2+y^2-z*w) -> [-oo, +oo] exact (the whole circle)
-B ((2)*x^2*y^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(-2)*y^1*z^1*w^1) -> {0} inner bound
-B ((2)*y^1*z^1*w^2+(3)*x^1*z^1*w^1+(-1)*y^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
-B ((2)*x^1*y^1+(-1)*z^1*w^1)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
-B ((1)*x^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y) -> [-oo, +oo] exact (the whole circle)
-B ((-2)*x^2*z^2+(3)*x^1*w^2)/(x^4+y^2+z^2+w^2) -> {0} inner bound
-B ((2)*x^1*y^1+(-2)*y^2+(-2)*x^1*z^1*w^2)/(x^2+y^2-z*w) -> [-oo, +oo] exact (the whole circle)
-B ((-1)*z^1*w^2+(-1)*x^2*z^1)/(x^2+y^2-z*w) -> {0} inner bound
-B ((2)*x^1*w^1)/(x^2+y^2-z*w+(2)*x^1*z^1*w^1) -> [-oo, +oo] exact (the whole circle)
-B ((-1)*y^1*z^2*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(3)*y^2*w^1) -> {0} inner bound
-B ((1)*y^2*w^1+(2)*x^2*z^2+(-1)*x^1*y^3)/(x^4+y^2+z^2+w^2) -> {0} inner bound
-B: {'witnesses checked': 23654, 'BAD': 0, 'whole circle': 18, 'limit does not exist': 27}
+B ((-1)*x^2*y^1*z^1)/(x^2+y^4+z^2+w^6) -> {0} inner bound
+B ((3)*x^3*z^1+(-1)*z^2+(-1)*x^1*y^1*w^1)/(x^4+y^2+z^2+w^2+(2)*x^2*w^1) -> [-1, 0] u [1.29672e-13, 2] inner bound
+B ((-2)*x^1*z^1*w^1)/(x*y+z*w+(1)*x^2*w^1) -> [-oo, -0.0569193] u {0} u [0.000989847, +oo] inner bound
+B ((-1)*y^1*z^1*w^1+(2)*x^2*z^1*w^1+(1)*x^1*w^1)/(x^2+y^4+z^2+w^6) -> [-oo, +oo] exact (the whole circle)
+B ((-2)*y^1*w^3+(-1)*z^1*w^1)/(x^2+y^4+z^2+w^6) -> [-oo, +oo] exact (the whole circle)
+B ((1)*x^2*w^2)/(x^2+y^4+z^2+w^6) -> {0} inner bound
+B ((3)*x^2*y^1*w^1+(2)*x^2*y^1*w^1)/(x*y+z*w) -> [-oo, -1.21032e-12] u {0} u [9.00327e-13, +oo] inner bound
+B ((-1)*x^1*y^1*w^1+(1)*w^2)/(x^2+y^4+z^2+w^6+(1)*y^1*z^1*w^1) -> {-oo} u [0, +oo] inner bound
+B ((-2)*x^1*w^1)/(x^2+y^2+z^2+w^2) -> [-1, 1] inner bound
+B ((-2)*y^1*z^1*w^2+(2)*x^1*z^1+(3)*x^1*y^1)/(x*y+z*w+(-2)*y^1*z^2) -> [-oo, +oo] exact (the whole circle)
+B ((-1)*x^2*z^1)/(x^2+y^2+z^2+w^2+(2)*z^3) -> {0} inner bound
+B ((3)*y^2*z^1+(-2)*x^1*y^2*w^1+(2)*x^3*y^1)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((2)*x^1*z^1*w^1)/(x*y+z*w+(-2)*x^1*z^2) -> [-oo, -0.00412507] u {0} u [0.00909861, +oo] inner bound
+B ((1)*x^1*w^1+(-2)*x^1*y^1*z^1*w^1)/(x^4+y^2+z^2+w^2+(1)*y^1*w^2) -> [-oo, +oo] exact (the whole circle)
+B ((2)*y^1*w^1)/(x^2+y^2+z^2+w^2) -> [-1, 1] inner bound
+B ((1)*y^1*z^1*w^1+(-2)*x^1*z^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((-1)*x^3*z^1+(2)*x^1*w^1+(-2)*x^1*w^3)/(x^4+y^2+z^2+w^2) -> [-oo, +oo] exact (the whole circle)
+B ((-2)*x^1*z^2*w^1)/(x^2+y^2+z^2+w^2+(2)*z^2*w^1) -> {0} inner bound
+B ((-2)*w^3+(-1)*y^2*z^2)/(x*y+z*w+(-2)*x^1*y^1*z^1) -> [-oo, +oo] exact (the whole circle)
+B ((3)*y^3*w^1+(2)*z^1*w^1)/(x^2+y^2+z^2+w^2) -> [-1, 1] inner bound
+B ((-1)*y^1*z^2*w^1+(1)*x^1*y^1*z^1*w^1+(1)*x^2*z^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(-2)*x^2*z^1) -> {0} inner bound
+B ((-1)*y^1*w^1+(1)*x^1*z^2*w^1+(-2)*x^1*z^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((-2)*x^1*w^1)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((3)*x^1*z^2+(-2)*x^1*y^1*w^1+(-1)*x^2)/(x^2+2*y^2+z^4+w^4+x*y+(3)*x^1*w^2) -> [-oo, +oo] exact (the whole circle)
+B ((3)*x^1*y^1*w^1+(3)*y^1*w^1)/(x^2+y^4+z^2+w^6) -> [-oo, +oo] exact (the whole circle)
+B ((2)*z^2*w^1+(-1)*z^1*w^3+(3)*y^2)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((-2)*y^1*z^1*w^2)/(x^2+2*y^2+z^4+w^4+x*y+(2)*x^1*z^2) -> [-oo, -0.000171468] u {0} u [0.000167968, +oo] inner bound
+B ((-2)*x^2*y^1*z^1+(3)*z^2*w^2+(-2)*y^1*z^1*w^1)/(x*y+z*w) -> [-oo, -0.047619] u {0} u [0.0555556, +oo] inner bound
+B ((2)*z^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(1)*z^1*w^2) -> [-oo, +oo] exact (the whole circle)
+B ((3)*y^1*w^1+(-2)*x^1*z^1*w^2+(-1)*x^2*y^1*w^1)/(x^2+y^4+z^2+w^6+(-1)*x^1*y^1*w^1) -> [-oo, +oo] exact (the whole circle)
+B ((-1)*x^1*y^2*z^1+(3)*z^1*w^1)/(x^4+y^2+z^2+w^2+(1)*x^1*y^1*z^1) -> [-1.5, 1.5] inner bound
+B ((-2)*x^1*y^1*w^1+(-2)*x^1*y^2+(-2)*w^2)/(x*y+z*w+(2)*x^2*z^1) -> [-oo, +oo] exact (the whole circle)
+B ((3)*x^1*y^2*w^1+(-2)*x^1*y^1*z^2+(-2)*y^1*w^1)/(x^2+y^2+z^2+w^2) -> [-1, 1] inner bound
+B ((2)*x^1*y^1*w^1+(-1)*y^1*w^1+(2)*x^1*w^1)/(x^2+y^2-z*w) -> [-oo, +oo] exact (the whole circle)
+B ((2)*y^2*z^1*w^1+(3)*x^1*y^2)/(x^2+y^2-z*w+(-2)*y^1*z^1*w^1) -> [-oo, -0.0131579] u {0} u [0.0125199, +oo] inner bound
+B ((-2)*x^2*y^1*w^1)/(x^2+2*y^2+z^4+w^4+x*y+(3)*x^1*z^1*w^1) -> {0} inner bound
+B ((1)*x^1*z^1)/(x*y+z*w) -> [-oo, +oo] exact (the whole circle)
+B ((2)*x^1*y^1*w^2+(1)*x^1*w^1)/(x^2+y^4+z^2+w^6+(-2)*x^2*z^1) -> [-oo, +oo] exact (the whole circle)
+B ((-1)*x^1*z^2+(-2)*x^3*w^1)/(x^4+y^2+z^2+w^2) -> {0} inner bound
+B: {'witnesses checked': 504867, 'BAD': 0, 'whole circle': 19, 'limit does not exist': 33}

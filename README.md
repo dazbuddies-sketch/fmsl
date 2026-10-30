@@ -365,9 +365,14 @@ from fmsl.witness import inner_bound
 inner_bound("x*w/(x^2+y^2+z^2+w^2)", ["x", "y", "z", "w"])["set"]   # '[-0.5, 0.5]'
 ```
 
-Checks are in `benchmarks/witness_check.py`. In three variables the result was never outside
-the exact answer and matched it in 41 of 50 functions. In four variables, 23,654 witnessed values
-were re-checked by exact evaluation along their curves, and none was wrong.
+It zooms in at points where the leading part of the denominator vanishes, which reaches curves
+with more than one term. It also uses the theorem that the answer is connected: of the gaps
+between proven pieces, at most one can be missing from the answer.
+
+Checks are in `benchmarks/witness_check.py`. In three variables, on 50 functions, the result was
+never outside the exact answer. It equalled the answer in 39 and equalled it up to gaps narrower
+than 1e-11 in 8 more. In four variables, 504,867 witnessed values were re-checked by exact
+evaluation along their curves, and none was wrong.
 
 ## Distances: limits with r = sqrt(x² + y²)
 
