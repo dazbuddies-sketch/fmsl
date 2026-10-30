@@ -759,13 +759,15 @@ order is now the default. `benchmarks/learning_benchmark.py`, 30 new formulas, a
 | method | proven | total time | median |
 |---|---|---|---|
 | one start (FMSL 0.26) | 8 of 30 | 511 s | 3.3 s |
-| several starts, learned default order | 15 of 30 | 520 s | 10.6 s |
-| several starts + learning per kind of problem | 15 of 30 | 596 s | 10.1 s |
-| asked again in a new session (memory) | 15 of 30 | 558 s | 4.8 s |
+| several starts, learned default order | 15 of 30 | 521 s | 10.0 s |
+| several starts + learning per kind of problem | 15 of 30 | 589 s | 10.1 s |
+| asked again in a new session (memory, `time_limit=60`) | 15 of 30 | 0 s | 0.0 s |
 
 Nearly twice as many proofs for about the same total time. With the learned order built in, the
-per-kind learning added no further proofs on this set; the memory answers repeated proven questions
-at once, while unproven ones still spend their full time.
+per-kind learning added no further proofs on this set. Asked again in a new session, every answer
+came from memory: proven answers at once, and questions not decided within the time limit reported
+at once as such (a larger `time_limit` tries again). Before failures were remembered, that row took
+558 s.
 
 ## Training AI: proven problems and rewards
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.28.0
+- `limit_at_origin(..., time_limit=s)`: stop and report "not proven within s seconds".
+- `fmsl.memory` remembers questions not decided within a time limit (timed out, or left
+  undecided by the engine): asked again with the same or a smaller limit, FMSL says so at once; a
+  larger limit tries again. On the learning benchmark, the 30 questions asked again in a new
+  session took 0 s in total instead of 558 s.
+
 ## 0.27.0
 - `fmsl.memory` (off by default): proven answers saved per FMSL version and returned at once in
   later sessions; a strategy learner (UCB1 bandit) that orders proof strategies by past reward
