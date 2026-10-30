@@ -7,7 +7,8 @@ map can change the proof time from 0.1 s to never. Each formula gets at most cap
   B  multi-start without learning: a 5 s probe of each start, then the first one without limit
   C  multi-start with learning (fmsl.memory): the same, but starts are ordered by what worked on
      earlier formulas of the same kind; trained on n_train formulas, measured on n_test new ones
-  D  memory: C's test formulas asked again in a new session (answers come from the saved proofs)
+  D  memory: C's test formulas asked again in a new session: proven answers come from the saved
+     proofs, and formulas not proven within the limit are reported at once (remembered failures)
 Reported: how many are proven within the cap, and the total and median time.
 """
 import os, random, signal, statistics, sys, tempfile, time
@@ -53,8 +54,15 @@ def run(fs, how, cap):
         if how == "A":
             g = reduce_distance(f, ["x", "y", "z"], None, 0)
             ok, t = capped(lambda: V._limit_at_origin(g, ["x", "y", "z"]), cap)
-        else:
+        elif how == "B":
             ok, t = capped(lambda: V.limit_at_origin(f, ["x", "y", "z"]), cap)
+        else:                                           # FMSL's own time limit, remembered by fmsl.memory
+            t0 = time.time()
+            try:
+                r = V.limit_at_origin(f, ["x", "y", "z"], time_limit=cap); ok = bool(r["proven"])
+            except Exception:
+                ok = False
+            t = min(time.time() - t0, cap)
         res.append((ok, t))
     return res
 

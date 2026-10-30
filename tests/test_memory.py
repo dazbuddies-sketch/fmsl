@@ -28,6 +28,17 @@ class TestMemory(unittest.TestCase):
         limit_at_origin("sin(x)/(x-y)")
         self.assertEqual(memory.stats()["results"], 0)
 
+    def test_failure_within_a_time_limit_is_remembered(self):
+        import time
+        path = os.path.join(tempfile.mkdtemp(), "m.json")
+        memory.enable(path)
+        f = "x*y*z/sqrt(x^2+y^2+z^2)^3"                       # takes well over 2 s to prove
+        self.assertFalse(limit_at_origin(f, time_limit=2)["proven"])
+        memory.disable(); memory.enable(path)
+        t = time.time(); r = limit_at_origin(f, time_limit=2)
+        self.assertFalse(r["proven"]); self.assertLess(time.time() - t, 0.5)
+        self.assertIn("earlier attempt", r["explanation"])
+
     def test_bandit_prefers_what_worked(self):
         memory.enable(os.path.join(tempfile.mkdtemp(), "m.json"))
         for _ in range(5):

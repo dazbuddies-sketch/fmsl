@@ -4,7 +4,9 @@ Two parts, both off by default (FMSL's answers never depend on them):
 
 1. Proven results. Every proven answer is saved with the FMSL version that proved it; asking the
    same question again returns it at once. A new version starts a fresh memory, so a fix in the
-   engine is never hidden by an old answer.
+   engine is never hidden by an old answer. With a time limit (limit_at_origin(..., time_limit=60)),
+   a question that could not be proven within it is remembered too: asked again with the same or a
+   smaller limit, FMSL says so at once instead of spending the time again; a larger limit retries.
 
 2. Strategy learning (a bandit, the simplest form of reinforcement learning). Where FMSL has a
    choice that does not affect the answer but can change the time a proof takes by a large factor
@@ -24,7 +26,8 @@ Setting the environment variable FMSL_MEMORY to a file path enables it at import
 """
 import json, math, os, threading
 
-__all__ = ["enable", "disable", "enabled", "stats", "lookup", "store", "order", "reward"]
+__all__ = ["enable", "disable", "enabled", "stats", "lookup", "store", "order", "reward",
+           "failed_within", "note_failure"]
 
 _LOCK = threading.Lock()
 _STATE = {"path": None, "data": None}
@@ -37,12 +40,13 @@ def _version():
 
 def enable(path=None):
     path = path or os.path.join(os.path.expanduser("~"), ".cache", "fmsl", "memory.json")
-    data = {"version": _version(), "results": {}, "strategy": {}}
+    data = {"version": _version(), "results": {}, "failures": {}, "strategy": {}}
     try:
         with open(path) as fh:
             old = json.load(fh)
         if old.get("version") == data["version"]:
             data = old
+            data.setdefault("failures", {})
         else:                                       # a new engine: keep what was learned about speed only
             data["strategy"] = old.get("strategy", {})
     except (OSError, ValueError):
@@ -88,6 +92,23 @@ def store(kind, expr, variables, result, point=None, side=None):
         _save()
 
 
+def failed_within(kind, expr, variables, point=None, side=None):
+    """the largest time limit (seconds) within which this FMSL version could not prove the answer
+       in an earlier attempt, or None"""
+    if not enabled(): return None
+    with _LOCK:
+        return _STATE["data"]["failures"].get(_key(kind, expr, variables, point, side))
+
+
+def note_failure(kind, expr, variables, seconds, point=None, side=None):
+    if not enabled(): return
+    with _LOCK:
+        k = _key(kind, expr, variables, point, side)
+        f = _STATE["data"]["failures"]
+        f[k] = max(f.get(k, 0), seconds)
+        _save()
+
+
 def order(bucket, n_actions, c=0.3):
     """the actions 0..n-1, best first, for this kind of problem (UCB1; untried first, in order)"""
     if not enabled() or n_actions <= 1: return list(range(n_actions))
@@ -114,6 +135,7 @@ def stats():
     if not enabled(): return {"enabled": False}
     d = _STATE["data"]
     return {"enabled": True, "path": _STATE["path"], "version": d["version"], "results": len(d["results"]),
+            "failures": len(d.get("failures", {})),
             "strategy": {b: {a: {"tries": n, "mean_reward": round(s / n, 3)} for a, (n, s) in st.items()}
                          for b, st in d["strategy"].items()}}
 

@@ -235,19 +235,54 @@ def _three_variables(expr):
     return comps, proven, str(r.get("verdict", "")), []
 
 
-def limit_at_origin(expr, variables=None):
+class _Budget(BaseException):
+    """the caller's time limit ran out"""
+
+
+def limit_at_origin(expr, variables=None, time_limit=None):
     """The complete set of values expr approaches as the variables tend to 0, proven (see
     _limit_at_origin). With fmsl.memory enabled, a proven answer from an earlier session is
-    returned at once, and new proven answers are saved."""
+    returned at once, and new proven answers are saved.
+
+    time_limit (seconds, main thread only): stop and report "not proven" when the proof takes
+    longer; with memory enabled this is remembered, so the same question with the same or a
+    smaller limit is answered at once."""
     from fmsl import memory
     if memory.enabled():
         hit = memory.lookup("origin", expr, variables)
         if hit is not None:
             hit["explanation"] = "from memory (proven earlier by this FMSL version); " + hit["explanation"]
             return hit
-    r = _limit_at_origin(expr, variables)
+        if time_limit:
+            done = memory.failed_within("origin", expr, variables)
+            if done is not None and done >= time_limit:
+                return _not_proven(expr, variables, f"not proven within {done:g} s in an earlier attempt by this "
+                                   f"FMSL version (from memory); give a larger time_limit to try again")
+    if not time_limit:
+        r = _limit_at_origin(expr, variables)
+        memory.store("origin", expr, variables, r)
+        return r
+    import signal, threading, time
+    if threading.current_thread() is not threading.main_thread():
+        raise ValueError("time_limit works in the main thread only")
+    def alarm(*_): raise _Budget()
+    old = signal.signal(signal.SIGALRM, alarm); signal.alarm(max(1, int(round(time_limit))))
+    t0 = time.time()
+    try:
+        r = _limit_at_origin(expr, variables)
+    except _Budget:
+        memory.note_failure("origin", expr, variables, time_limit)
+        return _not_proven(expr, variables, f"not proven within {time_limit:g} s")
+    finally:
+        signal.alarm(0); signal.signal(signal.SIGALRM, old)
     memory.store("origin", expr, variables, r)
     return r
+
+
+def _not_proven(expr, variables, why):
+    return {"expression": expr, "variables": _variables(expr, variables), "point": "origin",
+            "limit_exists": None, "limit": None, "set": None, "components": None, "proven": False,
+            "explanation": why, "witnesses": []}
 
 
 def _limit_at_origin(expr, variables=None):
