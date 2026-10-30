@@ -228,7 +228,18 @@ def _with_distance(expr, vs, point):
 
 
 def _three_variables(expr):
-    from fmsl.space import profile3
+    from fmsl.space import profile3, parse3
+    from fmsl.indeterminacy import clean_line
+    try:
+        N, D = parse3(expr)
+        v = clean_line(N, D)
+    except Exception:
+        v = None
+    if v is not None:
+        return ([(-INF, INF)], True,
+                f"every value: numerator and denominator both vanish on the line through the origin in direction "
+                f"{v}, and their differentials are independent there (fmsl.indeterminacy, Part 2 of "
+                f"docs/theory/n-variables.md), so f looks like u/v near points of that line", [])
     r = profile3(expr)
     proven = bool(r.get("exact", True)) and bool(r.get("complete"))
     comps = [(_f(a), _f(b)) for a, b in r["signed_components"]]

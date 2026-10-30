@@ -82,10 +82,36 @@ f: using Q∇P − P∇Q rather than ∇(P/Q) is what lets it run through Q = 0.
 ## Part 4. What is open
 
 1. **J, the limit values approached near I.** For a clean branch of I, Part 2 gives the whole
-   circle. For a branch along which dP and dQ are dependent, f near a point p of the branch is,
-   in a slice transverse to the branch, a 0/0 problem in n − 1 variables. The conjecture to check
-   is that FS(p) is constant on each branch away from finitely many points, so that J is computed
-   by a lower-dimensional fluid state, giving an induction on n.
+   circle. For a branch γ along which dP and dQ are dependent, f near a point p of γ is, in a
+   slice transverse to γ, a 0/0 problem in n − 1 variables.
+
+   *First guess, now refuted:* FS(p) is constant along γ near 0. It is not: in the exploration
+   below (`benchmarks/part4_explore.py`, output in `docs/theory/part4_exploration.txt`), with γ the
+   z-axis, FS at (0, 0, t) changes with t; for example [−∞, 0.00201] ∪ [0.24861, +∞] at t = 10⁻³
+   and [−∞, −0.00199] ∪ [0.25136, +∞] at t = −10⁻³.
+
+   *Refined conjecture:* the contribution of γ is the limit, as t → 0 from either side, of the
+   fluid states FS(γ(t)) (a limit of closed sets on the circle), and the ends of FS(0) lie in that
+   limit together with the limits along the branches of Γ. The slice fluid states FS(γ(t)) form a
+   one-parameter family in n − 1 variables, which is what FMSL's moving-target engine computes in
+   two variables (ends as exact functions of t), so the limit t → 0 is exact. This would give an
+   induction on n: a non-clean branch in n variables becomes a moving target in n − 1.
+
+   *Evidence (25 random functions, z-axis non-clean in each):* in all 7 cases whose answer is not
+   simply the whole circle, FS(0) from the independent three-variable engine equals the limit of
+   the slice fluid states, for example
+
+   | f (abbreviated) | FS(0) | FS(0,0,t), t = 10⁻³, −10⁻³ |
+   |---|---|---|
+   | row 5 | [−∞, 0] ∪ [1/4, +∞] | [−∞, 0.00201] ∪ [0.24861, +∞]; [−∞, −0.00199] ∪ [0.25136, +∞] |
+   | row 9 | {−∞} ∪ [1, +∞] | [0.999999, 999.626]; [−∞, −1000.38] ∪ [0.999999, +∞] |
+   | row 16 | {−∞} ∪ [0, +∞] | [−∞, −1999] ∪ [0.000999937, +∞]; [−0.00100006, 2001] |
+
+   (In row 9 the piece [−∞, −1000.38] for t < 0 shrinks to the single point −∞ as t → 0, which is
+   why −∞ is an isolated value at the origin.) One case (row 10) has FS(0) = the whole circle while
+   the slices along the z-axis give only {0}: there the whole circle comes from a different
+   indeterminacy line, x = 0, y = z, which is clean, exactly as Part 2 predicts. These are 7
+   cases, not a proof; they decide what to try to prove.
 2. **Testing a gap value c.** c ∈ FS exactly when 0 is a limit value of
    (P − cQ)² / (P² + Q²), a function that is 0/0 only on I. An exact test is needed.
 3. **Signs of ∞.** As in FMSL now: decided from the sign of Q on each side of its zero set near

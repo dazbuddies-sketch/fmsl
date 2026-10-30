@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.30.0
+- Three variables: clean indeterminacy lines (`fmsl.indeterminacy`). When numerator and
+  denominator both vanish along a line through the origin with independent differentials there,
+  every value is a limit value (proved in `docs/theory/n-variables.md`, Part 2); FMSL checks this
+  exactly before zooming. Cross-check `benchmarks/indeterminacy_crosscheck.py`: of 300 random
+  functions, the test fired on 70; the three-variable engine agreed on 69, never disagreed, and did
+  not finish one, which the theorem now answers at once.
+- `docs/theory/n-variables.md`: fluid states in n variables. Proved: the answer is one connected
+  arc of the circle; clean indeterminacy points force the whole circle. Reduced: where the ends of
+  a proper arc come from. Open, with evidence: non-clean indeterminacy branches as limits of slice
+  fluid states (7 of 7 non-trivial cases agree with the independent engine; a first, simpler
+  guess was refuted).
+
 ## 0.29.0
 - Blow-up along curves for analytic quotients (`fmsl.analytic`, the curve method): when the
   denominator B is an exact polynomial whose zero curves the numerator A avoids, FMSL proves
