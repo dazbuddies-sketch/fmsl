@@ -438,6 +438,87 @@ def _quotient_series(expr, names):
                     " = 0 (proven by exact restriction to each line); cancelled exactly")
 
 
+# ---------------------------------------------------------------- denominators that are polynomials
+_BIG = 10 ** 6
+
+
+def _exact_den(e, names):
+    """(N, D) mirroring _eval, with N or D an exact polynomial (S of unbounded degree) when it is
+       built from polynomials only, and None when a function enters it"""
+    n = len(names)
+    one = S.const(1, n, _BIG)
+    t = e[0]
+    if t == "num": return S.const(e[1], n, _BIG), one
+    if t == "var": return S.var(names.index(e[1]), n, _BIG), one
+    if t == "neg":
+        N, D = _exact_den(e[1], names); return (-N if N is not None else None), D
+    mul = lambda a, b: a * b if a is not None and b is not None else None
+    if t in ("+", "-"):
+        (N1, D1), (N2, D2) = _exact_den(e[1], names), _exact_den(e[2], names)
+        if D1 is not None and D2 is not None and D1.c == one.c and D2.c == one.c:
+            if N1 is None or N2 is None: return None, one
+            return (N1 + N2 if t == "+" else N1 - N2), one
+        a, b = mul(N1, D2), mul(N2, D1)
+        N = (a + b if t == "+" else a - b) if a is not None and b is not None else None
+        return N, mul(D1, D2)
+    if t == "*":
+        (N1, D1), (N2, D2) = _exact_den(e[1], names), _exact_den(e[2], names)
+        return mul(N1, N2), mul(D1, D2)
+    if t == "/":
+        (N1, D1), (N2, D2) = _exact_den(e[1], names), _exact_den(e[2], names)
+        return mul(N1, D2), mul(D1, N2)
+    if t == "pow":
+        N, D = _exact_den(e[1], names)
+        p = e[2]
+        if not isinstance(p, int): return None, one
+        if p < 0: N, D, p = D, N, -p
+        RN, RD = one, one
+        for _ in range(p): RN, RD = mul(RN, N), mul(RD, D)
+        return RN, RD
+    if t == "call":
+        return (None, None) if e[1] in ("tan", "tanh") else (None, one)
+    raise NotAnalytic(f"unsupported expression {t!r}")
+
+
+def _degree(P): return max((sum(e) for e in P.c), default=0)
+
+
+def _curve_method(expr, names, engine, series, k_max, note):
+    """the denominator B is an exact polynomial whose zero set may contain curves through the point,
+       and A is analytic. If r^(2L)/(A_K^2 + B^2) is bounded (A and B have no common zero but the
+       point) with K >= L, then f = A/B and g = A_K/B have the same limit values, +oo and -oo
+       included:
+         * on the circle [-oo, +oo] (chordal distance): |f - g| / sqrt((1+f^2)(1+g^2))
+             = |A - A_K| |B| / (sqrt(A^2+B^2) sqrt(A_K^2+B^2)) <= C r^(K+1) / (c r^L) -> 0;
+         * signs at infinity: where |f| or |g| is large, |B| is small, so |A_K| >= c r^L / 2 and
+           A has the sign of A_K (|A - A_K| <= C r^(K+1)), while B is the same exact polynomial;
+           so f and g have the same sign there.
+       Returns (components, proven, explanation) or None if no such L is found."""
+    import math
+    from .compiler import Parser
+    _, Dx = _exact_den(Parser(expr).parse(), names)
+    if Dx is None: return None
+    r2 = "(" + "+".join(f"{x}^2" for x in names) + ")"
+    probe = series(4)
+    m = min(probe[0].order() if probe[0].c else 99, probe[1].order() if probe[1].c else 99)
+    deg = _degree(Dx)
+    for L in range(max(m, 1), m + 8):
+        K = max(L, deg)
+        if K > k_max + deg: break
+        A, B = series(K)
+        Bt = S(B.c, B.n, deg)                            # the exact polynomial (after any cancellation)
+        At = S(A.c, A.n, L) if A.c else A
+        comps, proven, _, _ = engine(f"{r2}^{L}/(({_text(At, names)})^2+({_text(Bt, names)})^2)")
+        if comps is None or not proven or any(math.isinf(u) or math.isinf(v) for u, v in comps):
+            continue
+        comps, proven, expl, _ = engine(f"({_text(At, names)})/({_text(Bt, names)})")
+        head = (note + f"the denominator is an exact polynomial; |A_{L}| + |B| >= c r^{L} proven "
+                f"(r^{2 * L}/(A_{L}^2 + B^2) bounded), so A/B and A_{L}/B have the same limit values, "
+                f"signs of infinity included")
+        return comps, proven, head + "; " + expl
+    return None
+
+
 def analytic_limit(expr, names, engine, k_max=24, extra_L=6):
     """(components, proven, explanation) for expr in the variables `names` (["x","y"] or
        ["x","y","z"]); engine(text) -> (components, proven, explanation, witnesses) is FMSL's
@@ -490,5 +571,8 @@ def analytic_limit(expr, names, engine, k_max=24, extra_L=6):
             return [(0.0, 0.0)], True, head + "; the numerator's polynomial is 0, so the limit is 0"
         comps, proven, expl, _ = engine(f"({_text(Ak, names)})/({_text(Bk, names)})")
         return comps, proven, head + "; " + expl
-    return None, False, (pre + "not proven: the denominator's zero at the point is not isolated, or no bound "
-                         f"|denominator| >= c r^L was found for L in {tried} (degree <= {k_max})")
+    cm = _curve_method(expr, names, engine, series, k_max, pre)
+    if cm is not None: return cm
+    return None, False, (pre + "not proven: the denominator's zero at the point is not isolated and is not an exact "
+                         "polynomial whose zero curves the numerator avoids, or no bound |denominator| >= c r^L "
+                         f"was found for L in {tried} (degree <= {k_max})")

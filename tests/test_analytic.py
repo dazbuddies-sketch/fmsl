@@ -31,15 +31,19 @@ class TestAnalytic(unittest.TestCase):
             with self.subTest(e=e):
                 r = limit_at_origin(e); self.assertTrue(r["proven"]); self.assertEqual(r["set"], st)
 
-    def test_no_false_cancellation(self):
-        # the numerator does not vanish on the line: nothing may be cancelled, and nothing is claimed
-        for e in ["sin(x)/(x-y)", "sin(x-y)/(x-y)^2"]:
+    def test_blow_up_along_curves(self):
+        # the polynomial denominator vanishes along curves the numerator avoids (the curve method)
+        for e, st in [("sin(x)/(x-y)", "[-oo, +oo]"), ("sin(x-y)/(x-y)^2", "{-oo} u {+oo}"),
+                      ("(1-cos(x))/(x^2-y^2)", "[-oo, 0] u [1/2, +oo]"), ("sin(x)^2/(x^2-y^2)", "[-oo, 0] u [1, +oo]"),
+                      ("(x^2+sin(y)^2)/(x*y)", "[-oo, -2] u [2, +oo]"), ("exp(x)/(x-y)", "{-oo} u {+oo}")]:
             with self.subTest(e=e):
-                self.assertFalse(limit_at_origin(e)["proven"])
+                r = limit_at_origin(e); self.assertTrue(r["proven"]); self.assertEqual(r["set"], st)
 
     def test_curve_zero_not_claimed(self):
-        r = limit_at_origin("sin(x)/(x-y)")
-        self.assertFalse(r["proven"]); self.assertIsNone(r["set"])
+        # a common zero curve FMSL cannot cancel, and a denominator that is not a polynomial
+        for e in ["(sin(x)-sin(y))/(x-y)", "x/sin(x-y)"]:
+            with self.subTest(e=e):
+                r = limit_at_origin(e); self.assertFalse(r["proven"]); self.assertIsNone(r["set"])
 
     def test_taylor_is_exact(self):
         A, B = taylor_quotient("sin(x*y)", ["x", "y"], 7)

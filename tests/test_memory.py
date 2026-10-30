@@ -25,7 +25,7 @@ class TestMemory(unittest.TestCase):
     def test_unproven_answers_are_not_saved(self):
         path = os.path.join(tempfile.mkdtemp(), "m.json")
         memory.enable(path)
-        limit_at_origin("sin(x)/(x-y)")
+        limit_at_origin("x/sin(x-y)")
         self.assertEqual(memory.stats()["results"], 0)
 
     def test_failure_within_a_time_limit_is_remembered(self):

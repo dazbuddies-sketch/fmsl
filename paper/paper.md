@@ -49,8 +49,8 @@ questions in principle but does not return the structure of the answer.
 FMSL is free, open source and dependency-free. It reproduces all 21 examples of @dgnp2022,
 including the one Maple got wrong, computes the case they left open, and extends the computation
 to three variables, distances, analytic functions and parametric families. Intended users are
-educators, researchers, authors of numerical software, and AI assistants, which can call FMSL
-through a Model Context Protocol server to check their answers. A SymPy bridge returns SymPy
+educators, researchers, numerical-software authors, and AI assistants, which can call FMSL
+through a Model Context Protocol server. A SymPy bridge returns SymPy
 objects.
 
 # Software design
@@ -80,8 +80,8 @@ Independent algorithms check each result type:
   confirmed on a plane or by families of paths). Deliberately damaged answers were caught 53 of
   53 times.
 - **Other results.** Moving targets (111 of 111 states), rates (139 functions), global extrema
-  (67 polynomials) and non-properness sets (153 maps, 304 candidates) agree with exact images,
-  exact rational points, exact real-point tests and elimination.
+  (67 polynomials) and non-properness sets (153 maps, 304 candidates) agree with exact
+  independent methods.
 - **Distances.** In two variables the squaring map and an unrelated polar blow-up agree on 74 of
   74 functions; in three, direction-only functions match numerical sphere ranges (36 of 36).
 - **Analytic functions and weighted distances.** Direct 320-digit evaluation of the original
@@ -95,8 +95,9 @@ Independent algorithms check each result type:
 In three variables FMSL reports UNPROVEN when it would have to zoom along a curve $c^pd^q=u_0$
 with $|p|,|q|>1$, use a number field of degree above 16, or zoom deeper than four levels.
 Celedon points that arise only deep inside the zoom are found by sampling and reported as
-approximate. Analytic functions are proven only when the denominator's zero becomes isolated
-after cancelling common factors along rational lines; square roots only of quadratic forms that
+approximate. Analytic functions are proven when the denominator's zero becomes isolated after
+cancelling common factors along rational lines, or the denominator is a polynomial whose zero
+curves the numerator avoids; square roots only of quadratic forms that
 take a rational square value. Zero-testing is undecidable in general [@richardson1968].
 
 # Research impact statement

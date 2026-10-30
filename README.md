@@ -473,8 +473,28 @@ limit_at_origin("(1-cos(x+y))/(x+y)^2")["set"]              # {1/2}
 limit_at_origin("(x+y)*sin(x*y)/((x+y)*(x^2+y^2))")["set"]  # [-1/2, 1/2]
 ```
 
-When the numerator does not vanish on the line (sin(x)/(x − y)), the values really do blow up
-along it, and FMSL still answers "not proven" rather than guess.
+**Blow-up along curves.** When the denominator B is an exact polynomial whose zero set contains
+curves through the point, and the numerator A does not vanish on them (sin(x)/(x − y),
+(1 − cos x)/(x² − y²), sin(xy)/(x² − y³)), the values blow up along those curves. FMSL proves that
+|A_K| + |B| ≥ c·r^K (r^(2K)/(A_K² + B²) bounded) and then shows that A/B and A_K/B have the same
+limit values, +∞ and −∞ told apart: on the circle [−∞, +∞] the chordal distance between them is at
+most C·r^(K+1)/(c·r^K) → 0, and wherever either is large, A has the sign of A_K while B is the same
+polynomial. As far as we have found, the set of limit values of an analytic quotient whose
+denominator vanishes along curves had not been computed before; the methods we know stop at an
+isolated zero.
+
+```python
+limit_at_origin("(1-cos(x))/(x^2-y^2)")["set"]     # [-oo, 0] u [1/2, +oo]
+limit_at_origin("sin(x-y)/(x-y)^2")["set"]         # {-oo} u {+oo}
+limit_at_origin("(x^2+sin(y)^2)/(x*y)")["set"]     # [-oo, -2] u [2, +oo]
+```
+
+Checked by `benchmarks/curve_crosscheck.py`: of 76 functions, 73 were proven; direct 320-digit
+evaluation at about 12,000 points never left a proven set, and all 70 deliberately damaged answers
+(a piece dropped, the wrong sign of infinity, a moved end) were rejected. 25 of the proven sets are
+not simply the whole line. Still "not proven": a common zero curve FMSL cannot cancel
+((sin x − sin y)/(x − y)), and denominators that are not polynomials (x/sin(x − y), tan² in the
+numerator puts cos² in the denominator).
 
 ## At infinity, and from one side
 
@@ -1003,9 +1023,9 @@ All bound arithmetic is exact rational arithmetic with outward rounding.
   boundary is fundamental: zero-testing general expressions is undecidable
   (Richardson's theorem).
 * **Several variables with sin, exp, log, ...:** proven only when the denominator's zero at the
-  point is isolated, or becomes isolated after cancelling common factors along rational lines
-  (two variables). Otherwise, as for sin(x)/(x − y), (sin x − sin y)/(x − y) or a curve such as
-  y = x², FMSL says "not proven". Arguments of sin, cos, exp, ... must be 0 at the point, of log
+  point is isolated (after cancelling common factors along rational lines, in two variables), or
+  when the denominator is an exact polynomial whose zero curves the numerator avoids. Otherwise,
+  as for (sin x − sin y)/(x − y) or x/sin(x − y), FMSL says "not proven". Arguments of sin, cos, exp, ... must be 0 at the point, of log
   equal to 1, and of sqrt a positive rational square; anything else is refused, since it
   would need constants such as sin 1 or e.
 * **Essential singularities** such as `exp(-1/t²)`, `sin(1/t)` and `exp(i/t)` are detected

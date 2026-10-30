@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.29.0
+- Blow-up along curves for analytic quotients (`fmsl.analytic`, the curve method): when the
+  denominator B is an exact polynomial whose zero curves the numerator A avoids, FMSL proves
+  |A_K| + |B| >= c r^K and shows that A/B and A_K/B have the same limit values, +oo and -oo told
+  apart (chordal distance -> 0; where either is large, A has the sign of A_K and B is the same).
+  sin(x)/(x-y) -> [-oo, +oo], (1-cos(x))/(x^2-y^2) -> [-oo, 0] u [1/2, +oo],
+  sin(x-y)/(x-y)^2 -> {-oo} u {+oo}.
+- Cross-check `benchmarks/curve_crosscheck.py`: 76 functions, 73 proven, direct 320-digit
+  evaluation never leaves a proven set, 70 of 70 damaged answers (a piece dropped, the wrong sign
+  of infinity, a moved end) rejected.
+
 ## 0.28.0
 - `limit_at_origin(..., time_limit=s)`: stop and report "not proven within s seconds".
 - `fmsl.memory` remembers questions not decided within a time limit (timed out, or left
