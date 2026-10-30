@@ -112,6 +112,32 @@ f: using Q∇P − P∇Q rather than ∇(P/Q) is what lets it run through Q = 0.
    the slices along the z-axis give only {0}: there the whole circle comes from a different
    indeterminacy line, x = 0, y = z, which is clean, exactly as Part 2 predicts. These are 7
    cases, not a proof; they decide what to try to prove.
+
+   *Stress test (`benchmarks/part4_test.py`, 60 functions, half built to break it):* this checks
+   a stronger statement, that the tangential region alone (|(x, y)| = o(|z|)) adds nothing to
+   the limit of the slice fluid states. Both sides are computed exactly. The tangential side is the
+   fluid state at 0 of g(u, v, z) = f(zu, zv, z), and the slices are taken at t = ±10⁻⁶. Values
+   above 10⁴ count as ∞, so slice ends that grow without bound as t → 0 are read as reaching ∞.
+
+   | result | count |
+   |---|---|
+   | agree | 57 |
+   | disagree | 1 |
+   | engine unfinished | 2 |
+
+   The disagreement is
+   f = (−2xy(1+z) − 2zx³)/(−2x²z² − xy(2−z) − z³x). Its numerator and denominator share the
+   factor x; the generator did not exclude that. After cancelling it,
+   f = 2(y(1+z) + zx²)/(2xz² + y(2−z) + z³), and the z-axis is not in I at all. Each slice gives
+   {0}, since f(0, 0, t) = 0/t³. Along x = 0, y = a z³, however, f → 2a/(2a+1), which takes every
+   value as a varies (checked with exact arithmetic at z = 10⁻⁶). The denominator's zero surface,
+   y ≈ −z³/2, hugs the axis at order z³, and the whole circle comes from there.
+
+   So the stronger statement is false. Scales between the axis and the cone |(x, y)| ~ |z| can
+   contribute, through branches of Γ (here through Q = 0 ≠ P) that are tangent to γ. The refined
+   conjecture as stated above already includes the limits along the branches of Γ, and this example
+   is consistent with it. What the example adds is that those branches must include the ones
+   tangent to γ, which is the part to prove and to compute.
 2. **Testing a gap value c.** c ∈ FS exactly when 0 is a limit value of
    (P − cQ)² / (P² + Q²), a function that is 0/0 only on I. An exact test is needed.
 3. **Signs of ∞.** As in FMSL now: decided from the sign of Q on each side of its zero set near
