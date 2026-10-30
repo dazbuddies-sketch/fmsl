@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.31.0
+- Any number of variables: `fmsl.witness.inner_bound`. Every value it reports is a limit value
+  of f at the origin, proven by an explicit curve x = (c1 t^w1, ..., cn t^wn) (weighted initial
+  forms), and whole intervals are proven along segments of such curves (exact Sturm root
+  isolation and the intermediate value theorem). It is an inner bound: values can be missing.
+  When it covers the whole circle it is exact, and when it holds two values it proves the limit
+  does not exist. Check `benchmarks/witness_check.py`:
+  - three variables, 50 functions: the inner bound always lies inside the exact engine's answer,
+    and equals it in 41. The 9 misses are whole-circle answers reached only along curves that
+    need more than one term;
+  - four variables, 40 functions with no exact answer to compare: 23,654 witnessed values, each
+    re-checked by exact rational evaluation of f along its curve at t = 10^-20, 10^-40, 10^-80,
+    none wrong. 18 proven to be the whole circle, 27 proven to have no limit.
+- `benchmarks/part4_test.py`, Part 4 stress test (60 three-variable functions, half built to
+  break the conjecture): 57 agree, 2 unfinished, 1 disagreement. The disagreement refutes the
+  stronger statement that only the slices along the axis matter: there, the denominator's zero
+  surface hugs the axis at order z^3. Details in `docs/theory/n-variables.md`.
+
 ## 0.30.0
 - Three variables: clean indeterminacy lines (`fmsl.indeterminacy`). When numerator and
   denominator both vanish along a line through the origin with independent differentials there,

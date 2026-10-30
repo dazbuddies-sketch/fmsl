@@ -353,6 +353,22 @@ digits and marked "approx."; on the 200 random functions this made 19 answers ex
 the same sets as before. A 40-digit fallback remains only if the number field would exceed
 degree 16, and is then flagged.
 
+## Four or more variables: proven values with witness curves
+
+`fmsl.witness.inner_bound(expr, names)` works in any number of variables. Every value it reports
+is proven by an explicit curve x = (c1 t^w1, ..., cn t^wn), t → 0+. When the result is the whole
+circle it is the exact answer, and when it holds two different values it proves that the limit
+does not exist. Otherwise it is an inner bound, and values may be missing.
+
+```python
+from fmsl.witness import inner_bound
+inner_bound("x*w/(x^2+y^2+z^2+w^2)", ["x", "y", "z", "w"])["set"]   # '[-0.5, 0.5]'
+```
+
+Checks are in `benchmarks/witness_check.py`. In three variables the result was never outside
+the exact answer and matched it in 41 of 50 functions. In four variables, 23,654 witnessed values
+were re-checked by exact evaluation along their curves, and none was wrong.
+
 ## Distances: limits with r = sqrt(x² + y²)
 
 Distances are everywhere (potentials 1/r, norms, the Euclidean length of an error), and

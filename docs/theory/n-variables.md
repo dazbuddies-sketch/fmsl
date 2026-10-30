@@ -143,6 +143,21 @@ f: using Q∇P − P∇Q rather than ∇(P/Q) is what lets it run through Q = 0.
 3. **Signs of ∞.** As in FMSL now: decided from the sign of Q on each side of its zero set near
    the branches where f is large.
 
+## Inner bounds in any number of variables (`fmsl.witness`)
+
+Curve selection says every limit value is reached along an analytic curve, and the leading
+term of such a curve is c t^w. The module uses only curves of exactly that form,
+x = (c1 t^w1, ..., cn t^wn). Each gives an exactly known limit whenever in_w Q(c) ≠ 0, and
+segments in c give whole intervals. This is the one-term part of what `fmsl.space` does exactly
+in three variables, without its zooming. So it proves values but can miss some.
+
+In three variables it was checked against the exact engine on 50 functions: never outside, and
+equal in 41. In four variables, 23,654 witnessed values were re-checked along their curves and
+none was wrong (`benchmarks/witness_check.py`, `docs/theory/witness_check_output.txt`). The 9
+three-variable misses all need curves with more than one term, such as x = y·sqrt(−z) on the zero
+surface of x² + zy². Making this exact in four variables means adding the zooming step, and that
+step is Part 4.
+
 ## Evidence so far
 
 `benchmarks/part2_check.py`: 40 random pairs P = x a + y b, Q = x c + y d (a, b, c, d of degree at
