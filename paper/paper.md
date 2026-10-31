@@ -42,12 +42,13 @@ computer algebra. SymPy [@sympy] handles one-variable limits [@gruntz1996] but h
 multivariable limit routine. @zengxiao2020 decide whether limits of bivariate rational functions
 exist; @dgnp2022 compute the range of limit values when the denominator has an isolated zero,
 report a case where Maple 2021 returned a wrong range, and leave other denominators to future
-work; @strzebonski2021 reduces limits of analytic quotients to rational ones when the
+work, which the same authors have since solved [@dgnp2026]; @strzebonski2021 reduces limits of analytic quotients to rational ones when the
 denominator's zero is isolated. Cylindrical algebraic decomposition [@collins1975] decides such
 questions in principle but does not return the structure of the answer.
 
 FMSL is free, open source and dependency-free. It reproduces all 21 examples of @dgnp2022,
-including the one Maple got wrong, computes the case they left open, and extends the computation
+including the one Maple got wrong, independently computes the case they left open in 2022 (solved
+in @dgnp2026), and extends the computation
 to three variables, distances, analytic functions and parametric families. Intended users are
 educators, researchers, numerical-software authors, and AI assistants, which can call FMSL
 through a Model Context Protocol server. A SymPy bridge returns SymPy

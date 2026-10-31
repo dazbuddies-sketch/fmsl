@@ -23,7 +23,8 @@ values of f at 0 viewed on the circle.)
 What prior work assumes, and this note does not: that Q vanishes only at 0 near 0. Without that
 assumption, I can be a curve or a surface through 0 when n ≥ 3, and f is 0/0 at every point of it.
 The 2016 Western Ontario work (Alvandi, Kazemi, Moreno Maza) calls this case work in progress;
-the 2022 bivariate paper (Đinh, Guo, Nguyễn, Phạm) leaves non-isolated zeros to future work.
+the 2022 bivariate paper (Đinh, Guo, Nguyễn, Phạm) leaves non-isolated zeros to future work, and the
+same authors have since solved the bivariate case (arXiv:2610.36842, 2026).
 
 ## Part 1. FS is a point, a closed arc, or the whole circle
 
