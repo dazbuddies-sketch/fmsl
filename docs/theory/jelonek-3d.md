@@ -78,3 +78,22 @@ Conjecture", ulam.ai).
 - The u3-axis lies both in the Jelonek set and in the image: F(c/2, 0, 0) = (0, 0, c). (An
   earlier version of this note, and an email of 6 November 2026, wrongly said that (0, 0, c),
   c != 0, is not in the image; that came from an algebra slip and has been corrected.)
+
+## Second search: critical values (November 6)
+
+Z. Jelonek (6 November 2026): a map with S_F of codimension 2 whose critical values miss S_F
+would also be interesting. 400 more maps (`jelonek3_search2_output.txt`), adding three kinds that
+are not visibly triangular. Results: 72 codimension-2 candidates, every one with S_F a line and
+det J vanishing on a surface, and every one triangular up to polynomial automorphisms of the
+source or the target. The two genuinely non-triangular kinds gave none.
+
+Critical values. The first test in the search script (Newton's method on F1 = F2 = det J = 0)
+was unreliable: it misses solutions that form a curve, and reported "no solution" for all 72.
+It was replaced by `benchmarks/jelonek3_critical_check.py`, checked two ways:
+- Levenberg-Marquardt minimisation of F1^2 + F2^2 + det^2 (handles curves of solutions);
+- for plainly triangular maps (x, y, h), an exact criterion: the critical values meet the line
+  u1 = u2 = 0 exactly when h_z(0, 0, z) has a real root or vanishes identically (Sturm's
+  theorem).
+The two agree on all 42 plainly triangular maps. Of the 72: 31 have critical values meeting
+S_F and 41 do not (like Example 3.4 of Braun-Jelonek-Michalska). Nothing found goes beyond
+triangular maps up to automorphisms.
