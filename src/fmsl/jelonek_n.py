@@ -264,7 +264,12 @@ def _sub(P, w, c0, j, n):
         else: X.append(_mul(sw, _add({(0,) * n: c0[i]} if c0[i] else {}, var(1 + others.index(i)))))
     cache = {}
     def pw(i, e):
-        if (i, e) not in cache: cache[(i, e)] = {(0,) * n: Fr(1)} if e == 0 else _mul(pw(i, e - 1), X[i])
+        if (i, e) not in cache:
+            if len(X[i]) == 1:                       # a monomial: any integer power, Laurent in s
+                (k, v), = X[i].items()
+                cache[(i, e)] = {tuple(a * e for a in k): v ** e}
+            elif e < 0: raise ValueError("negative power of a binomial")
+            else: cache[(i, e)] = {(0,) * n: Fr(1)} if e == 0 else _mul(pw(i, e - 1), X[i])
         return cache[(i, e)]
     out = {}
     for k, v in P.items():
@@ -326,7 +331,7 @@ def _rational_roots(p):
     return sorted(out)
 
 
-def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=40):
+def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=40, zeros_per=2):
     """proven points of S_F with their arcs: [(point, arc)], where arc = (weights, c, zoom chain)"""
     gen = random.Random(seed)
     out = []
@@ -355,9 +360,11 @@ def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=40):
                         out.append((pt, (w, c, chain)))
                     continue
                 if level == depth or zooms_done >= max_zooms: continue
-                for c0 in _zeros(blow, n, positive, gen)[:2]:
+                for c0 in _zeros(blow, n, positive, gen)[:zeros_per]:
                     if pos is None and not any(c0[i] for i in range(n) if w[i] < 0): continue
-                    j = next(i for i in range(n) if c0[i] != 0 and (pos is not None or w[i] < 0))
+                    # deeper levels: s (index 0) keeps the monomial substitution, so negative powers of s stay monomials
+                    j = 0 if pos is not None else next(i for i in range(n) if c0[i] != 0 and w[i] < 0)
+                    if c0[j] == 0: continue
                     nxt.append(([_sub(P, w, c0, j, n) for P in G], 0, chain + [(w, c0, j)]))
                     zooms_done += 1
         todo = nxt
