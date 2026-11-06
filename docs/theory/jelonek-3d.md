@@ -50,3 +50,23 @@ S_F = the z-axis line (or the image of it). No random map of the other three kin
 candidate. So the search found many codimension-2 Jelonek sets, as expected, and nothing with
 the preferred Jacobian condition, which is consistent with the conjecture. A failed search
 proves nothing.
+
+## The 2026 counterexample to the Jacobian conjecture
+
+F = ((1+xy)^3 z + y^2(1+xy)(4+3xy), y + 3x(1+xy)^2 z + 3xy^2(4+3xy), 2x - 3x^2 y - x^3 z),
+with det J_F = -2 (the counterexample of July 2026, "A counterexample to the Jacobian
+Conjecture", ulam.ai).
+
+- Outer bound, exact. The relations for y and z have constant leading coefficients, so along any
+  sequence to infinity with F bounded, y and z stay bounded and only x grows. The relation for x
+  has leading coefficient (times 27)
+        A(u) = 27 u1^2 u3^2 - 18 u1 u2 u3 + u2^3 u3 + 16 u1 - u2^2,
+  so the real Jelonek set lies in the surface A = 0.
+- Inner bound. With zooming three levels deep, 901 points of the Jelonek set are proven by
+  explicit arcs. 542 of them are off the u3-axis, and all lie on A = 0. They fill a surface: for
+  example, in the slice u3 = 0 (where A = 16 u1 - u2^2) the points (1/4, -2, 0), (1/9, 4/3, 0),
+  (1, 4, 0) and (9, 12, 0) are all proven. So the real Jelonek set is two-dimensional.
+- The points (0, 0, c) with c != 0 are limits along arcs but are not values of F: if x = 0 then
+  F_3 = 0, and if x != 0 the equations F = (0, 0, c) force xy = 0 and x^2 z = 0, contradicting
+  F_3 = x(2 - 3xy - x^2 z) = c != 0... (more precisely: F_1 = F_2 = 0 force 2 = 3xy + x^2 z with
+  xy = 0 and x^2 z = 0). This agrees with the image missing two lines.

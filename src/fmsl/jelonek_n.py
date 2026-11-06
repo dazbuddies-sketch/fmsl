@@ -282,7 +282,7 @@ def _sub(P, w, c0, j, n):
 
 def _zeros(polys, n, positive, gen, tries=60):
     grid = [Fr(k) for k in (-3, -2, -1, 1, 2, 3)] + [Fr(1, 2), Fr(-1, 2)]
-    pick = lambda i: abs(gen.choice(grid)) if i in positive else gen.choice(grid)
+    pick = lambda i: abs(gen.choice(grid)) if i in positive else gen.choice(grid + [Fr(0)])
     found = []
     for _ in range(tries):
         c = tuple(pick(i) for i in range(n))
@@ -303,7 +303,7 @@ def _zeros(polys, n, positive, gen, tries=60):
                 if r == 0 or (k in positive and r < 0): continue
                 c2 = list(c); c2[k] = r
                 if all(_ev(P, c2) == 0 for P in polys): found.append(tuple(c2))
-    return list(dict.fromkeys(found))
+    return sorted(dict.fromkeys(found), key=lambda c: sum(1 for x in c if x == 0))
 
 
 def _rational_roots(p):
@@ -331,12 +331,11 @@ def _rational_roots(p):
     return sorted(out)
 
 
-def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=40, zeros_per=2):
+def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=60, zeros_per=2):
     """proven points of S_F with their arcs: [(point, arc)], where arc = (weights, c, zoom chain)"""
     gen = random.Random(seed)
     out = []
     todo = [(F, None, [])]
-    zooms_done = 0
     for level in range(depth + 1):
         nxt = []
         for G, pos, chain in todo:
@@ -352,22 +351,26 @@ def inner_points(F, n, K=3, depth=1, samples=4, seed=0, max_zooms=40, zeros_per=
                 blow = [I for m, I in ords if m < 0]
                 if not blow:
                     for _ in range(samples):
-                        c = tuple((abs(x) if i in positive else x) for i, x in
-                                  enumerate(gen.choice([Fr(k) for k in (-3, -2, -1, 1, 2, 3)] + [Fr(1, 2)])
-                                            for _ in range(n)))
+                        grid = [Fr(k) for k in (-3, -2, -1, 1, 2, 3)] + [Fr(1, 2)]
+                        # at deeper levels an offset may also be 0 (that coordinate follows the
+                        # earlier terms exactly); s itself stays positive
+                        c = tuple((abs(gen.choice(grid)) if i in positive else
+                                   gen.choice(grid + ([Fr(0)] if pos is not None else []))) for i in range(n))
                         if pos is None and not any(c[i] for i in range(n) if w[i] < 0): continue
                         pt = tuple((_ev(I, c) if m == 0 else Fr(0)) for m, I in ords)
                         out.append((pt, (w, c, chain)))
                     continue
-                if level == depth or zooms_done >= max_zooms: continue
+                if level == depth: continue
                 for c0 in _zeros(blow, n, positive, gen)[:zeros_per]:
                     if pos is None and not any(c0[i] for i in range(n) if w[i] < 0): continue
                     # deeper levels: s (index 0) keeps the monomial substitution, so negative powers of s stay monomials
                     j = 0 if pos is not None else next(i for i in range(n) if c0[i] != 0 and w[i] < 0)
                     if c0[j] == 0: continue
-                    nxt.append(([_sub(P, w, c0, j, n) for P in G], 0, chain + [(w, c0, j)]))
-                    zooms_done += 1
-        todo = nxt
+                    nxt.append((sum(abs(x) for x in w) + sum(1 for x in c0 if x == 0), gen.random(), G, w, c0, j, chain))
+        # each level gets its own budget, simplest weights first
+        nxt.sort(key=lambda t: (t[0], t[1]))
+        todo = [([_sub(P, w, c0, j, n) for P in G], 0, chain + [(w, c0, j)])
+                for _, _, G, w, c0, j, chain in nxt[:max_zooms]]
     return out
 
 
