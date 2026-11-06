@@ -36,7 +36,15 @@ def poly(gen, terms, dmax):
 
 
 def family(gen, k):
-    kind = k % 5
+    kind = k % 8
+    if kind == 5:     # (x, y + q(x, z), h): the second coordinate depends on z
+        A = gen.choice(["(x^2+y^2)", "(x^2+2*y^2)", "(x^2+y^4)"])
+        return ["x", f"y+{poly(gen, 1, 2).replace('y', 'z')}", f"{A}*z^3+{gen.choice(['-z', '-2*z', 'x-z', '-z+y'])}+{poly(gen, 1, 2)}"]
+    if kind == 6:     # Example-3.4-like third coordinate with coupled first two coordinates
+        A = gen.choice(["(x^2+y^2)", "(x^2+x*y+y^2)"])
+        return [f"x+{gen.choice(['y*z', 'z^2', 'x*z', 'y^2'])}", f"y+{gen.choice(['x*z', 'z^2', 'x^2', 'x*y'])}", f"{A}*z^3-z"]
+    if kind == 7:     # random cubic maps with a linear part (local diffeomorphisms near 0)
+        return [f"{v}+{poly(gen, gen.randint(1, 3), 3)}" for v in V]
     if kind == 4:     # a triangular codimension-2 map composed with a polynomial automorphism:
                       # S_F is unchanged, but the map is no longer triangular (a test of the tool)
         A = gen.choice(["(x^2+y^2)", "(x^2+2*y^2)"])
@@ -70,6 +78,46 @@ def det_class(J, gen, lines=200):
     return "small" if 0 in signs or len(signs) > 1 else "nonzero"
 
 
+def crit_meets(r, F, gen, starts=400):
+    """Only for candidates whose outer bound is the line u1 = u2 = 0 (checked: every outer polynomial
+       of the first coordinate system vanishes identically on that line). Critical values meet the
+       line exactly when the system F1 = F2 = det J = 0 has a real solution. Search: Newton's method
+       from many starting points (evidence, not proof); a solution found is refined and reported.
+       Returns "meets at <point>", "no solution found", or "not tested"."""
+    from fmsl.jelonek_n import _polys, _deriv
+    P = _polys(F, V); J = r["jacobian"]
+    on_line = all(all(_ev(L["lead"], (Fr(0), Fr(0), Fr(t))) == 0 for t in (-3, 1, 7)) or
+                  _ev(L["lead"], (Fr(0), Fr(0), Fr(1))) != 0 and False for L in r["outer"][0] if len(L["lead"]) > 1)
+    if not on_line: return "not tested"
+    G = [P[0], P[1], J]
+    D = [[_deriv(g, k) for k in range(3)] for g in G]
+    fl = lambda Q: [(k, float(v)) for k, v in Q.items()]
+    Gf = [fl(g) for g in G]; Df = [[fl(d) for d in row] for row in D]
+    def ev(T, x):
+        s = 0.0
+        for k, v in T:
+            m = v
+            for xi, e in zip(x, k):
+                if e: m *= xi ** e
+            s += m
+        return s
+    for _ in range(starts):
+        x = [gen.uniform(-4, 4) for _ in V]
+        for _ in range(60):
+            g = [ev(T, x) for T in Gf]
+            M = [[ev(T, x) for T in row] for row in Df]
+            det = (M[0][0]*(M[1][1]*M[2][2]-M[1][2]*M[2][1]) - M[0][1]*(M[1][0]*M[2][2]-M[1][2]*M[2][0])
+                   + M[0][2]*(M[1][0]*M[2][1]-M[1][1]*M[2][0]))
+            if abs(det) < 1e-14: break
+            inv = [[(M[(j+1)%3][(i+1)%3]*M[(j+2)%3][(i+2)%3]-M[(j+1)%3][(i+2)%3]*M[(j+2)%3][(i+1)%3])/det for j in range(3)] for i in range(3)]
+            dx = [sum(inv[i][j]*g[j] for j in range(3)) for i in range(3)]
+            x = [a - b for a, b in zip(x, dx)]
+            if max(abs(a) for a in x) > 1e6: break
+            if max(abs(a) for a in g) < 1e-13 and max(abs(a) for a in dx) < 1e-12:
+                return "meets at " + str([round(a, 6) for a in x])
+    return "no solution found"
+
+
 def main(N=200, seed=7):
     gen = random.Random(seed)
     tally = {}
@@ -93,7 +141,12 @@ def main(N=200, seed=7):
         if cat == "CODIM-2 CANDIDATE":
             dc = det_class(r["jacobian"], gen)
             cat += f" / det J {dc}"
-            print(cat, F, "| points e.g.", [tuple(map(str, p)) for p in r["inner_points"][:3]], flush=True)
+            cm = crit_meets(r, F, gen)
+            cat += " / " + ("critical values meet J_F" if cm.startswith("meets") else
+                            "no critical value found on J_F" if cm == "no solution found" else "critical test not run")
+            tri = "triangular" if F[0] == "x" and F[1] == "y" else "not plainly triangular"
+            cat += " / " + tri
+            print(cat, F, "|", cm, "| J points e.g.", [tuple(map(str, p)) for p in r["inner_points"][:3]], flush=True)
         tally[cat] = tally.get(cat, 0) + 1
     for c, v in sorted(tally.items()): print(f"{v:5d}  {c}")
 
