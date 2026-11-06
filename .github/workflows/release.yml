@@ -4,6 +4,9 @@
 #   2. create the GitHub release vX.Y.Z (notes = that version's section of CHANGELOG.md)
 #      -> Zenodo sees the release and mints a DOI,
 #   3. publish to PyPI with trusted publishing (no password or token stored anywhere).
+# PyPI gets exactly the files attached to the GitHub release. If a PyPI upload ever fails
+# (for example a short outage at PyPI or Sigstore), the next push to main tries again, and
+# an older version can be sent by hand: Actions -> release -> Run workflow -> version 0.24.0.
 # One-time setup on pypi.org: add a pending publisher with
 #   owner: dazbuddies-sketch   repository: fmsl   workflow: release.yml   environment: pypi
 name: release
@@ -11,6 +14,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Send an existing GitHub release to PyPI if it isn't there yet (for example 0.24.0). Leave empty for the version in pyproject.toml."
+        required: false
+        default: ""
 permissions:
   contents: write
 jobs:
@@ -19,15 +27,26 @@ jobs:
     outputs:
       version: ${{ steps.v.outputs.version }}
       new: ${{ steps.v.outputs.new }}
+      on_pypi: ${{ steps.v.outputs.on_pypi }}
     steps:
       - uses: actions/checkout@v4
       - id: v
         env:
           GH_TOKEN: ${{ github.token }}
+          ASKED: ${{ github.event.inputs.version }}
         run: |
-          version=$(python3 -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ -n "$ASKED" ]; then
+            version="$ASKED"
+            # by hand: only send an existing release to PyPI, never make a new release
+            gh release view "v$version" >/dev/null 2>&1 || { echo "There is no GitHub release v$version."; exit 1; }
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            version=$(python3 -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+            if gh release view "v$version" >/dev/null 2>&1; then echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          if gh release view "v$version" >/dev/null 2>&1; then echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
+          if curl -sf "https://pypi.org/pypi/fmsl/$version/json" >/dev/null; then echo "on_pypi=true" >> "$GITHUB_OUTPUT"; else echo "on_pypi=false" >> "$GITHUB_OUTPUT"; fi
+          echo "fmsl $version: new GitHub release needed: $(grep '^new=' "$GITHUB_OUTPUT" | cut -d= -f2), already on PyPI: $(grep '^on_pypi=' "$GITHUB_OUTPUT" | cut -d= -f2)"
   release:
     needs: check
     if: needs.check.outputs.new == 'true'
@@ -53,14 +72,20 @@ jobs:
           gh release create "v$VERSION" dist/* --title "FMSL $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
   pypi:
     needs: [check, release]
-    if: needs.check.outputs.new == 'true'
+    # runs whenever this version isn't on PyPI yet: right after a new release, and again on
+    # later pushes if an upload failed (the release job is skipped then, which is fine)
+    if: ${{ !cancelled() && needs.check.outputs.on_pypi == 'false' && needs.release.result != 'failure' }}
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
+      contents: read
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
+      - name: Get the files of the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.check.outputs.version }}
+        run: gh release download "v$VERSION" --repo "$GITHUB_REPOSITORY" --pattern "fmsl-$VERSION*" --dir dist && ls -l dist
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

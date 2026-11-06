@@ -46,7 +46,9 @@ jobs:
           (async () => {
             const b = await chromium.launch(); const p = await b.newPage();
             await p.goto(process.env.URL, { waitUntil: 'load' });
-            await p.waitForSelector('body[data-ready="1"]', { timeout: 180000 });
+            // ready, or the page's own message saying why Python couldn't load (fail fast with the reason)
+            await p.waitForFunction(() => document.body.dataset.ready === '1' || /could not load/i.test(document.getElementById('status')?.textContent || ''), null, { timeout: 240000 });
+            if (await p.evaluate(() => document.body.dataset.ready !== '1')) throw new Error('The page says: ' + await p.textContent('#status'));
             const cases = [['xy/(x²+y²)', '[-1/2, 1/2]'], ['x²y²/(x²+y²)', '{0}'], ['3 variables', '[-1/2, 1]']];
             for (const [chip, want] of cases) {
               await p.click(`.chip:has-text("${chip}")`);
