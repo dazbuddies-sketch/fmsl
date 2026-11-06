@@ -21,9 +21,8 @@ codimension >= 3 and for n = 2; Pinchuk's map shows codimension 1 is not enough)
 
 For F = (x, y, h(x, y, z)), det J_F = h_z. If h_z >= 0 everywhere and vanishes on no segment of
 a vertical line, then h is strictly increasing on every vertical line, so it is a polynomial of
-odd degree in z and maps that line onto R. Then F is a continuous bijection that is open (a
-local homeomorphism wherever h_z > 0, and strictly monotone fibres elsewhere), hence a
-homeomorphism, hence proper: S_F is empty. So a triangular map with nonempty S_F has h_z
+odd degree in z and maps that line onto R. Then F is a continuous bijection of R^3, hence a
+homeomorphism by invariance of domain, hence proper: S_F is empty. So a triangular map with nonempty S_F has h_z
 changing sign, and det J_F vanishes on a surface. The same holds after composing with polynomial
 automorphisms.
 
