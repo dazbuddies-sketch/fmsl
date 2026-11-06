@@ -42,7 +42,7 @@ computer algebra. SymPy [@sympy] handles one-variable limits [@gruntz1996] but h
 multivariable limit routine. @zengxiao2020 decide whether limits of bivariate rational functions
 exist; @dgnp2022 compute the range of limit values when the denominator has an isolated zero,
 report a case where Maple 2021 returned a wrong range, and leave other denominators to future
-work; @strzebonski2021 reduces limits of analytic quotients to rational ones when the
+work, which they have since solved [@dgnp2026]; @strzebonski2021 reduces limits of analytic quotients to rational ones when the
 denominator's zero is isolated. Cylindrical algebraic decomposition [@collins1975] decides such
 questions in principle but does not return the structure of the answer.
 

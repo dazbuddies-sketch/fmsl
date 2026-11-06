@@ -267,7 +267,8 @@ hits); all three are regression tests.
 FMSL. **All 21 agree** with the paper, including example 20, where the paper reports that
 Maple 2021's `limit` returned a wrong range (Maple gave (3/4, 1); the true range is [3/4, +∞]).
 The paper did not compute a range for example 5, because its denominator vanishes along curves
-("future work"). FMSL gives **[−∞, −3] ∪ [3, +∞]**, which is disconnected in the extended line
+("future work"); the same authors have since solved that case (arXiv:2610.36842, 2026). FMSL gives
+**[−∞, −3] ∪ [3, +∞]**, which is disconnected in the extended line
 but connected on the circle. The independent loop computation confirms it.
 
 The signed range (+∞ and −∞ kept apart, as in the paper) is `profile(...)["cluster"]["signed_text"]`.
@@ -518,7 +519,8 @@ limit values, +∞ and −∞ told apart: on the circle [−∞, +∞] the chord
 most C·r^(K+1)/(c·r^K) → 0, and wherever either is large, A has the sign of A_K while B is the same
 polynomial. As far as we have found, the set of limit values of an analytic quotient whose
 denominator vanishes along curves had not been computed before; the methods we know stop at an
-isolated zero.
+isolated zero (for rational functions of two variables, the non-isolated case is solved in
+arXiv:2610.36842).
 
 ```python
 limit_at_origin("(1-cos(x))/(x^2-y^2)")["set"]     # [-oo, 0] u [1/2, +oo]
@@ -1099,7 +1101,9 @@ bivariate rational functions* (arXiv:2202.04889, 2022). It gives a Newton–Puis
 implemented in Maple, that computes the full range of limit values when the denominator has an
 **isolated** zero; that range is a closed interval. For a denominator that vanishes along curves,
 the authors note the range "may be not connected" in the extended line [−∞, +∞] and leave
-computing it to future work. FMSL handles that case. Viewed on the circle R ∪ {∞}, where +∞ and −∞
+computing it to future work. They have since solved that case, with an algorithm and code, in
+arXiv:2610.36842 (2026), which is the reference for it; FMSL independently returns verified
+answers on examples of that kind. Viewed on the circle R ∪ {∞}, where +∞ and −∞
 are one point, the range is always connected. FMSL computes it exactly, as a point, an arc or the
 whole circle, with algebraic endpoints, and checks it against an independent loop computation.
 Related work computes limit existence for analytic quotients (arXiv:2102.01242) and Łojasiewicz
