@@ -62,10 +62,19 @@ Conjecture", ulam.ai).
   has leading coefficient (times 27)
         A(u) = 27 u1^2 u3^2 - 18 u1 u2 u3 + u2^3 u3 + 16 u1 - u2^2,
   so the real Jelonek set lies in the surface A = 0.
-- Inner bound. With zooming three levels deep, 901 points of the Jelonek set are proven by
-  explicit arcs. 542 of them are off the u3-axis, and all lie on A = 0. They fill a surface: for
-  example, in the slice u3 = 0 (where A = 16 u1 - u2^2) the points (1/4, -2, 0), (1/9, 4/3, 0),
-  (1, 4, 0) and (9, 12, 0) are all proven. So the real Jelonek set is two-dimensional.
+- Inner bound, exact, two-dimensional. For any real a, b, g, h, along the arc
+        x = 1/s,  y = a + b s + g s^2,  z = s(-3a + (2 - 3b) s + h s^2),   s -> 0+,
+  F is a polynomial in s plus the terms below, so F tends to
+        L(a, lambda) = (a^2 - a^3 lambda,  4a - 3a^2 lambda,  lambda),   lambda = -(h + 3g).
+  The derivative of L at (a, lambda) = (1, 0) has rank 2, so these limits fill a two-dimensional
+  piece of the Jelonek set, and A(L(a, lambda)) = 0 identically. Checked three ways: the Laurent
+  expansion (the s^-1 coefficients of all three components are multiples of e + 3b - 2), exact
+  rational evaluation along 300 random arcs at s = 10^-30 (error below 10^-24, scaling like s),
+  and symbolic expansion of A(L) = 0.
+- The automatic search (three levels of zooming) separately proves 901 points with arcs, 542 off
+  the u3-axis, all on A = 0; each of its 14,184 arcs was re-checked exactly as a Laurent
+  polynomial by separate code. Each individual arc family it uses is only one-dimensional, so the
+  two-dimensional statement rests on the explicit family above.
 - The u3-axis lies both in the Jelonek set and in the image: F(c/2, 0, 0) = (0, 0, c). (An
   earlier version of this note, and an email of 6 November 2026, wrongly said that (0, 0, c),
   c != 0, is not in the image; that came from an algebra slip and has been corrected.)
