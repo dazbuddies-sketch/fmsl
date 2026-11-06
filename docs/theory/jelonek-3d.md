@@ -66,7 +66,6 @@ Conjecture", ulam.ai).
   explicit arcs. 542 of them are off the u3-axis, and all lie on A = 0. They fill a surface: for
   example, in the slice u3 = 0 (where A = 16 u1 - u2^2) the points (1/4, -2, 0), (1/9, 4/3, 0),
   (1, 4, 0) and (9, 12, 0) are all proven. So the real Jelonek set is two-dimensional.
-- The points (0, 0, c) with c != 0 are limits along arcs but are not values of F: if x = 0 then
-  F_3 = 0, and if x != 0 the equations F = (0, 0, c) force xy = 0 and x^2 z = 0, contradicting
-  F_3 = x(2 - 3xy - x^2 z) = c != 0... (more precisely: F_1 = F_2 = 0 force 2 = 3xy + x^2 z with
-  xy = 0 and x^2 z = 0). This agrees with the image missing two lines.
+- The u3-axis lies both in the Jelonek set and in the image: F(c/2, 0, 0) = (0, 0, c). (An
+  earlier version of this note, and an email of 6 November 2026, wrongly said that (0, 0, c),
+  c != 0, is not in the image; that came from an algebra slip and has been corrected.)
