@@ -111,6 +111,18 @@ class DeepCeledon(unittest.TestCase):
         self.assertEqual(r["intervals"][1]["ends"][1][1], right)
         self.assertEqual(r["intervals"][3]["ends"][1][1], {(0, 1): Fr(-1), (1, 0): Fr(1)})   # v = t
 
+    def test_hidden_on_irrational_branches(self):
+        # along y = u x (u^2 = p), x^4 y^4 = p^2 x^8 cancels the hidden part of the x^8
+        # coefficient, leaving (t - r): the value is 1/(4 p c^2 + t - r) on the branch
+        cases = [("x^8/((y^2-t*x^2)^2 + (t-1+t^2)*x^8 - x^4*y^4)", [0, 1]),            # u = sqrt(t)
+                 ("x^8/((y^2-(t+1)*x^2)^2 + (t-2+(t+1)^2)*x^8 - x^4*y^4)", [-1, 2]),    # u = sqrt(t+1)
+                 ("(x^8+t*x^4*y^4)/((y^2-2*x^2)^2 + (t-1+4)*x^8 - x^4*y^4)", [Fr(-1, 4), 1])]  # u = sqrt 2
+        for f, expected in cases:
+            r = moving_profile(f, deep=True, joint=False)
+            self.assertEqual([s["t"] for s in r["celedon_points"]], expected, f)
+            self.assertEqual(r["unexplained"], [], f)
+            self.assertEqual(r["deep_unsupported"], [], f)
+
     def test_t_dependent_zoom_root(self):
         # zoom root y = t*x; hidden coefficient (t - 2) at the second level
         f = "x^4/((y-t*x)^2+(t-2+t^3)*x^4-x*y^3)"

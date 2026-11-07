@@ -92,7 +92,13 @@ def hidden2(gen):
 
 def irrat(gen):
     r = gen.choice([0, 1, -1])
+    pp = gen.choice(["t", "(t+1)", "2", "3", "(2*t)", "(t+2)"])
+    rr = gen.choice([1, 2, Fr(1, 2), -1])
+    num = gen.choice(["x^8", "x^8+t*x^4*y^4", "x^8-x^6*y^2"])
     return gen.choice([
+        # hidden ON the irrational branch y = u x, u^2 = pp: x^4 y^4 = pp^2 x^8 there
+        f"({num})/((y^2-{pp}*x^2)^2 + (t-({rr})+{pp}^2)*x^8 - x^4*y^4)",
+        f"({num})/((y^2-{pp}*x^2)^2 + (t-({rr})+{pp}^2)*x^8 - x^4*y^4)",
         f"x^8/((y^2-2*x^2)^2 + (t-({r}))*x^8)",
         f"x^8/((y^2-t*x^2)^2 + x^8)",
         f"x^4*y^4/((y^2-(t+1)*x^2)^2 + (t-({r}))*x^6*y^2 + x^10)",

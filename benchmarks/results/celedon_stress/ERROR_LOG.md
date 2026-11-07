@@ -4,7 +4,7 @@
 errors can be studied as a source of their own. That includes FMSL's mistakes and **our own
 mistakes in testing**.*
 
-Raw data: `error_log.jsonl` (2,311 records over 13 runs, one JSON line each: run, seed, source, family, mode,
+Raw data: `error_log.jsonl` (2,731 records over 15 runs, one JSON line each: run, seed, source, family, mode,
 kind, time t, detail). Verified catalogs: `catalog_*.md`. Tools: `benchmarks/celedon_stress.py`
 (runs and logs) and `benchmarks/celedon_errors.py` (re-verifies every logged point and classifies it).
 
@@ -54,7 +54,7 @@ and moving-path families, the two modes agree everywhere.
 | E4 | false Celedon point at an irrational time, e.g. t = ∛(1/2) | **both modes** | at an irrational time with an irrational zoom curve (y = √2·x), the 2-variable engine returns a partial snapshot (`exact = False`, e.g. {0} instead of [0, 0.28]); the moving layer ignored the flag | **fixed in both modes**: an unproven snapshot is no longer evidence of a change, and is labeled "(partial)". Deep-mode phantoms went 14 → 0 |
 | E5 | snapshot cost spikes at times with large denominators | engine performance | rational roots are found by listing all divisors, which explodes for messy fractions | **open** (performance only, answers stay correct) |
 | E6 | changes when arcs from different zoom branches merge | both modes | no exact condition for it yet | **fixed in deep mode in round 2** (see below); not observed in round 1 because no source produced it |
-| E7 | zoom curves irrational in t (c₀ = √t) | deep mode | the method handles roots in Q(t) only | **reported honestly** as an unsupported branch, sampling as before |
+| E7 | zoom curves irrational in t (c₀ = √t) | deep mode | the method handles roots in Q(t) only | reported honestly in round 1; **fixed in round 3** for one irrational zoom level (see below) |
 
 ## Our own mistakes during testing (fixed, and logged so they are not repeated)
 
@@ -90,6 +90,26 @@ irrational in t (16 per seed), and ends without an exact formula (14–20 per se
 **Note in default mode.** A family that zooms along a curve now carries a note saying hidden
 changes are not searched in this mode. On the earlier runs it appeared on all 39 families where
 default mode made an error, and on 15 of the 98 where it made none.
+
+## Round 3: zoom curves irrational in t (seeds 101 and 404)
+
+The `irrat` source now also builds changes hidden **on** an irrational branch, for example
+x⁸/((y² − t·x²)² + (t − 1 + t²)x⁸ − x⁴y⁴). Along y = √t·x the value is 1/(4t·c² + t − 1), so the
+Celedon point is t = 1, and no top-level coefficient vanishes there.
+
+| # | error | where | cause | status |
+|---|---|---|---|---|
+| E7 | zoom curves irrational in t not searched (c₀ = √t, √(t+1), √2) | deep mode reported them unsupported; default mode gave displaced echoes (0.618 for 1, 0.366 for 1/2, the latter with no warning) | the deep search handled roots in Q(t) only | **fixed for one irrational zoom level** (`fmsl.celedon_alg`): coefficients in Q[t, u], exact resultants in c, u eliminated with Res_u(·, h) |
+
+| 138 families (seeds 101, 404) | default mode | deep mode |
+|---|---|---|
+| silent misses | 7 + 10 | **0** |
+| misses with a warning | 17 + 20 | **0** |
+| phantoms | 18 + 27 | **0** |
+| wrong end formulas, loop mismatches | 0 | **0** |
+| "irrational zoom" unsupported | – | 16 per seed before, **0** now |
+| still unsupported (stated) | – | ends without an exact formula: 9 and 3 |
+| harness timeout (engine alone: 2.5 s default, 8.1 s deep, both answers verified) | 1 | 1 |
 
 ## What the errors teach (patterns)
 

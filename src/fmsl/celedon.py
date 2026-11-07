@@ -233,7 +233,7 @@ def _collision_polys(fN, fD):
     return out
 
 
-def deep_candidate_times(N, D, depth=3, _path=(), _collect=None):
+def deep_candidate_times(N, D, depth=3, _path=(), _collect=None, _alg_ends=None):
     """exact candidate Celedon points, including those that arise inside the zoom.
        Returns (candidates, unsupported): candidates as in fmsl.moving.candidate_times
        [(time, [reasons])]; unsupported lists zoom branches not covered (irrational in t,
@@ -260,7 +260,18 @@ def deep_candidate_times(N, D, depth=3, _path=(), _collect=None):
             for G in zoomers:
                 roots, complete = rational_roots_in_t(G)
                 if not complete:
-                    unsupported.append(f"zoom root not rational in t (weight {a}, {side}, {where})")
+                    rest = irrational_part(G, roots)
+                    if rest is not None and _cdeg(rest) > 0 and depth > 0 and _alg_ends is not None:
+                        from .celedon_alg import branch_candidates
+                        label = f"irrational zoom root of {_bxt(rest)} (weight {a}, {side}, {where})"
+                        try:
+                            bp, bE, bu = branch_candidates(N, D, a, sigma, rest, label)
+                            polys.extend(bp); _alg_ends.extend(bE); unsupported.extend(bu)
+                        except (ArithmeticError, NotImplementedError, ZeroDivisionError) as exc:
+                            unsupported.append(f"zoom root not rational in t, branch search failed "
+                                               f"({type(exc).__name__}) (weight {a}, {side}, {where})")
+                    else:
+                        unsupported.append(f"zoom root not rational in t (weight {a}, {side}, {where})")
                 for P, Q in roots:
                     if not P: continue                              # c0 = 0: other weights
                     key = (tuple(P), tuple(Q))
@@ -278,7 +289,7 @@ def deep_candidate_times(N, D, depth=3, _path=(), _collect=None):
                     for t, why in candidate_times(N1, D1):
                         for w in why:
                             polys.append(("root", t, f"{w} [inside zoom {label}]"))
-                    sub, uns = deep_candidate_times(N1, D1, depth - 1, _path + (label,), _collect)
+                    sub, uns = deep_candidate_times(N1, D1, depth - 1, _path + (label,), _collect, _alg_ends)
                     for t, why in sub:
                         for w in why: polys.append(("root", t, w))
                     unsupported.extend(uns)
@@ -366,15 +377,45 @@ def merge_candidate_times(Es):
     return polys
 
 
-def all_candidate_times(N, D, depth=3, zoomed=None, merges=True):
+def irrational_part(G, roots):
+    """the factor of G (squarefree, without the factor c) left after removing the linear factors
+       Q(t) c - P(t) of its roots in Q(t): the zoom roots that are irrational in t"""
+    g = _sqfree_c(_drop_c_factor(G))
+    for P, Q in roots:
+        lin = {(k, 1): v for k, v in enumerate(Q) if v}
+        for k, v in enumerate(P):
+            if v: lin[(k, 0)] = lin.get((k, 0), 0) - v
+        try:
+            g = bdivexact(g, lin)
+        except Exception:
+            return None
+    return g
+
+
+def _bxt(P):
+    terms = []
+    for (k, j), v in sorted(P.items(), key=lambda kv: (-kv[0][1], -kv[0][0])):
+        mono = "*".join(x for x in ((f"t^{k}" if k > 1 else "t" if k == 1 else ""),
+                                    (f"u^{j}" if j > 1 else "u" if j == 1 else "")) if x)
+        terms.append(f"{v}" + (f"*{mono}" if mono else ""))
+    return " + ".join(terms)
+
+
+def all_candidate_times(N, D, depth=3, zoomed=None, merges=True, alg_ends=None):
     """top-level candidates (fmsl.moving) merged with the deep ones, and (merges=True) the times
        where ends of different branches meet.  If `zoomed` is a list, the zoomed families
        (N1, D1) are appended to it (same ratio as N/D, new coordinates)."""
     top = candidate_times(N, D)
     if zoomed is None: zoomed = []
-    deep, unsupported = deep_candidate_times(N, D, depth, _collect=zoomed)
+    if alg_ends is None: alg_ends = []
+    deep, unsupported = deep_candidate_times(N, D, depth, _collect=zoomed, _alg_ends=alg_ends)
     if merges:
-        for L, why in merge_candidate_times(end_relations(N, D, zoomed)):
+        Es = end_relations(N, D, zoomed)
+        from .moving import _primitive_E
+        for E in alg_ends:
+            E = _primitive_E(E)
+            if E and _cdeg(E) >= 1 and E not in Es: Es.append(E)
+        for L, why in merge_candidate_times(Es):
             s = squarefree(L)
             if len(s) <= 1: continue
             deep = list(deep) + [(r, [why]) for r in _real_roots(s)]

@@ -116,10 +116,35 @@ t = −2 nothing changes inside any single branch, so before step 5 this point w
 approximately. Now both are exact. The default mode still gives t = −2 only approximately, and
 reports a displaced point at t = 1 with the note.
 
+## Zoom curves that are irrational in t (`fmsl.celedon_alg`)
+
+When a zoom root is not a rational function of t, let h(u, t) be the factor of G that is left after
+the roots in Q(t) are removed. The substitution x = σ·s^q, y = s^p·(u + w) gives a family whose
+coefficients are polynomials in (t, u), to be read on the curve h(u, t) = 0. The method follows
+the same steps as `candidate_times`, with three changes:
+
+1. **Support on the branch.** A coefficient is dropped when h divides it (gcd over Q(t)). If it
+   vanishes on only one factor of h, h is split and each part is searched separately.
+2. **Resultants in c with coefficients in Q[t, u].** These are computed exactly: at enough values
+   of u where the leading coefficients survive, then interpolated in u and checked at one more value.
+3. **Elimination of u.** Each condition P(t, u) becomes R(t) = Res_u(P, h). Every t where P vanishes
+   at some root u of h(·, t) is a root of R, so nothing on the branch is missed. Times from conjugate
+   branches may be added, which is harmless.
+
+The branch's end relations, meaning boundary values and critical values with u eliminated the
+same way, are added to the arc-merging step and to the end formulas.
+
+Example: x⁸/((y² − t·x²)² + (t − 1 + t²)x⁸ − x⁴y⁴). Along y = √t·x the term x⁴y⁴ equals t²x⁸ and
+cancels the hidden part of the coefficient, so the value tends to 1/(4t·c² + t − 1). The snapshot is
+bounded for t > 1 and the whole line for 0 < t < 1. The Celedon point **t = 1** is invisible at the
+top level, where the candidates are 0 and the roots of t² + t − 1. Deep mode finds it exactly. The
+default mode reports a displaced point at 0.618, the echo, and leaves t = 1 approximate. The same
+works for a constant irrational curve (y = √2·x) and for y = √(t+1)·x.
+
 ## What is not covered (stated plainly)
 
-* **Irrational zoom roots** (for example c₀ = √t). These branches are listed in
-  `deep_unsupported` and fall back to sampling, exactly as before.
+* **A further zoom inside an irrational branch.** Only one irrational zoom level is searched.
+  Deeper zooms inside it are listed in `deep_unsupported` and fall back to sampling.
 * **Zoom trees deeper than the depth limit** are also listed as unsupported.
 * **Ends without an exact relation** are listed as unsupported; merges involving them are checked
   by sampling only.

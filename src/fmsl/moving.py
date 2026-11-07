@@ -274,10 +274,11 @@ def moving_profile(text, path=None, joint=True, deep=False):
        deep=True (opt-in) also searches for Celedon points hidden inside the zoom
        (fmsl.celedon); the default leaves the analysis exactly as before."""
     N, D = parse_moving(text, path)
-    deep_unsupported, zoomed = [], []
+    deep_unsupported, zoomed, alg_ends = [], [], []
     if deep:
         from .celedon import all_candidate_times
-        cands, deep_unsupported = all_candidate_times(N, D, 3 if deep is True else int(deep), zoomed)
+        cands, deep_unsupported = all_candidate_times(N, D, 3 if deep is True else int(deep), zoomed,
+                                                      alg_ends=alg_ends)
     else:
         cands = candidate_times(N, D)
     times = [c[0] for c in cands]
@@ -297,7 +298,7 @@ def moving_profile(text, path=None, joint=True, deep=False):
         ends = []
         if mid and mid.get("comps") is not None:
             try:
-                ends = endpoint_formulas(N, D, pts[1], mid["comps"], zoomed)
+                ends = endpoint_formulas(N, D, pts[1], mid["comps"], zoomed, alg_ends)
                 ends = _confirm_ends(ends, snaps, pts, sigs)
             except (ArithmeticError, NotImplementedError, TypeError):
                 ends = []
@@ -567,7 +568,7 @@ def _E_text(E):
     return s + " = 0"
 
 
-def endpoint_formulas(N, D, t0, comps, extra=()):
+def endpoint_formulas(N, D, t0, comps, extra=(), extra_E=()):
     """for the finite ends of the snapshot at the rational time t0: an exact relation
        E(t, v) = 0 satisfied by that end (v) for t in this interval, when one is found.
        extra: further families (N1, D1) with the same ratio (zoomed coordinates) whose
@@ -576,6 +577,7 @@ def endpoint_formulas(N, D, t0, comps, extra=()):
     Es = [_primitive_E(E) for E in _endpoint_polys(N, D)]
     for N1, D1 in extra:
         Es += [_primitive_E(E) for E in _endpoint_polys(N1, D1)]
+    Es += [_primitive_E(E) for E in extra_E]
     out = []
     ends = []
     for lo, hi in comps:
