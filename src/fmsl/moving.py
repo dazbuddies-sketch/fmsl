@@ -274,7 +274,7 @@ def moving_profile(text, path=None, joint=True, deep=False):
        deep=True (opt-in) also searches for Celedon points hidden inside the zoom
        (fmsl.celedon); the default leaves the analysis exactly as before."""
     N, D = parse_moving(text, path)
-    deep_unsupported, zoomed = None, []
+    deep_unsupported, zoomed = [], []
     if deep:
         from .celedon import all_candidate_times
         cands, deep_unsupported = all_candidate_times(N, D, 3 if deep is True else int(deep), zoomed)
@@ -301,6 +301,14 @@ def moving_profile(text, path=None, joint=True, deep=False):
                 ends = _confirm_ends(ends, snaps, pts, sigs)
             except (ArithmeticError, NotImplementedError, TypeError):
                 ends = []
+                if deep and _finite_ends(mid["comps"]):
+                    deep_unsupported.append(f"end formulas could not be computed for "
+                                            f"interval ({lo}, {hi}): arc merges there are checked by sampling only")
+            if deep:
+                for v, E in ends:
+                    if E is None:
+                        deep_unsupported.append(f"end {v} in interval ({lo}, {hi}) has no exact formula: "
+                                                f"arc merges there are checked by sampling only")
         intervals.append({"lo": lo, "hi": hi, "sample": pts[1],
                           "snapshot": mid["text"] if mid else "undefined (D = 0)",
                           "exact": bool(mid and mid["exact"]), "ends": ends})
@@ -329,6 +337,15 @@ def moving_profile(text, path=None, joint=True, deep=False):
     merged = []
     sp_times = [e["t"] for e in special]
     for k, iv in enumerate(intervals):
+        prev_ends = merged[-1][0]["ends"] if merged else None
+        same_formulas = (not prev_ends or not iv["ends"] or len(prev_ends) != len(iv["ends"])
+                         or all(E1 == E2 for (_, E1), (_, E2) in zip(prev_ends, iv["ends"])))
+        if merged and sig_of_interval[k] == merged[-1][1] and not same_formulas and iv["lo"] is not None:
+            # same shape, but an end changes formula here (it switches from one branch to another):
+            # not a Celedon point, but the end formulas hold only on each side separately
+            iv = dict(iv, end_switch_at=iv["lo"])
+            merged.append([iv, sig_of_interval[k]])
+            continue
         if merged and sig_of_interval[k] == merged[-1][1] and iv["lo"] is not None \
                 and not any(cmp(t, iv["lo"]) == 0 for t in sp_times) \
                 and not any(a < (_bounds(iv["lo"])[1] if isinstance(iv["lo"], A) else iv["lo"]) < b
@@ -343,6 +360,16 @@ def moving_profile(text, path=None, joint=True, deep=False):
            "candidates": len(cands)}
     if deep:
         out["deep_unsupported"] = deep_unsupported
+    else:
+        from .celedon import zoom_curves
+        try:
+            z = zoom_curves(N, D)
+        except (ArithmeticError, NotImplementedError, TypeError):
+            z = []
+        if z:
+            out["note"] = ("this family zooms along curves (repeated or shared roots): a change hidden inside "
+                           "the zoom is not searched in this mode, and can show up as a Celedon point displaced "
+                           "to the nearest visible candidate. moving_profile(..., deep=True) searches it exactly.")
     return out
 
 
@@ -392,6 +419,9 @@ def describe_moving(text, path=None):
         hi = "+oo" if iv["hi"] is None else _tstr(iv["hi"])
         more = "".join(f";  at t = {t}: {txt}" for t, txt in iv.get("more", [])[:2])
         out.append(f"  {lo} < t < {hi}:  at t = {iv['sample']}: {iv['snapshot']}{more}")
+        if iv.get("end_switch_at") is not None:
+            out.append(f"      (same shape as before t = {_tstr(iv['end_switch_at'])}: not a Celedon point, "
+                       f"but an end switches to another branch there)")
         forms = []
         for v, E in iv.get("ends", []):
             if E:
@@ -408,6 +438,8 @@ def describe_moving(text, path=None):
     for a, b in r["unexplained"]:
         out.append(f"  change near t in ({float(a):.6g}, {float(b):.6g}) not explained by the top-level "
                    f"candidates (found by sampling)")
+    if r.get("note"):
+        out.append(f"  note: {r['note']}")
     return "\n".join(out)
 
 
@@ -440,6 +472,13 @@ def _endpoint_polys(N, D):
         for sigma in (1, -1):
             fN, fD = _initial_form(CN, a, sigma), _initial_form(CD, a, sigma)
             if not fN or not fD: continue
+            # cancel a common factor first (the ratio is unchanged): a shared root, e.g. a curve
+            # the engine zooms along, makes the critical-value resultant below vanish identically,
+            # and the end relations of this level were silently lost
+            from .plane import bgcd as _bgcd, bdivexact as _bdivexact
+            G = _bgcd(fN, fD)
+            if G and _cdeg(G) > 0:
+                fN, fD = _bdivexact(fN, G), _bdivexact(fD, G)
             for jj in {_cdeg(fN), _cdeg(fD), min(j for (_, j) in fN), min(j for (_, j) in fD)}:
                 E = {}
                 for (k, j), v in fD.items():

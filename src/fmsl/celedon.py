@@ -300,11 +300,84 @@ def deep_candidate_times(N, D, depth=3, _path=(), _collect=None):
     return [(r, sorted(w)) for r, w in found], sorted(set(unsupported))
 
 
-def all_candidate_times(N, D, depth=3, zoomed=None):
-    """top-level candidates (fmsl.moving) merged with the deep ones.  If `zoomed` is a list,
-       the zoomed families (N1, D1) are appended to it (same ratio as N/D, new coordinates)."""
+def zoom_curves(N, D):
+    """the top-level zoom directions that exist for generic t: (weight, side) pairs where the
+       initial forms have a repeated or shared nonzero root in c.  Empty means the engine never
+       zooms for generic t, so no Celedon point can be hidden inside a zoom."""
+    CN, CD = _coeff_polys(N), _coeff_polys(D)
+    out = []
+    if not CN or not CD: return out
+    for a in _tie_weights(set(CN) | set(CD)):
+        for sigma in (1, -1):
+            fN, fD = _initial_form(CN, a, sigma), _initial_form(CD, a, sigma)
+            if not fN or not fD: continue
+            for G in (bgcd(fN, _dc(fN)) if _cdeg(fN) > 0 else {},
+                      bgcd(fD, _dc(fD)) if _cdeg(fD) > 0 else {},
+                      bgcd(fN, fD)):
+                if G and _cdeg(_drop_c_factor(G)) > 0:
+                    out.append((a, sigma)); break
+    return out
+
+
+def end_relations(N, D, zoomed=()):
+    """all end relations E(t, v) = 0 (dicts {(t power, v power)}): boundary and critical values at
+       every node of the top level and of every zoomed family, primitive, without duplicates"""
+    from .moving import _endpoint_polys, _primitive_E
+    out = []
+    for N1, D1 in [(N, D)] + list(zoomed):
+        try:
+            Es = _endpoint_polys(N1, D1)
+        except (ArithmeticError, NotImplementedError, TypeError):
+            continue
+        for E in Es:
+            E = _primitive_E(E)
+            if E and _cdeg(E) >= 1 and E not in out:
+                out.append(E)
+    return out
+
+
+def merge_candidate_times(Es):
+    """polynomials in t whose real roots are where two ends meet (two arcs touch, merge or
+       separate) or an end escapes to infinity -- the cross-branch condition.
+       Returned as [(poly in t, reason)]."""
+    polys = []
+    sq = [_sqfree_c(E) for E in Es]
+    for i, E in enumerate(sq):
+        if _cdeg(E) <= 0: continue
+        lc = _in_c(E)[-1]
+        if len(lc) > 1: polys.append((lc, "an end escapes to infinity"))
+        if _cdeg(E) >= 2:
+            r = ptrim(resultant_d(E, _dc(E)))
+            if len(r) > 1: polys.append((r, "two ends of one branch meet"))
+    for i in range(len(sq)):
+        for j in range(i + 1, len(sq)):
+            Ei, Ej = sq[i], sq[j]
+            if _cdeg(Ei) <= 0 or _cdeg(Ej) <= 0: continue
+            G = bgcd(Ei, Ej)
+            if _cdeg(G) > 0:                        # a shared relation: compare the other parts
+                Ei2, Ej2 = bdivexact(Ei, G), bdivexact(Ej, G)
+                pairs = [(Ei2, Ej2), (Ei2, G), (Ej2, G)]
+            else:
+                pairs = [(Ei, Ej)]
+            for P, Q in pairs:
+                if _cdeg(P) <= 0 or _cdeg(Q) <= 0: continue
+                r = ptrim(resultant_d(P, Q))
+                if len(r) > 1: polys.append((r, "ends of two branches meet (arcs merge or separate)"))
+    return polys
+
+
+def all_candidate_times(N, D, depth=3, zoomed=None, merges=True):
+    """top-level candidates (fmsl.moving) merged with the deep ones, and (merges=True) the times
+       where ends of different branches meet.  If `zoomed` is a list, the zoomed families
+       (N1, D1) are appended to it (same ratio as N/D, new coordinates)."""
     top = candidate_times(N, D)
+    if zoomed is None: zoomed = []
     deep, unsupported = deep_candidate_times(N, D, depth, _collect=zoomed)
+    if merges:
+        for L, why in merge_candidate_times(end_relations(N, D, zoomed)):
+            s = squarefree(L)
+            if len(s) <= 1: continue
+            deep = list(deep) + [(r, [why]) for r in _real_roots(s)]
     found = [[r, set(w)] for r, w in top]
     for r, w in deep:
         for item in found:

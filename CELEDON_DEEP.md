@@ -41,9 +41,25 @@ f_D, or shared by both. These are the roots of
 4. **Recurse** on (N₁, D₁) to a fixed depth (default 3). Branches beyond it are reported as
    unsupported.
 
+5. **Arcs of different branches.** Collect every end relation E(t, v) = 0, meaning the boundary
+   and critical values at every node of the top level and of every zoomed family. Add the real
+   roots of three kinds of polynomial in t:
+   * Res_v(E_i, E_j) for every pair, after dividing out a shared factor;
+   * the discriminant in v of each E_i;
+   * the leading coefficient in v of each E_i.
+
+   These are the times where two ends meet, so arcs can merge or separate, or where an end escapes
+   to infinity. If some end of a reported interval has no exact relation, deep mode says so in
+   `deep_unsupported`.
+
 In deep mode, end formulas are also taken from the zoomed families. In **both** modes, an end
 formula is now accepted only if the matching end also satisfies it at the other sample times of
 the interval. That removes formulas that fit at a single time by coincidence.
+
+In the default mode, a family that zooms along a curve for generic t now carries a **note** saying
+that changes hidden in the zoom are not searched there, and can show up displaced to the nearest
+visible candidate. It changes no result. In the stress test, the note appeared on all 39 families
+where the default mode made an error, and on 15 of the 98 families where it made none.
 
 ## Statement
 
@@ -77,17 +93,36 @@ empty, so every one of them is a rational function P/Q, and Q has no root in I b
 are the "critical points collide" and "critical point meets a pole" resultants of
 `candidate_times`, applied at the top level and to every (N₁, D₁). ∎
 
+**Theorem (whole snapshot).** Let 𝒞 now include the arc candidates of step 5. Suppose
+`deep_unsupported` is empty, so all zoom roots are rational in t, the depth suffices, and every
+end has an exact relation. Then on every open interval I that contains no point of 𝒞, the snapshot
+has the same type for all t ∈ I. Hence every Celedon point lies in 𝒞, and the Celedon points
+`moving_profile(deep=True)` reports are exactly the points of 𝒞 where the type actually changes.
+
+**Proof.** The snapshot is the union of the arcs produced at the nodes of the zoom tree. By the
+Proposition, the tree, and the set of arcs each node produces, keep the same combinatorial
+description on I. Each finite end of an arc is a real root, in v, of one of the relations E_i(t, ·),
+and moves continuously with t. By step 5, on I no end becomes infinite (leading coefficients),
+no two ends coming from the same relation meet (discriminants), and no two ends coming from
+different relations meet (resultants). So the order of all ends on the extended line, with ±∞
+included, is the same for every t ∈ I. The union of a fixed family of arcs depends only on the
+order of their ends. So the type of the union, meaning which arcs overlap, merge or stay apart,
+is constant on I. ∎
+
+Example: f = x⁴/((y − x)² − x⁴) + t·x²/(x² + y²). The ordinary directions give [0, t] for t > 0,
+and [t, 0] for t < 0. The curve near y = x gives [−∞, t/2 − 1] ∪ (t/2, +∞]. The pieces merge into
+the whole line at **t = 2**, where t/2 − 1 meets 0, and at **t = −2**, where t/2 − 1 meets t. At
+t = −2 nothing changes inside any single branch, so before step 5 this point was only found
+approximately. Now both are exact. The default mode still gives t = −2 only approximately, and
+reports a displaced point at t = 1 with the note.
+
 ## What is not covered (stated plainly)
 
 * **Irrational zoom roots** (for example c₀ = √t). These branches are listed in
   `deep_unsupported` and fall back to sampling, exactly as before.
 * **Zoom trees deeper than the depth limit** are also listed as unsupported.
-* **Ends from different branches meeting.** Two arcs coming from different zoom branches can
-  merge when their ends cross (for example 1/t on one branch meets 2 on another, at t = 1/2).
-  The Proposition fixes each branch's local type, not the way the arcs of different branches
-  overlap. The same gap exists at the top level. A change of this kind is still found by sampling
-  and reported as "change near …". Closing it needs resultants between the end relations
-  E(t, v) of different branches. That is the next step.
+* **Ends without an exact relation** are listed as unsupported; merges involving them are checked
+  by sampling only.
 
 ## Relation to known results
 
@@ -98,6 +133,24 @@ doubly exponential cost. What is offered here is an exact, local method that fol
 own zoom, with a proof of what it covers and an explicit list of what it does not. I did not find
 prior work computing exact limit sets at a 0/0 point for families with a parameter. The search
 was brief, so this is provisional.
+
+## End relations at a level with a shared root (both modes)
+
+When f_N and f_D share a factor, which happens along every curve the engine zooms on, the
+critical-value resultant Res_c(g, v·f_D − f_N) vanishes identically. The end relations of that
+level were then silently lost. Without them, step 5 could not see arcs merge, and deep mode
+reported 5/16 where the true merge is at 5/18. The common factor is now cancelled first. The ratio
+is unchanged, so this only adds correct relations.
+
+## Ends that switch branch (both modes)
+
+The shape of the snapshot can stay the same while one of its ends passes from one branch to
+another. For example, x⁴/((y + x)² + x⁴) + t·y²/(x² + y²) is a single arc for every t, but its right
+end is t/2 + 1 for 0 < t < 2 and t for t > 2. Such a time is not a Celedon point. Stretches on
+either side used to be joined and given a single end formula, which was wrong on part of it. Now
+they stay separate, and the boundary is marked "end switches branch" (`end_switch_at`). Deep mode
+finds every such switch exactly, since step 5 includes it. Default mode finds only those among its
+own candidates.
 
 ## Unproven snapshots (both modes)
 

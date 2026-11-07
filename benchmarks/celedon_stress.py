@@ -116,6 +116,19 @@ def dgnp(gen):
     return f"({f})/({g})"
 
 
+def merge(gen):
+    """arcs from different branches merge or separate as t moves: ordinary directions give an
+       arc ending at p(t)-type values, the hidden curve y ~ a x gives arcs with ends shifted by
+       p(t)/(1+a^2); the ends of the two branches cross at times that are invisible inside any
+       single branch"""
+    a = gen.choice(["1", "-1", "2"])
+    b = gen.choice(["1", "2"])
+    p = gen.choice(["t", "(t-1)", "2*t", "(t^2-1)", "(1-t)"])
+    q = gen.choice(["x^2/(x^2+y^2)", "y^2/(x^2+y^2)", "x*y/(x^2+y^2)"])
+    sgn = gen.choice(["-", "+"])
+    return f"x^4/((y-({a})*x)^2{sgn}{b}*x^4) + {p}*{q}"
+
+
 def path_family(gen):
     f = gen.choice(['x^2*y/(x^4+y^2)', '(x^2-y^2)/(x^2+y^2)', 'x*y/(x^2+y^2+x*y)',
                     'x^4/((x-y)^2+x^4)'])
@@ -124,7 +137,7 @@ def path_family(gen):
 
 
 SOURCES = {"classic": None, "randA": randA, "randB": randB, "hidden1": hidden1,
-           "hidden2": hidden2, "irrat": irrat, "dgnp": dgnp, "path": path_family}
+           "hidden2": hidden2, "irrat": irrat, "dgnp": dgnp, "merge": merge, "path": path_family}
 
 
 # ------------------------------------------------------------------ checks
@@ -243,7 +256,7 @@ def main():
     limit = 240
     gen = random.Random(seed)
     fams = [("classic", f, None) for f in CLASSIC]
-    for src in ("randA", "randB", "hidden1", "hidden2", "irrat", "dgnp", "path"):
+    for src in ("randA", "randB", "hidden1", "hidden2", "irrat", "dgnp", "merge", "path"):
         for _ in range(n):
             out = SOURCES[src](gen)
             f, p = out if isinstance(out, tuple) else (out, None)

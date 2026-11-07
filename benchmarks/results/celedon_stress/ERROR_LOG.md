@@ -4,7 +4,7 @@
 errors can be studied as a source of their own. That includes FMSL's mistakes and **our own
 mistakes in testing**.*
 
-Raw data: `error_log.jsonl` (1,361 records, one JSON line each: run, seed, source, family, mode,
+Raw data: `error_log.jsonl` (2,311 records over 13 runs, one JSON line each: run, seed, source, family, mode,
 kind, time t, detail). Verified catalogs: `catalog_*.md`. Tools: `benchmarks/celedon_stress.py`
 (runs and logs) and `benchmarks/celedon_errors.py` (re-verifies every logged point and classifies it).
 
@@ -53,7 +53,7 @@ and moving-path families, the two modes agree everywhere.
 | E3 | wrong end formula ("v = 1" instead of v = 1/t) | default mode | a formula was accepted after a check at one sample time | **fixed in both modes**: confirmed at all three sample times |
 | E4 | false Celedon point at an irrational time, e.g. t = ∛(1/2) | **both modes** | at an irrational time with an irrational zoom curve (y = √2·x), the 2-variable engine returns a partial snapshot (`exact = False`, e.g. {0} instead of [0, 0.28]); the moving layer ignored the flag | **fixed in both modes**: an unproven snapshot is no longer evidence of a change, and is labeled "(partial)". Deep-mode phantoms went 14 → 0 |
 | E5 | snapshot cost spikes at times with large denominators | engine performance | rational roots are found by listing all divisors, which explodes for messy fractions | **open** (performance only, answers stay correct) |
-| E6 | changes when arcs from different zoom branches merge | both modes | no exact condition for it yet | **open**: next step; not observed in these tests |
+| E6 | changes when arcs from different zoom branches merge | both modes | no exact condition for it yet | **fixed in deep mode in round 2** (see below); not observed in round 1 because no source produced it |
 | E7 | zoom curves irrational in t (c₀ = √t) | deep mode | the method handles roots in Q(t) only | **reported honestly** as an unsupported branch, sampling as before |
 
 ## Our own mistakes during testing (fixed, and logged so they are not repeated)
@@ -64,6 +64,32 @@ and moving-path families, the two modes agree everywhere.
 | M2 | first version of the root finder said "all branches covered" when some roots were complex at the sample time (c² + t) | the completeness claim would have been wrong for such branches | count all deg_c roots; regression test added |
 | M3 | checker judged irrational points by their two sides only | real changes that happen only *at* an irrational point (range collapsing to {∞} for one instant) were called phantoms | checker uses the exact algebraic value and a *proven* snapshot there |
 | M4 | harness built test times with denominators up to 10⁶–10⁹ | slow snapshots and harness timeouts that looked like engine failures | simple fractions; the remaining timeouts re-judged directly (deep mode correct on both families) |
+
+## Round 2: arcs of different branches (seeds 101 and 404, with a new `merge` source)
+
+A ninth source, `merge`, builds families where arcs from different branches merge or separate,
+for example x⁴/((y − 2x)² − 2x⁴) + 2t·x·y/(x² + y²). There the ordinary arc [−|t|, |t|] meets the
+hidden arc [−∞, 4t/5 − 1/2] at t = 5/18 and at t = −5/2. The first run with this source exposed
+three new errors.
+
+| # | error | where | cause | status |
+|---|---|---|---|---|
+| E6 | merges of arcs from different branches only approximate, or displaced (e.g. 5/16 reported for 5/18) | both modes | no exact condition for ends of different branches meeting | **fixed in deep mode**: resultants and discriminants of all end relations (`merge_candidate_times`); proof in `CELEDON_DEEP.md` |
+| E8 | end relations silently lost at a level where the initial forms share a root (the zoom curve) | both modes | the critical-value resultant vanishes identically when f_N and f_D share a factor | **fixed in both modes**: the common factor is cancelled first |
+| E9 | one end formula reported for a stretch where an end switches branch without a change of shape (right end t/2 + 1, then t, at t = 2) | both modes | stretches with the same shape were joined even when their end formulas differ | **fixed**: stretches stay separate and the boundary is marked "end switches branch" (not a Celedon point). Default mode can still miss a switch that is not among its candidates |
+
+| | default mode | deep mode |
+|---|---|---|
+| first run with `merge` (136 families) | 18–19 disagreements, wrong end formulas 6–7 per seed | **8 wrong end formulas, 1–2 phantoms, 1–3 unresolved changes per seed** |
+| after E6, E8 and E9 were fixed (same 136 families) | silent misses 7 + 7, phantoms 15 + 18, flagged misses 13 + 15 | **0 errors of any kind** |
+
+In deep mode, everything it cannot prove is listed in `deep_unsupported`: zoom curves that are
+irrational in t (16 per seed), and ends without an exact formula (14–20 per seed, in the
+`irrat`, `randA` and `path` sources).
+
+**Note in default mode.** A family that zooms along a curve now carries a note saying hidden
+changes are not searched in this mode. On the earlier runs it appeared on all 39 families where
+default mode made an error, and on 15 of the 98 where it made none.
 
 ## What the errors teach (patterns)
 
@@ -82,3 +108,8 @@ and moving-path families, the two modes agree everywhere.
 4. **Single-point checks are fragile.** E3 (one sample time) and M2 (one sample time for roots)
    both came from checking at a single point. Every check that now matters is made at several
    points, or exactly.
+5. **A test only finds the errors its sources can produce.** Round 1 reported "not observed" for
+   arc merges because no source built them. One targeted source (`merge`) found three new error
+   classes at once (E6, E8, E9). New sources are worth more than more seeds of old ones.
+6. **Shared factors hide information.** E8: when two expressions share a factor, an elimination
+   step can vanish identically and lose everything. Cancelling the common part first restored it.

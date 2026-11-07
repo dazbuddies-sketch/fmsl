@@ -17,8 +17,9 @@ class DeepCeledon(unittest.TestCase):
         self.assertEqual([s["t"] for s in r["celedon_points"]], [0])
         self.assertEqual(r["unexplained"], [])
         self.assertEqual(r["deep_unsupported"], [])
+        t1 = r["intervals"][1]["sample"]
         self.assertEqual([iv["snapshot"] for iv in r["intervals"]],
-                         ["[-oo, -1/3] u [0, +oo]", "[0, 1/2]"])
+                         ["[-oo, -1/3] u [0, +oo]", f"[0, {1 / t1}]"])     # [0, 1/t] for t > 0
         # the moving end is v = 1/t, i.e. t*v - 1 = 0, on both sides
         tv = {(1, 1): Fr(1), (0, 0): Fr(-1)}
         self.assertEqual([E for _, E in r["intervals"][0]["ends"]][0], tv)
@@ -75,6 +76,40 @@ class DeepCeledon(unittest.TestCase):
         self.assertEqual(r["unexplained"], [])
         r = moving_profile(f, joint=False)
         self.assertNotIn(0.7937, [round(float(s["t"]), 4) for s in r["celedon_points"]])
+
+    def test_arcs_from_different_branches_merge(self):
+        # ordinary directions give [0, t] (t > 0) or [t, 0] (t < 0); the hidden curve near y = x
+        # gives t/2 + 1/(c^2 - 1), i.e. [-oo, t/2 - 1] u (t/2, +oo].  The two pieces merge into the
+        # whole line when t/2 - 1 reaches 0 (t = 2) or reaches t (t = -2).  Nothing changes inside
+        # a single branch at t = -2: only the way the arcs combine.
+        f = "x^4/((y-x)^2-x^4) + t*x^2/(x^2+y^2)"
+        r = moving_profile(f, deep=True, joint=False)
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [-2, 2])
+        self.assertEqual(r["unexplained"], [])
+        self.assertTrue(any("ends of two branches meet" in w
+                            for s in r["celedon_points"] if s["t"] == -2 for w in s["why"]))
+        # the default mode still sees t = -2 only approximately (unchanged behaviour)
+        r0 = moving_profile(f, joint=False)
+        self.assertEqual(len(r0["unexplained"]), 1)
+
+    def test_merge_needs_ends_of_a_level_with_a_shared_root(self):
+        # ordinary arc [-|t|, |t|] (2t*c/(1+c^2)); hidden curve y ~ 2x gives 4t/5 + 1/(c^2-2).
+        # The arcs merge at t = 5/18 and t = -5/2.  The ends +-t used to be lost because the
+        # level's initial forms share the factor (c-2)^2, which killed the end-formula resultant.
+        r = moving_profile("x^4/((y-(2)*x)^2-2*x^4) + 2*t*x*y/(x^2+y^2)", deep=True, joint=False)
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [Fr(-5, 2), Fr(5, 18)])
+        self.assertEqual(r["unexplained"], [])
+        self.assertEqual(r["deep_unsupported"], [])
+
+    def test_end_switch_is_not_a_celedon_point(self):
+        # one arc for every t: [0,t] u [t/2, t/2+1] (t>0), [t,0] u [t/2, t/2+1] (t<0); the ends
+        # switch branch at t = -2, 0, 2 without a change of shape
+        r = moving_profile("x^4/((y-(-1)*x)^2+1*x^4) + t*y^2/(x^2+y^2)", deep=True, joint=False)
+        self.assertEqual(r["celedon_points"], [])
+        self.assertEqual([iv.get("end_switch_at") for iv in r["intervals"]], [None, -2, 0, 2])
+        right = {(0, 1): Fr(2), (0, 0): Fr(-2), (1, 0): Fr(-1)}           # 2v - 2 - t = 0
+        self.assertEqual(r["intervals"][1]["ends"][1][1], right)
+        self.assertEqual(r["intervals"][3]["ends"][1][1], {(0, 1): Fr(-1), (1, 0): Fr(1)})   # v = t
 
     def test_t_dependent_zoom_root(self):
         # zoom root y = t*x; hidden coefficient (t - 2) at the second level
