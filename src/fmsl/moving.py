@@ -225,6 +225,37 @@ def _samples_between(lo, hi):
     return [m1, m, m2]
 
 
+def _finite_ends(comps):
+    out = []
+    for lo, hi in comps:
+        for v in ((lo,) if cmp(lo, hi) == 0 else (lo, hi)):
+            if not isinstance(v, _Inf): out.append(v)
+    return out
+
+
+def _confirm_ends(ends, snaps, pts, sigs):
+    """an end formula E(t, v) = 0 is accepted only if the matching end also satisfies it at
+       the other sample times of the interval with the same type (a formula that fits at a
+       single time can fit by coincidence)"""
+    from .algebraic import peval
+    others = []
+    for k in (0, 2):
+        s = snaps[k]
+        if s and s.get("comps") is not None and sigs[k] == sigs[1]:
+            others.append((pts[k], _finite_ends(s["comps"])))
+    out = []
+    for idx, (v, E) in enumerate(ends):
+        if E is not None:
+            for t0, vs in others:
+                if idx >= len(vs) or len(vs) != len(ends):
+                    continue                                   # cannot match ends: keep as is
+                p = _evalE(E, t0)
+                if len(p) <= 1 or peval(p, vs[idx]) != 0:
+                    E = None; break
+        out.append((v, E))
+    return out
+
+
 def _bisect_change(N, D, a, b, sa, sb, tol=Fr(1, 10 ** 6)):
     """locate a type change between rational times a < b (types sa != sb)"""
     while b - a > tol:
@@ -236,12 +267,19 @@ def _bisect_change(N, D, a, b, sa, sb, tol=Fr(1, 10 ** 6)):
     return a, b
 
 
-def moving_profile(text, path=None, joint=True):
+def moving_profile(text, path=None, joint=True, deep=False):
     """the full moving-target analysis of a family f(x, y, t).  Returns a dict with
        'intervals' (lo, hi, sample time, snapshot text), 'special' (time, reasons, snapshot,
-       moving state), 'unexplained' (approximate change points found only by sampling)."""
+       moving state), 'unexplained' (approximate change points found only by sampling).
+       deep=True (opt-in) also searches for Celedon points hidden inside the zoom
+       (fmsl.celedon); the default leaves the analysis exactly as before."""
     N, D = parse_moving(text, path)
-    cands = candidate_times(N, D)
+    deep_unsupported, zoomed = None, []
+    if deep:
+        from .celedon import all_candidate_times
+        cands, deep_unsupported = all_candidate_times(N, D, 3 if deep is True else int(deep), zoomed)
+    else:
+        cands = candidate_times(N, D)
     times = [c[0] for c in cands]
     bounds = [None] + times + [None]
     intervals, unexplained = [], []
@@ -259,7 +297,8 @@ def moving_profile(text, path=None, joint=True):
         ends = []
         if mid and mid.get("comps") is not None:
             try:
-                ends = endpoint_formulas(N, D, pts[1], mid["comps"])
+                ends = endpoint_formulas(N, D, pts[1], mid["comps"], zoomed)
+                ends = _confirm_ends(ends, snaps, pts, sigs)
             except (ArithmeticError, NotImplementedError, TypeError):
                 ends = []
         intervals.append({"lo": lo, "hi": hi, "sample": pts[1],
@@ -296,10 +335,13 @@ def moving_profile(text, path=None, joint=True):
             merged[-1][0].setdefault("more", []).append((iv["sample"], iv["snapshot"]))
         else:
             merged.append([dict(iv), sig_of_interval[k]])
-    return {"intervals": [m[0] for m in merged], "celedon_points": special,
-            "special": special,                                  # older name, kept for compatibility
-            "unexplained": unexplained,
-            "candidates": len(cands)}
+    out = {"intervals": [m[0] for m in merged], "celedon_points": special,
+           "special": special,                                  # older name, kept for compatibility
+           "unexplained": unexplained,
+           "candidates": len(cands)}
+    if deep:
+        out["deep_unsupported"] = deep_unsupported
+    return out
 
 
 def _tstr(t):
@@ -484,11 +526,15 @@ def _E_text(E):
     return s + " = 0"
 
 
-def endpoint_formulas(N, D, t0, comps):
+def endpoint_formulas(N, D, t0, comps, extra=()):
     """for the finite ends of the snapshot at the rational time t0: an exact relation
-       E(t, v) = 0 satisfied by that end (v) for t in this interval, when one is found"""
+       E(t, v) = 0 satisfied by that end (v) for t in this interval, when one is found.
+       extra: further families (N1, D1) with the same ratio (zoomed coordinates) whose
+       candidate relations are also tried."""
     from .algebraic import peval
     Es = [_primitive_E(E) for E in _endpoint_polys(N, D)]
+    for N1, D1 in extra:
+        Es += [_primitive_E(E) for E in _endpoint_polys(N1, D1)]
     out = []
     ends = []
     for lo, hi in comps:
