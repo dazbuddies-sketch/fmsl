@@ -4,7 +4,7 @@
 errors can be studied as a source of their own. That includes FMSL's mistakes and **our own
 mistakes in testing**.*
 
-Raw data: `error_log.jsonl` (2,731 records over 15 runs, one JSON line each: run, seed, source, family, mode,
+Raw data: `error_log.jsonl` (3,140 records over 17 runs, one JSON line each: run, seed, source, family, mode,
 kind, time t, detail). Verified catalogs: `catalog_*.md`. Tools: `benchmarks/celedon_stress.py`
 (runs and logs) and `benchmarks/celedon_errors.py` (re-verifies every logged point and classifies it).
 
@@ -110,6 +110,27 @@ Celedon point is t = 1, and no top-level coefficient vanishes there.
 | "irrational zoom" unsupported | – | 16 per seed before, **0** now |
 | still unsupported (stated) | – | ends without an exact formula: 9 and 3 |
 | harness timeout (engine alone: 2.5 s default, 8.1 s deep, both answers verified) | 1 | 1 |
+
+## Round 4: version 0.35.0 (seeds 101 and 404, same 138 families as round 3)
+
+| # | error | where | cause | status |
+|---|---|---|---|---|
+| E10 | the end v = 0 had no exact formula (12 ends, all `randA`, e.g. after a common factor cancels) | deep mode, reported as unsupported | boundary and critical values never produce the constant 0 | **fixed**: v = 0 is always offered and confirmed |
+| E5 | snapshot cost spiking at times with large denominators | engine | the rational root theorem's double loop over divisors | **fixed**: enumeration only when the candidates are few, exact isolation otherwise (8.9 s to 0.17 s on the worst case timed, identical answers) |
+
+The deep search is now the default.
+
+| 138 families | `deep=False` (old top-level search) | default (deep) |
+|---|---|---|
+| silent misses | 7 + 11 | **0** |
+| misses with a warning | 17 + 20 | **0** |
+| phantoms | 18 + 28 | **0** |
+| wrong end formulas, loop mismatches, timeouts | 0 | **0** |
+| unsupported (stated) | – | **0** |
+
+The whole run took 242 s and 351 s, against 607 s and 1,318 s in round 3. The paper's checks
+are unchanged: 113 of 113 two-variable functions against the square loop, 75 of 75 snapshots
+and 36 of 36 moving states.
 
 ## What the errors teach (patterns)
 

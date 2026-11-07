@@ -332,9 +332,10 @@ def zoom_curves(N, D):
 
 def end_relations(N, D, zoomed=()):
     """all end relations E(t, v) = 0 (dicts {(t power, v power)}): boundary and critical values at
-       every node of the top level and of every zoomed family, primitive, without duplicates"""
+       every node of the top level and of every zoomed family, primitive, without duplicates, and
+       the constant end v = 0"""
     from .moving import _endpoint_polys, _primitive_E
-    out = []
+    out = [{(0, 1): Fr(1)}]
     for N1, D1 in [(N, D)] + list(zoomed):
         try:
             Es = _endpoint_polys(N1, D1)

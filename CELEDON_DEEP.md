@@ -1,8 +1,8 @@
 # Celedon points hidden inside the zoom
 
-*MJ Celedon. Modules `fmsl.celedon` and `fmsl.celedon_alg`, used by
-`moving_profile(..., deep=True)`. The deep search is opt-in. The default mode received only fixes
-that remove wrong answers or add correct ones (listed in CHANGELOG 0.34.0).*
+*MJ Celedon. Modules `fmsl.celedon` and `fmsl.celedon_alg`, used by `moving_profile`. Since 0.35.0
+the deep search is the default; `deep=False` gives the earlier top-level search, which received
+only fixes that remove wrong answers or add correct ones (CHANGELOG 0.34.0).*
 
 ## The problem
 

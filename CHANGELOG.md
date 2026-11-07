@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.35.0
+- **The deep Celedon search is now the default** (`moving_profile(..., deep=True)`). In the
+  stress test, the old top-level search missed changes silently or reported them displaced
+  (17 silent misses and 45 false points on 138 families), while the deep search made none. The
+  deep search only adds candidates, which are kept only where the type really changes, and
+  correct end formulas. `deep=False` gives the earlier top-level search, with its note.
+- **The end v = 0 is always offered as an end formula**, and confirmed like any other. Boundary
+  and critical values never produce it, for example after a common factor cancels. Deep mode
+  reported 12 such ends as unsupported in the stress test, and now finds them all.
+- **Faster rational roots.** The rational root theorem is used only when its candidates are few.
+  The double loop over divisors cost up to millions of evaluations at times with large
+  denominators. Otherwise the roots are isolated exactly, as before for large coefficients.
+  For example, a snapshot at t = −577/408 went from 8.9 s to 0.17 s, with identical answers on
+  every case timed.
+
 ## 0.34.0
 - **Deep Celedon points (opt-in):** `moving_profile(..., deep=True)`. It finds exactly the
   Celedon points that the default mode can only sample:

@@ -98,10 +98,9 @@ Independent algorithms check each result type:
 
 In three variables FMSL reports UNPROVEN when it would have to zoom along a curve $c^pd^q=u_0$
 with $|p|,|q|>1$, use a number field of degree above 16, or zoom deeper than four levels.
-Celedon points are found exactly when the deep search reports nothing unsupported. It does not
-yet zoom a second time inside a zoom curve that is irrational in $t$, and some ends have no exact
-formula; such changes are found by sampling only. The default mode searches only the top level
-and notes the families where a change can be hidden. Analytic functions are proven when the denominator's zero becomes isolated after
+Celedon points are found exactly when the deep search, the default, reports nothing unsupported.
+It does not yet zoom a second time inside a zoom curve that is irrational in $t$, and an end
+without an exact formula is checked by sampling only; both cases are reported. Analytic functions are proven when the denominator's zero becomes isolated after
 cancelling common factors along rational lines, or the denominator is a polynomial whose zero
 curves the numerator avoids; square roots only of quadratic forms that
 take a rational square value. Zero-testing is undecidable in general [@richardson1968].
