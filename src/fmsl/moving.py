@@ -271,8 +271,9 @@ def moving_profile(text, path=None, joint=True, deep=False):
     """the full moving-target analysis of a family f(x, y, t).  Returns a dict with
        'intervals' (lo, hi, sample time, snapshot text), 'special' (time, reasons, snapshot,
        moving state), 'unexplained' (approximate change points found only by sampling).
-       deep=True (opt-in) also searches for Celedon points hidden inside the zoom
-       (fmsl.celedon); the default leaves the analysis exactly as before."""
+       deep=True (opt-in) also searches exactly for Celedon points hidden inside the zoom and for
+       arcs of different branches merging (fmsl.celedon); then 'deep_unsupported' lists what it
+       could not prove.  The default mode adds a 'note' when the family zooms along a curve."""
     N, D = parse_moving(text, path)
     deep_unsupported, zoomed, alg_ends = [], [], []
     if deep:

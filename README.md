@@ -614,12 +614,27 @@ For x²y/(x⁴ + t·y²) the ends satisfy 4t·v² = 1 (that is, ±1/(2√t)) for
 is taken for t ≤ 0. For (xy + t·x²)/(x² + (t − 1)y²) the Celedon point is the real root
 t ≈ −0.754878 of t³ − t² + 1, where a gap in the range closes.
 
-**What is proven.** Every reported fluid state is exact. Candidate Celedon points are the real
-roots of exact polynomials in t: the coefficients of N and D, and the discriminants and
-resultants of the initial forms (computed over Q[t]). Changes that arise only deeper in the
-zoom are found by sampling three times in every interval and reported as "change near ...",
-never hidden; this part is evidence, not proof. End formulas come from exact evaluation at
-rational times and interpolation, with the degree bounded in advance and two extra times checked.
+**What is proven.** Every reported fluid state is exact. In the default mode, candidate Celedon
+points are the real roots of exact polynomials in t: the coefficients of N and D, and the
+discriminants and resultants of the initial forms (computed over Q[t]). Changes that arise only
+deeper in the zoom are looked for by sampling three times in every interval; this part is
+evidence, not proof. **Correction (0.34.0):** earlier versions said such changes are always
+reported as "change near ...". The stress test in `benchmarks/results/celedon_stress/` shows they
+can instead be missed silently, or appear displaced onto the nearest visible candidate (for
+example t = 0 reported when the change is at t = 1/2). The default mode now adds a note to every
+family where this can happen. End formulas come from exact evaluation at rational times and
+interpolation, with the degree bounded in advance, and are confirmed at all three sample times
+of their interval.
+
+**Deep mode** (`moving_profile(..., deep=True)`, `fmsl.celedon`) finds those changes exactly. It
+runs the zoom with t kept as a symbol, including along zoom curves irrational in t such as
+y = √t·x. It also finds the times where arcs coming from different branches merge or separate.
+If it reports nothing in `deep_unsupported`, every Celedon point is found exactly; the theorem
+and proof are in [`CELEDON_DEEP.md`](CELEDON_DEEP.md). Anything it cannot prove (a second zoom
+inside an irrational branch, an end without an exact formula) is listed there, never claimed. On
+the stress test (9 sources, about 140 families per run, checked independently of the zoom), deep
+mode made no errors after the fixes. The default mode made 17 silent misses and 45 false points
+on the same families, all on families that carry the note.
 
 **Independent check** (`benchmarks/moving_crosscheck.py`, 8 classic and 30 random families):
 snapshots agree with the square-loop image at sample times 75 of 75; moving states agree with

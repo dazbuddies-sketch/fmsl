@@ -31,7 +31,8 @@ contain distances such as $\sqrt{x^2+2y^2}$ and the functions $\sin$, $\cos$, $\
 their relatives.
 
 The same machinery gives, for a family $f(x,y,t)$, the exact times where the fluid state changes
-character (*Celedon points*); the rate $\theta$ in $|f-L|\le C r^{\theta}$; whether a
+character (*Celedon points*), including changes hidden inside the zoom and along zoom curves
+irrational in $t$; the rate $\theta$ in $|f-L|\le C r^{\theta}$; whether a
 polynomial's global minimum is attained; and the non-properness set of a polynomial map of the
 plane [@jelonek1993]. A one-variable engine generates code with proven error bounds.
 
@@ -79,6 +80,9 @@ Independent algorithms check each result type:
   and on small cube surfaces on 102 of 105 three-variable functions (the other three are
   confirmed on a plane or by families of paths). Deliberately damaged answers were caught 53 of
   53 times.
+- **Celedon points.** A stress test with nine sources of families checks every reported point
+  independently of the zoom. The deep search made no errors on the final runs. A public error
+  log records each error found along the way and how it was fixed.
 - **Other results.** Moving targets (111 of 111 states), rates (139 functions), global extrema
   (67 polynomials) and non-properness sets (153 maps, 304 candidates) agree with exact
   independent methods.
@@ -94,8 +98,10 @@ Independent algorithms check each result type:
 
 In three variables FMSL reports UNPROVEN when it would have to zoom along a curve $c^pd^q=u_0$
 with $|p|,|q|>1$, use a number field of degree above 16, or zoom deeper than four levels.
-Celedon points that arise only deep inside the zoom are found by sampling and reported as
-approximate. Analytic functions are proven when the denominator's zero becomes isolated after
+Celedon points are found exactly when the deep search reports nothing unsupported. It does not
+yet zoom a second time inside a zoom curve that is irrational in $t$, and some ends have no exact
+formula; such changes are found by sampling only. The default mode searches only the top level
+and notes the families where a change can be hidden. Analytic functions are proven when the denominator's zero becomes isolated after
 cancelling common factors along rational lines, or the denominator is a polynomial whose zero
 curves the numerator avoids; square roots only of quadratic forms that
 take a rational square value. Zero-testing is undecidable in general [@richardson1968].

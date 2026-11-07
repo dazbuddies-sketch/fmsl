@@ -1,7 +1,8 @@
 # Celedon points hidden inside the zoom
 
-*MJ Celedon. Module `fmsl.celedon`, used by `moving_profile(..., deep=True)`. Opt-in: the
-default analysis is unchanged.*
+*MJ Celedon. Modules `fmsl.celedon` and `fmsl.celedon_alg`, used by
+`moving_profile(..., deep=True)`. The deep search is opt-in. The default mode received only fixes
+that remove wrong answers or add correct ones (listed in CHANGELOG 0.34.0).*
 
 ## The problem
 
