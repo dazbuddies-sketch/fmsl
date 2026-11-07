@@ -64,6 +64,18 @@ class DeepCeledon(unittest.TestCase):
             x, y = s, s * (1 + w)
             self.assertEqual(_ev(N1, s, w, t) / _ev(D1, s, w, t), _ev(N, x, y, t) / _ev(D, x, y, t))
 
+    def test_unproven_snapshot_is_not_a_celedon_point(self):
+        # at the algebraic time t0 = cbrt(1/2) ~ 0.7937 the zoom curve y = t0*x is irrational, the
+        # two-variable engine returns a PARTIAL snapshot ({0}, exact=False), while the true snapshot
+        # is [0, (1-t0^3)/(t0+1)] ~ [0, 0.2788], the same type as on both sides.  It used to be
+        # reported as a Celedon point.
+        f = "(x^4-x*y^3)/((y-(t)*x)^2 + (t-(-1)+2*(t)^3)*x^4 - 2*x*y^3)"
+        r = moving_profile(f, deep=True, joint=False)
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [-1, 1])
+        self.assertEqual(r["unexplained"], [])
+        r = moving_profile(f, joint=False)
+        self.assertNotIn(0.7937, [round(float(s["t"]), 4) for s in r["celedon_points"]])
+
     def test_t_dependent_zoom_root(self):
         # zoom root y = t*x; hidden coefficient (t - 2) at the second level
         f = "x^4/((y-t*x)^2+(t-2+t^3)*x^4-x*y^3)"

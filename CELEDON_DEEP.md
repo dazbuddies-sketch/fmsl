@@ -99,6 +99,15 @@ own zoom, with a proof of what it covers and an explicit list of what it does no
 prior work computing exact limit sets at a 0/0 point for families with a parameter. The search
 was brief, so this is provisional.
 
+## Unproven snapshots (both modes)
+
+At an irrational time where the zoom curve is irrational too (y = √2·x), the two-variable engine
+returns a partial snapshot marked `exact = False`. The moving layer used to treat it as a fact. That
+produced false Celedon points (for example at t = ∛(1/2) for
+(x⁴ − x·y³)/((y − t·x)² + (t + 1 + 2t³)x⁴ − 2x·y³), where the true snapshot is [0, 0.2788], not {0}).
+Now an unproven snapshot is never on its own evidence of a change, and its text is labeled
+"(partial)". See `benchmarks/results/celedon_stress/ERROR_LOG.md`.
+
 ## Checks
 
 * `tests/test_celedon_deep.py`: the hidden example (exact t = 0, end formula t·v = 1), the default

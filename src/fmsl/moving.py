@@ -313,9 +313,11 @@ def moving_profile(text, path=None, joint=True, deep=False):
             s = {"text": f"not computed ({type(exc).__name__})", "sig": "?", "exact": False}
         left, right = sig_of_interval[k], sig_of_interval[k + 1]
         here = s["sig"] if s else None
-        if left == right == here:
-            continue                                       # nothing changes at this candidate
-        entry = {"t": t0, "why": why, "snapshot": s["text"] if s else "undefined (D = 0)"}
+        proven = not s or s.get("exact", True)
+        if left == right and (here == left or not proven):
+            continue      # nothing changes here (an UNPROVEN snapshot alone is no evidence of a change)
+        entry = {"t": t0, "why": why, "snapshot": (s["text"] + ("" if proven else " (partial)")) if s
+                 else "undefined (D = 0)"}
         if joint:
             try:
                 m = moving_state(N, D, t0)
