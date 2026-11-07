@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.34.0
+- **Deep Celedon points (opt-in):** `moving_profile(..., deep=True)`. It finds exactly the
+  Celedon points that the default mode can only sample:
+  - changes hidden inside the zoom: the zoom is run with t kept as a symbol (`fmsl.celedon`);
+  - changes along zoom curves irrational in t, such as y = √t·x (`fmsl.celedon_alg`);
+  - times where arcs from different branches merge or separate.
+
+  If `deep_unsupported` is empty, every Celedon point is found exactly. The theorem and proof are
+  in `CELEDON_DEEP.md`.
+- **Correction.** Earlier versions said changes deeper in the zoom are always reported as
+  "change near ...". They can instead be missed silently, or reported displaced onto the
+  nearest visible candidate, for example t = 0 when the change is at t = 1/2. The default mode
+  now adds a `note` to every family that zooms along a curve, which is where this happens. Use
+  `deep=True` there.
+- **Default-mode fixes.** Each one removes a wrong answer or adds a correct one:
+  - An end formula is accepted only if it holds at all three sample times of its interval.
+    One sample time let "v = 1" through where the end is v = 1/t.
+  - A snapshot the engine marks as not exact is no longer evidence of a Celedon point, and is
+    labeled "(partial)". At irrational times with an irrational zoom curve it gave false points,
+    for example {0} instead of [0, 0.2788].
+  - End relations are no longer lost at levels where the initial forms share a root. A common
+    factor made the end-formula resultant vanish identically.
+  - Stretches with the same shape but different end formulas stay separate (`end_switch_at`).
+    An end switching branch is not a Celedon point.
+- **Stress test and error log:**
+  - `benchmarks/celedon_stress.py` runs 9 sources of families with checks independent of the
+    zoom;
+  - `benchmarks/celedon_errors.py` re-verifies every logged point;
+  - `benchmarks/results/celedon_stress/ERROR_LOG.md` records the error classes, the mistakes
+    made while testing, and the patterns.
+
+  Deep mode: no errors on the final runs. The paper's moving-target check is unchanged (75 of 75
+  snapshots, 36 of 36 moving states).
+
 ## 0.33.0
 - Complete answers in any number of variables: `fmsl.nvar.limit_n`. When the denominator has,
   for some weight w, a positive definite initial form, weighted scaling gives the whole answer:
