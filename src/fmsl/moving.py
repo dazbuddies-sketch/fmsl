@@ -267,13 +267,14 @@ def _bisect_change(N, D, a, b, sa, sb, tol=Fr(1, 10 ** 6)):
     return a, b
 
 
-def moving_profile(text, path=None, joint=True, deep=False):
+def moving_profile(text, path=None, joint=True, deep=True):
     """the full moving-target analysis of a family f(x, y, t).  Returns a dict with
        'intervals' (lo, hi, sample time, snapshot text), 'special' (time, reasons, snapshot,
        moving state), 'unexplained' (approximate change points found only by sampling).
-       deep=True (opt-in) also searches exactly for Celedon points hidden inside the zoom and for
-       arcs of different branches merging (fmsl.celedon); then 'deep_unsupported' lists what it
-       could not prove.  The default mode adds a 'note' when the family zooms along a curve."""
+       deep=True (the default since 0.35.0) also searches exactly for Celedon points hidden inside
+       the zoom and for arcs of different branches merging (fmsl.celedon); 'deep_unsupported'
+       lists what it could not prove.  deep=False gives the top-level search of earlier versions,
+       with a 'note' when the family zooms along a curve (a change can then be missed or displaced)."""
     N, D = parse_moving(text, path)
     deep_unsupported, zoomed, alg_ends = [], [], []
     if deep:
@@ -371,7 +372,7 @@ def moving_profile(text, path=None, joint=True, deep=False):
         if z:
             out["note"] = ("this family zooms along curves (repeated or shared roots): a change hidden inside "
                            "the zoom is not searched in this mode, and can show up as a Celedon point displaced "
-                           "to the nearest visible candidate. moving_profile(..., deep=True) searches it exactly.")
+                           "to the nearest visible candidate. The default (deep=True) searches it exactly.")
     return out
 
 
@@ -579,6 +580,8 @@ def endpoint_formulas(N, D, t0, comps, extra=(), extra_E=()):
     for N1, D1 in extra:
         Es += [_primitive_E(E) for E in _endpoint_polys(N1, D1)]
     Es += [_primitive_E(E) for E in extra_E]
+    Es.append({(0, 1): Fr(1)})          # the end v = 0 (e.g. after a common factor cancels): never
+                                        # produced by boundary or critical values, confirmed like any other
     out = []
     ends = []
     for lo, hi in comps:

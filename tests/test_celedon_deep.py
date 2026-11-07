@@ -28,7 +28,7 @@ class DeepCeledon(unittest.TestCase):
     def test_default_mode_unchanged_points(self):
         # default mode still reports only what the top-level data shows (the hidden point is
         # left as an approximate change), but no longer prints a coincidental end formula
-        r = moving_profile(HIDDEN)
+        r = moving_profile(HIDDEN, deep=False)
         self.assertEqual([s["t"] for s in r["celedon_points"]], [-1])
         self.assertEqual(len(r["unexplained"]), 1)
         ends = r["intervals"][1]["ends"]
@@ -74,7 +74,7 @@ class DeepCeledon(unittest.TestCase):
         r = moving_profile(f, deep=True, joint=False)
         self.assertEqual([s["t"] for s in r["celedon_points"]], [-1, 1])
         self.assertEqual(r["unexplained"], [])
-        r = moving_profile(f, joint=False)
+        r = moving_profile(f, joint=False, deep=False)
         self.assertNotIn(0.7937, [round(float(s["t"]), 4) for s in r["celedon_points"]])
 
     def test_arcs_from_different_branches_merge(self):
@@ -89,7 +89,7 @@ class DeepCeledon(unittest.TestCase):
         self.assertTrue(any("ends of two branches meet" in w
                             for s in r["celedon_points"] if s["t"] == -2 for w in s["why"]))
         # the default mode still sees t = -2 only approximately (unchanged behaviour)
-        r0 = moving_profile(f, joint=False)
+        r0 = moving_profile(f, joint=False, deep=False)
         self.assertEqual(len(r0["unexplained"]), 1)
 
     def test_merge_needs_ends_of_a_level_with_a_shared_root(self):
@@ -122,6 +122,20 @@ class DeepCeledon(unittest.TestCase):
             self.assertEqual([s["t"] for s in r["celedon_points"]], expected, f)
             self.assertEqual(r["unexplained"], [], f)
             self.assertEqual(r["deep_unsupported"], [], f)
+
+    def test_end_zero_has_a_formula(self):
+        # after the common factor x cancels, f tends to 0 along every path; the end v = 0 is never
+        # a boundary or critical value, and used to be reported as an end without a formula
+        f = "((-2)*(t-1)*x^3*y^2)/((-1)*(t-2)*x^3*y^0 + (-2)*(t-1)*x^4*y^4)"
+        r = moving_profile(f, joint=False)
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [2])
+        self.assertEqual(r["deep_unsupported"], [])
+        self.assertTrue(any(E == {(0, 1): Fr(1)} for iv in r["intervals"] for _, E in iv["ends"]))
+
+    def test_deep_is_the_default(self):
+        r = moving_profile(HIDDEN)
+        self.assertIn("deep_unsupported", r)
+        self.assertEqual([s["t"] for s in r["celedon_points"]], [0])
 
     def test_t_dependent_zoom_root(self):
         # zoom root y = t*x; hidden coefficient (t - 2) at the second level

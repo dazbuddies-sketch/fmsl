@@ -213,10 +213,15 @@ def _rational_roots(p, lo=None, hi=None):
     den = 1
     for v in p: den = den * v.denominator // gcd(den, v.denominator)
     ints = [int(v * den) for v in p]
-    if max(abs(ints[0]), abs(ints[-1])) < 10 ** 12:
+    d0 = _divisors(ints[0]) if abs(ints[0]) < 10 ** 12 else None
+    d1 = _divisors(ints[-1]) if d0 is not None and abs(ints[-1]) < 10 ** 12 else None
+    # enumerate the rational root theorem's candidates only when there are few of them: the
+    # double loop costs len(d0) * len(d1) evaluations (millions for coefficients with many
+    # divisors, the cost spikes at times with large denominators); otherwise isolate exactly
+    if d0 is not None and d1 is not None and len(d0) * len(d1) <= 4000:
         roots = []
-        for num in _divisors(ints[0]):
-            for dd in _divisors(ints[-1]):
+        for num in d0:
+            for dd in d1:
                 for sgn in (1, -1):
                     r = Fr(sgn * num, dd)
                     if r not in roots and _ueval(p, r) == 0: roots.append(r)
