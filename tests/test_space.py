@@ -74,9 +74,6 @@ class Plane(unittest.TestCase):
         self.assertEqual(_describe_line(_union_line(iv)), "[0, +oo]")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class TestExactCriticalValues(unittest.TestCase):
     """roadmap #3: critical points with a nonlinear fibre are now exact (they were 40-digit approximations)"""
@@ -93,3 +90,37 @@ class TestExactCriticalValues(unittest.TestCase):
         N, D = parse_rational("x^2*y + (y^3-3*y)^2")
         vals, exact = critical_values(N, D)
         self.assertTrue(exact); self.assertEqual(sorted(set(vals)), [0, 4])
+
+
+class TestIsolatedRealZeroOfLeadingForm(unittest.TestCase):
+    """0.35.1: the leading form of N (or D) can vanish at ISOLATED real points of the chart, e.g. a
+       sum of squares 3(x+2z)^2 + (y+z)^2, zero only on the line (-2z, -z, z).  The engine skipped
+       the zoom there and reported exact divergence {-oo} u {+oo}; independent cube images give
+       more.  Found by a targeted 3-variable hunt (DGNP four-form check)."""
+    def _run(self, f):
+        from fmsl.space import parse3, profile3_polys
+        return profile3_polys(*parse3(f))
+
+    def test_sum_of_squares_over_quartic(self):
+        r = self._run("(3*(x+2*z)^2 + 1*(y+z)^2)/((z^2 - x^2 - y^2)*(z^2 - 2*x^2 - y^2))")
+        self.assertEqual(r["signed_text"], "{-oo} u [0, +oo]")      # cube images agree
+
+    def test_negative_sum_of_squares(self):
+        r = self._run("(-(3*(x-y+z)^2 + 3*(y+z)^2))/((y - x^2)*(z)*(z - x*y))")
+        self.assertTrue(r["whole"])
+
+    def test_sum_of_squares_plus_cubic(self):
+        r = self._run("(3*(x-y)^2 + 1*(y+z)^2 + z^3)/((x - y)*(x*y - z^2))")
+        self.assertTrue(r["whole"])
+
+    def test_isolated_zero_is_detected(self):
+        from fmsl.space import _has_real_zero
+        from fmsl.plane import has_real_points
+        F = {(0, 0): Fr(3), (0, 1): Fr(12), (0, 2): Fr(13), (2, 0): Fr(1), (1, 1): Fr(2)}  # zero at (1/2, -1/2)
+        self.assertFalse(has_real_points(F, avoid_zero=True))      # curves only, by design
+        self.assertTrue(_has_real_zero(F))
+        self.assertFalse(_has_real_zero({(0, 0): Fr(1), (2, 0): Fr(1), (0, 2): Fr(1)}))   # 1 + c^2 + d^2
+
+
+if __name__ == "__main__":
+    unittest.main()
