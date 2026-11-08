@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.35.1
+- **Fix: three-variable engine (`fmsl.space`) claimed exact divergence where it should not.**
+  When the leading form of the numerator (or denominator) vanished only at *isolated* real points
+  of a chart, for example the sum of squares 3(x+2z)² + (y+z)², zero only along the line
+  (−2z, −z, z), the engine did not zoom there. `plane.has_real_points` searches curve components
+  only, and an isolated real zero is not on a curve. The engine then reported "{−oo} u {+oo}"
+  marked exact, and lost the values near that line. Isolated real zeros are now found exactly as
+  common zeros of F, F_c, F_d, and zoomed like any other special point.
+  - (3(x+2z)² + (y+z)²)/((z²−x²−y²)(z²−2x²−y²)): now {−oo} u [0, +oo], as the cube images give
+    (the remaining unzoomed branch is reported, `complete = False`).
+  - Two more cases now give the whole circle, as their cube images do.
+  - Found by a targeted 3-variable hunt against independent cube images, while testing the
+    four-form shape of limit sets in n variables. Regression tests in `tests/test_space.py`.
+
 ## 0.35.0
 - **The deep Celedon search is now the default** (`moving_profile(..., deep=True)`). In the
   stress test, the old top-level search missed changes silently or reported them displaced

@@ -313,7 +313,7 @@ def _common_points(A_, B_):
     if not A_ or not B_: return pts, other
     g = bgcd(A_, B_)
     if any(k != (0, 0) for k in g):
-        if has_real_points(g, avoid_zero=True): other = True
+        if _has_real_zero(g): other = True
         A_, B_ = bdivexact(A_, g), bdivexact(B_, g)
     degA, degB = max(k for _, k in A_), max(k for _, k in B_)
     if degA == 0 or degB == 0:
@@ -341,6 +341,17 @@ def _common_points(A_, B_):
             if isinstance(d0, A) and not ALLOW_ALG: other = True
             else: pts.append((c0, d0))
     return pts, other
+
+def _has_real_zero(F):
+    """True if F(c, d) = 0 has a real point with c, d != 0, INCLUDING isolated real points
+       (e.g. a sum of squares such as 3(1 + 2d)^2 + (c + d)^2, zero only at (1/2, -1/2)).
+       plane.has_real_points searches curve components only; an isolated real zero is a
+       singular point of F, found exactly as a common zero of F, F_c, F_d."""
+    if has_real_points(F, avoid_zero=True): return True
+    Fc, Fd = bdc(F), bdd(F)
+    if not Fc or not Fd: return False                  # then F = f(c) or f(d): no isolated points
+    pts, other = _common_points(Fc, Fd)
+    return other or any(beval(F, *q) == 0 for q in pts)
 
 def _special_points(F, Gc):
     """real points (c, d != 0) where F = 0 is singular, or meets Gc = 0"""
@@ -503,7 +514,10 @@ def _edge(N, D, fN, fD, v, a, b, sigma, delta, depth, label, where, out, budget,
 
 def _vertex_zoom(N, D, F, Gc, a, b, sigma, depth, label, where, out, budget, zero_of, only_special=False, ctx=None):
     """zoom at the special real points of F = 0 (singular, or shared with Gc)"""
-    if not has_real_points(F, avoid_zero=True) and not only_special:
+    # an isolated real zero of F (a point where a sum of squares vanishes) is a singular point:
+    # it must be zoomed too.  Version 0.35.0 returned here, which made f = 3(x+2z)^2 + (y+z)^2
+    # over a quartic report exact divergence and lose the values near the line (-2z, -z, z).
+    if not _has_real_zero(F) and not only_special:
         return
     pts, other = _special_points(F, Gc)
     # a non-isolated real zero set without regular crossings (e.g. a double curve) needs a

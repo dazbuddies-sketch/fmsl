@@ -132,6 +132,20 @@ The whole run took 242 s and 351 s, against 607 s and 1,318 s in round 3. The pa
 are unchanged: 113 of 113 two-variable functions against the square loop, 75 of 75 snapshots
 and 36 of 36 moving states.
 
+## Round 5: the three-variable engine (version 0.35.1)
+
+While checking that limit sets in n variables always have one of the four forms of
+Dinh–Guo–Nguyễn–Phạm, a targeted hunt built 3-variable cases where f keeps one sign near 0. It
+compared FMSL's 3-variable engine with the exact image on a small cube (no zooming).
+
+| # | error | where | cause | status |
+|---|---|---|---|---|
+| E11 | "{−oo} u {+oo}" marked **exact** when the true set is larger, e.g. {−oo} u [0, +oo] for (3(x+2z)² + (y+z)²)/((z²−x²−y²)(z²−2x²−y²)) | `fmsl.space`, 5 of 100 targeted cases | the leading form of N vanishes only at an **isolated** real point of the chart (a sum of squares); the curve search `has_real_points` does not see isolated points, so no zoom was made | **fixed in 0.35.1**: isolated real zeros are found exactly (common zeros of F, F_c, F_d) and zoomed |
+
+The true answers, from the cube images, are still of the four forms, so the shape claim stands.
+The pattern is #2 below again: a search known to be incomplete (curves only, as its own
+docstring says) was used where completeness was needed.
+
 ## What the errors teach (patterns)
 
 1. **A displaced echo, not noise.** All 32 default-mode phantoms sit on a visible top-level
