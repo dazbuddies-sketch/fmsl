@@ -122,5 +122,20 @@ class TestIsolatedRealZeroOfLeadingForm(unittest.TestCase):
         self.assertFalse(_has_real_zero({(0, 0): Fr(1), (2, 0): Fr(1), (0, 2): Fr(1)}))   # 1 + c^2 + d^2
 
 
+class TestBoundedLimitSetInThreeVariables(unittest.TestCase):
+    """Mistake M5 in the error log: the four DGNP forms do NOT hold in every dimension for coprime
+       f, g with 0 a non-isolated zero of g.  Here g = x^2 + y^2 vanishes on the whole z-axis, f
+       vanishes there too, and the limit set is the bounded interval [1, 2] (no infinity)."""
+    def test_bounded_interval(self):
+        from fmsl.space import profile3
+        r = profile3("(x^2+2*y^2)/(x^2+y^2)")
+        self.assertEqual(r["signed_text"], "[1, 2]")
+
+    def test_four_forms_when_f_is_not_zero_on_g_zero_set(self):
+        from fmsl.space import profile3
+        r = profile3("(x^2+y^2)/(z^2-x^2-y^2)")                     # g changes sign, f != 0 on g = 0
+        self.assertEqual(r["signed_text"], "[-oo, -1] u [0, +oo]")
+
+
 if __name__ == "__main__":
     unittest.main()
