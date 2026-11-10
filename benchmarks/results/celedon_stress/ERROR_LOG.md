@@ -64,6 +64,7 @@ and moving-path families, the two modes agree everywhere.
 | M2 | first version of the root finder said "all branches covered" when some roots were complex at the sample time (c² + t) | the completeness claim would have been wrong for such branches | count all deg_c roots; regression test added |
 | M3 | checker judged irrational points by their two sides only | real changes that happen only *at* an irrational point (range collapsing to {∞} for one instant) were called phantoms | checker uses the exact algebraic value and a *proven* snapshot there |
 | M4 | harness built test times with denominators up to 10⁶–10⁹ | slow snapshots and harness timeouts that looked like engine failures | simple fractions; the remaining timeouts re-judged directly (deep mode correct on both families) |
+| M5 | stated that the four forms hold in every dimension for coprime f, g with 0 a non-isolated zero of g; the proof assumed infinity is always a limit value, which in two variables follows from coprimality but in three or more does not | the claim was false as stated: (x² + 2y²)/(x² + y²) in three variables gives [1, 2]. The test hunt missed it because every test denominator changed sign | hypothesis added (f does not vanish identically on g⁻¹(0) near 0, as in DGNP Theorem 3.6(i)); counterexample recorded here and in tests/test_space.py |
 
 ## Round 2: arcs of different branches (seeds 101 and 404, with a new `merge` source)
 
@@ -134,7 +135,7 @@ and 36 of 36 moving states.
 
 ## Round 5: the three-variable engine (version 0.35.1)
 
-While checking that limit sets in n variables always have one of the four forms of
+While checking whether limit sets in n variables always have one of the four forms of
 Dinh–Guo–Nguyễn–Phạm, a targeted hunt built 3-variable cases where f keeps one sign near 0. It
 compared FMSL's 3-variable engine with the exact image on a small cube (no zooming).
 
@@ -142,7 +143,13 @@ compared FMSL's 3-variable engine with the exact image on a small cube (no zoomi
 |---|---|---|---|---|
 | E11 | "{−oo} u {+oo}" marked **exact** when the true set is larger, e.g. {−oo} u [0, +oo] for (3(x+2z)² + (y+z)²)/((z²−x²−y²)(z²−2x²−y²)) | `fmsl.space`, 5 of 100 targeted cases | the leading form of N vanishes only at an **isolated** real point of the chart (a sum of squares); the curve search `has_real_points` does not see isolated points, so no zoom was made | **fixed in 0.35.1**: isolated real zeros are found exactly (common zeros of F, F_c, F_d) and zoomed |
 
-The true answers, from the cube images, are still of the four forms, so the shape claim stands.
+The true answers, from the cube images, are still of the four forms. But the shape claim itself
+was **stated too broadly** (mistake M5 below): in three or more variables it needs the extra
+hypothesis that f does not vanish identically on g⁻¹(0) near 0. Without it the set can be a bounded
+interval, for example [1, 2] for (x² + 2y²)/(x² + y²) in three variables, where f and g are coprime
+and g vanishes along the whole z-axis. The general fact (docs/theory/n-variables.md) is that the set
+is a point, a closed arc or the whole circle; under that hypothesis infinity lies in it, which gives
+the four forms.
 The pattern is #2 below again: a search known to be incomplete (curves only, as its own
 docstring says) was used where completeness was needed.
 
